@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - JobBeacon</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body>
+  
+  <div class="dashboard-layout">
+    <!-- Mobile Overlay -->
+    <div class="dashboard-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+            <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+            <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          Job<span>Beacon</span>
+        </a>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Overview
+        </a>
+        <a href="#" class="nav-item" id="navJobs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+          Manage Jobs
+        </a>
+        <a href="#" class="nav-item" id="navApplications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          My Applications
+        </a>
+        <a href="#" class="nav-item" id="navSavedJobs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+          Saved Jobs
+        </a>
+        <a href="#" class="nav-item" id="navProfile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          My Profile
+        </a>
+        <a href="/" class="nav-item" target="_blank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          View Site
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="nav-item" id="logoutBtn" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; color: #EF4444;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        
+        <h2 style="font-size: 1.25rem;">Dashboard</h2>
+        
+        <button id="themeToggle" class="theme-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </header>
+
+      <div class="dashboard-content">
+        <!-- JOBS VIEW -->
+        <div id="viewJobs">
+          <!-- Stats -->
+          <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            </div>
+            <div class="stat-details">
+              <h3>Total Active Jobs</h3>
+              <p id="statTotalJobs">-</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background-color: #E0E7FF; color: #4F46E5;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="stat-details">
+              <h3>Companies Hiring</h3>
+              <p id="statCompanies">-</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background-color: #DCFCE7; color: #16A34A;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-9 5 18 3-10 5 10"></path></svg>
+            </div>
+            <div class="stat-details">
+              <h3>Total Views</h3>
+              <p id="statViews">-</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jobs Management -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <h2 style="font-size: 1.5rem;">Manage Jobs</h2>
+          <button class="btn btn-primary" id="openAddModalBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Post New Job
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Date Posted</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="jobsTableBody">
+              <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading jobs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        </div> <!-- End viewJobs -->
+
+        <!-- APPLICATIONS VIEW -->
+        <div id="viewApplications" style="display: none;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">My Applications</h2>
+          <div class="table-container">
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>Job Title</th>
+                  <th>Company</th>
+                  <th>Applied On</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="applicationsTableBody">
+                <tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading applications...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SAVED JOBS VIEW -->
+        <div id="viewSavedJobs" style="display: none;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Saved Jobs</h2>
+          <div class="jobs-grid" id="savedJobsGrid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">Loading saved jobs...</div>
+          </div>
+        </div>
+
+        <!-- PROFILE VIEW -->
+        <div id="viewProfile" style="display: none;">
+          <div style="max-width: 600px;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">My Profile</h2>
+            <div class="card" style="padding: 2rem;">
+              <form id="profileForm">
+                <div class="form-group" style="text-align: center; margin-bottom: 2rem;">
+                  <div id="profileAvatarPreview" class="company-logo" style="width: 100px; height: 100px; margin: 0 auto 1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: var(--bg-body); border: 2px dashed var(--border);">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </div>
+                  <input type="hidden" id="profileAvatarUrl">
+                  <label class="btn btn-outline" style="cursor: pointer;">
+                    Upload Photo
+                    <input type="file" id="profileAvatarUpload" accept="image/*" style="display: none;">
+                  </label>
+                  <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Max size: 2MB.</p>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="profileName">Full Name</label>
+                  <input type="text" id="profileName" class="form-control" required placeholder="Your full name">
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="profileEmail">Contact Email</label>
+                  <input type="email" id="profileEmail" class="form-control" required placeholder="Email for contact purposes">
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="profilePhone">Phone Number (Optional)</label>
+                  <input type="text" id="profilePhone" class="form-control" placeholder="e.g. +233 ...">
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label" for="profileBio">Bio / Professional Summary</label>
+                  <textarea id="profileBio" class="form-control" rows="4" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+              </form>
+            </div>
+          </div>
+        </div> <!-- End viewProfile -->
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Job Modal -->
+  <div class="modal-overlay" id="jobModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Post New Job</h2>
+        <button class="btn btn-outline" style="border: none; padding: 0.5rem;" id="closeModalBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="jobForm">
+          <input type="hidden" id="jobId">
+          <input type="hidden" id="jobLogoUrl">
+          
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label class="form-label" for="postType">What are you posting?*</label>
+              <select id="postType" class="form-control" required style="border-color: var(--primary);">
+                <option value="hiring">I am hiring (Employer)</option>
+                <option value="seeking">I am seeking a job (Candidate)</option>
+              </select>
+            </div>
+          
+            <div class="form-group full-width">
+              <label class="form-label" id="labelJobTitle" for="jobTitle">Job Title*</label>
+              <input type="text" id="jobTitle" class="form-control" required placeholder="e.g. Senior Frontend Developer">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" id="labelJobCompany" for="jobCompany">Company Name*</label>
+              <input type="text" id="jobCompany" class="form-control" required placeholder="e.g. TechCorp Ghana">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="jobLocation">Location*</label>
+              <select id="jobLocation" class="form-control" required>
+                <option value="">Select Location</option>
+                <option value="Accra">Accra</option>
+                <option value="Kumasi">Kumasi</option>
+                <option value="Takoradi">Takoradi</option>
+                <option value="Tamale">Tamale</option>
+                <option value="Remote">Remote</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="jobType">Job Type*</label>
+              <select id="jobType" class="form-control" required>
+                <option value="">Select Type</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Remote">Remote</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="jobCategory">Category*</label>
+              <select id="jobCategory" class="form-control" required>
+                <option value="">Select Category</option>
+                <option value="Technology">Technology</option>
+                <option value="Banking">Banking & Finance</option>
+                <option value="Marketing">Marketing & Design</option>
+                <option value="NGO">NGO & Non-Profit</option>
+                <option value="Telecommunications">Telecommunications</option>
+              </select>
+            </div>
+            
+            <div class="form-group full-width">
+              <label class="form-label" for="jobSalary">Salary (Optional)</label>
+              <input type="number" id="jobSalary" class="form-control" placeholder="e.g. 5000">
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label" id="labelJobApplyUrl" for="jobApplyUrl">Application URL or Email*</label>
+              <input type="text" id="jobApplyUrl" class="form-control" required placeholder="https://careers.company.com or mailto:hr@company.com">
+            </div>
+            
+            <div class="form-group full-width">
+              <label class="form-label" id="labelJobDescription" for="jobDescription">Job Description*</label>
+              <textarea id="jobDescription" class="form-control" required placeholder="Describe the role..."></textarea>
+            </div>
+            
+            <div class="form-group full-width">
+              <label class="form-label" for="jobResponsibilities">Responsibilities (One per line)</label>
+              <textarea id="jobResponsibilities" class="form-control" placeholder="- Write clean code..."></textarea>
+            </div>
+            
+            <div class="form-group full-width">
+              <label class="form-label" for="jobRequirements">Requirements (One per line)</label>
+              <textarea id="jobRequirements" class="form-control" placeholder="- 3+ years experience..."></textarea>
+            </div>
+            
+            <!-- We will skip file upload logic for MVP simplicity, we can use avatars as fallback -->
+            <!-- But here is the UI for it -->
+            <div class="form-group full-width">
+              <label class="form-label" id="labelLogoUpload">Company Logo (Optional)</label>
+              <input type="file" id="logoUpload" accept="image/*" class="form-control" style="padding-bottom: 2rem;">
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;" id="labelLogoUploadHelp">Max size: 2MB. Leave blank to auto-generate from company name.</p>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancelModalBtn">Cancel</button>
+        <button type="submit" form="jobForm" class="btn btn-primary" id="saveJobBtn">Save Job</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module">
+    import { Dashboard } from '/assets/js/dashboard.js';
+    import { Jobs } from '/assets/js/jobs.js';
+    import { Auth } from '/assets/js/auth.js';
+    import { UI } from '/assets/js/app.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Init dashboard (auth check)
+      await Dashboard.init();
+      
+      // Load stats
+      const stats = await Dashboard.getStats();
+      if (!stats.error) {
+        document.getElementById('statTotalJobs').textContent = stats.totalJobs;
+        document.getElementById('statCompanies').textContent = stats.activeCompanies;
+        document.getElementById('statViews').textContent = stats.totalViews.toLocaleString();
+      }
+      
+      // Load jobs table
+      const tbody = document.getElementById('jobsTableBody');
+      
+      async function loadTable() {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading jobs...</td></tr>';
+        
+        const user = await Auth.getSession();
+        const isAdmin = Auth.isAdmin(user?.email);
+        const options = { limit: 100 };
+        
+        if (!isAdmin && user) {
+          options.userId = user.id;
+        }
+        
+        const { jobs, error } = await Jobs.getJobs(options);
+        
+        if (error) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #EF4444;">Error loading jobs</td></tr>`;
+          return;
+        }
+        
+        if (!jobs || jobs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No jobs found. Click "Post New Job" to get started.</td></tr>`;
+          return;
+        }
+        
+        tbody.innerHTML = jobs.map(job => `
+          <tr>
+            <td>
+              <div style="font-weight: 500; color: var(--text-primary);">${job.title}</div>
+              <div style="font-size: 0.875rem; color: var(--text-secondary);">${job.type}</div>
+            </td>
+            <td>${job.company}</td>
+            <td>${job.location}</td>
+            <td>${new Date(job.created_at).toLocaleDateString()}</td>
+            <td>
+              <div class="table-actions">
+                <a href="/pages/job-details.html?id=${job.id}" target="_blank" class="action-btn" title="View">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </a>
+                <button class="action-btn edit-job-btn" data-id="${job.id}" title="Edit">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </button>
+                <button class="action-btn delete delete-job-btn" data-id="${job.id}" title="Delete">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+        
+        // Attach event listeners for edit and delete
+        document.querySelectorAll('.edit-job-btn').forEach(btn => {
+          btn.addEventListener('click', () => openModal(btn.getAttribute('data-id')));
+        });
+        
+        document.querySelectorAll('.delete-job-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            if (confirm('Are you sure you want to delete this job? This action cannot be undone.')) {
+              const id = btn.getAttribute('data-id');
+              const { success } = await Dashboard.deleteJob(id);
+              if (success) loadTable();
+            }
+          });
+        });
+      }
+      
+      loadTable();
+      
+      // Modal Logic
+      const modal = document.getElementById('jobModal');
+      const form = document.getElementById('jobForm');
+      const titleEl = document.getElementById('modalTitle');
+      const saveBtn = document.getElementById('saveJobBtn');
+      
+      const openModal = async (jobId = null) => {
+        form.reset();
+        document.getElementById('jobId').value = '';
+        document.getElementById('jobLogoUrl').value = '';
+        document.getElementById('postType').value = 'hiring';
+        document.getElementById('postType').dispatchEvent(new Event('change'));
+        
+        if (jobId) {
+          titleEl.textContent = 'Edit Job';
+          saveBtn.textContent = 'Update Job';
+          
+          // Show loading
+          modal.classList.add('active');
+          const { job } = await Jobs.getJobById(jobId);
+          
+          if (job) {
+            document.getElementById('jobId').value = job.id;
+            document.getElementById('postType').value = job.post_type || 'hiring';
+            document.getElementById('postType').dispatchEvent(new Event('change'));
+            document.getElementById('jobTitle').value = job.title;
+            document.getElementById('jobCompany').value = job.company;
+            document.getElementById('jobLocation').value = job.location;
+            document.getElementById('jobType').value = job.type;
+            document.getElementById('jobCategory').value = job.category;
+            document.getElementById('jobSalary').value = job.salary || '';
+            document.getElementById('jobApplyUrl').value = job.apply_url || '';
+            document.getElementById('jobDescription').value = job.description || '';
+            document.getElementById('jobResponsibilities').value = job.responsibilities || '';
+            document.getElementById('jobRequirements').value = job.requirements || '';
+            document.getElementById('jobLogoUrl').value = job.company_logo || '';
+          }
+        } else {
+          titleEl.textContent = 'Post New Job';
+          saveBtn.textContent = 'Save Job';
+          modal.classList.add('active');
+        }
+      };
+      
+      const closeModal = () => {
+        modal.classList.remove('active');
+      };
+      
+      document.getElementById('openAddModalBtn').addEventListener('click', () => openModal());
+      document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+      document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+      
+      // Auto-open edit modal if ?edit=<jobId> is in URL
+      const dashUrlParams = new URLSearchParams(window.location.search);
+      const editJobId = dashUrlParams.get('edit');
+      if (editJobId) {
+        openModal(editJobId);
+        // Clean the URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+      
+      // Handle post type label changes
+      const postTypeEl = document.getElementById('postType');
+      postTypeEl.addEventListener('change', (e) => {
+        const isSeeking = e.target.value === 'seeking';
+        
+        document.getElementById('labelJobTitle').textContent = isSeeking ? 'Your Professional Title*' : 'Job Title*';
+        document.getElementById('labelJobCompany').textContent = isSeeking ? 'Your Full Name*' : 'Company Name*';
+        document.getElementById('labelJobApplyUrl').textContent = isSeeking ? 'Your Portfolio or Contact Email*' : 'Application URL or Email*';
+        document.getElementById('labelJobDescription').textContent = isSeeking ? 'Professional Summary*' : 'Job Description*';
+        document.getElementById('labelLogoUpload').textContent = isSeeking ? 'Your Photo (Optional)' : 'Company Logo (Optional)';
+        document.getElementById('labelLogoUploadHelp').textContent = isSeeking ? 'Max size: 2MB. Leave blank to auto-generate from your name.' : 'Max size: 2MB. Leave blank to auto-generate from company name.';
+        
+        // Update placeholders
+        document.getElementById('jobTitle').placeholder = isSeeking ? 'e.g. Senior Frontend Developer' : 'e.g. Senior Frontend Developer';
+        document.getElementById('jobCompany').placeholder = isSeeking ? 'e.g. Kwame Mensah' : 'e.g. TechCorp Ghana';
+        document.getElementById('jobApplyUrl').placeholder = isSeeking ? 'e.g. https://github.com/kwame or kwame@email.com' : 'https://careers.company.com or mailto:hr@company.com';
+        document.getElementById('jobDescription').placeholder = isSeeking ? 'Describe your experience and what you are looking for...' : 'Describe the role...';
+      });
+      
+      // Form Submission
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+        
+        // Handle logo upload if file selected
+        const logoInput = document.getElementById('logoUpload');
+        let logoUrl = document.getElementById('jobLogoUrl').value;
+        
+        if (logoInput.files && logoInput.files[0]) {
+          const uploadUrl = await Dashboard.uploadLogo(logoInput.files[0]);
+          if (uploadUrl) logoUrl = uploadUrl;
+        }
+        
+        const jobData = {
+          post_type: document.getElementById('postType').value,
+          title: document.getElementById('jobTitle').value,
+          company: document.getElementById('jobCompany').value,
+          location: document.getElementById('jobLocation').value,
+          type: document.getElementById('jobType').value,
+          category: document.getElementById('jobCategory').value,
+          salary: document.getElementById('jobSalary').value ? parseInt(document.getElementById('jobSalary').value) : null,
+          apply_url: document.getElementById('jobApplyUrl').value,
+          description: document.getElementById('jobDescription').value,
+          responsibilities: document.getElementById('jobResponsibilities').value,
+          requirements: document.getElementById('jobRequirements').value,
+          company_logo: logoUrl
+        };
+        
+        const id = document.getElementById('jobId').value;
+        
+        let result;
+        if (id) {
+          result = await Dashboard.updateJob(id, jobData);
+        } else {
+          result = await Dashboard.addJob(jobData);
+        }
+        
+        saveBtn.disabled = false;
+        
+        if (!result.error) {
+          closeModal();
+          loadTable();
+        } else {
+          saveBtn.textContent = id ? 'Update Job' : 'Save Job';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

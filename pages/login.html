@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up - JobBeacon</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: radial-gradient(circle at 15% 50%, var(--primary-light), transparent 25%),
+                        radial-gradient(circle at 85% 30%, var(--secondary-light), transparent 25%);
+      background-color: var(--bg-body);
+      padding: 2rem 1rem;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+    
+    .login-card {
+      background-color: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 3rem 2.5rem;
+      box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.6s ease-out both;
+    }
+    
+    .logo-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .logo {
+      justify-content: center;
+      font-size: 2rem;
+    }
+    
+    .login-title {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+    }
+    
+    .login-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 0.875rem;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .checkbox-group input {
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+    
+    .checkbox-group label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+
+    .auth-divider span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 500;
+    }
+
+    .btn-google {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md, 0.5rem);
+      border: 1px solid var(--glass-border);
+      background-color: var(--glass-bg);
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .btn-google:hover {
+      background-color: var(--bg-hover, rgba(255,255,255,0.12));
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .btn-google:active {
+      transform: translateY(0);
+    }
+
+    .btn-google svg {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-container">
+        <a href="/" class="logo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+            <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+            <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          Job<span>Beacon</span>
+        </a>
+      </div>
+      
+      <h1 class="login-title" id="pageTitle">Welcome Back</h1>
+      <p class="login-subtitle" id="pageSubtitle">Sign in to your dashboard</p>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="user@example.com" required autocomplete="email">
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="remember">
+          <label for="remember">Remember me for 30 days</label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%;">
+          Sign In
+        </button>
+      </form>
+
+      <div class="auth-divider">
+        <span>or</span>
+      </div>
+
+      <button type="button" id="googleSignInBtn" class="btn-google">
+        <svg width="20" height="20" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.0 24.0 0 0 0 0 21.56l7.98-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+      
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem;">
+        <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
+          <span id="toggleText">Don't have an account?</span> 
+          <a href="#" id="toggleBtn" style="color: var(--primary); text-decoration: underline;">Sign Up</a>
+        </p>
+        <a href="/" style="color: var(--text-secondary); text-decoration: underline;">Return to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module">
+    import { Auth } from '/assets/js/auth.js';
+    import { UI } from '/assets/js/app.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Redirect if already logged in
+      await Auth.redirectIfAuthenticated();
+      
+      const loginForm = document.getElementById('loginForm');
+      const loginBtn = document.getElementById('loginBtn');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const toggleBtn = document.getElementById('toggleBtn');
+      const pageTitle = document.getElementById('pageTitle');
+      const pageSubtitle = document.getElementById('pageSubtitle');
+      const toggleText = document.getElementById('toggleText');
+      const rememberDiv = document.querySelector('.checkbox-group');
+      
+      let isSignUpMode = false;
+      
+      const toggleMode = () => {
+        isSignUpMode = !isSignUpMode;
+        
+        if (isSignUpMode) {
+          pageTitle.innerText = 'Create an Account';
+          pageSubtitle.innerText = 'Sign up to post jobs';
+          loginBtn.innerText = 'Sign Up';
+          toggleText.innerText = 'Already have an account?';
+          toggleBtn.innerText = 'Sign In';
+          rememberDiv.style.display = 'none';
+        } else {
+          pageTitle.innerText = 'Welcome Back';
+          pageSubtitle.innerText = 'Sign in to your dashboard';
+          loginBtn.innerText = 'Sign In';
+          toggleText.innerText = 'Don\'t have an account?';
+          toggleBtn.innerText = 'Sign Up';
+          rememberDiv.style.display = 'flex';
+        }
+      };
+      
+      toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleMode();
+      });
+      
+      // Auto-switch to sign up mode if query param says so
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('signup') === 'true') {
+        toggleMode();
+      }
+      
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        
+        if (!email || !password) {
+          UI.showToast('Please enter both email and password', 'error');
+          return;
+        }
+        
+        // Show loading state
+        const originalText = loginBtn.innerText;
+        const actionText = isSignUpMode ? 'Signing up...' : 'Signing in...';
+        loginBtn.innerHTML = `<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> ${actionText}`;
+        loginBtn.disabled = true;
+        
+        // Add spin keyframes if not exists
+        if (!document.getElementById('spinStyle')) {
+          const style = document.createElement('style');
+          style.id = 'spinStyle';
+          style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
+          document.head.appendChild(style);
+        }
+        
+        if (isSignUpMode) {
+          await Auth.signUp(email, password);
+        } else {
+          await Auth.signIn(email, password);
+        }
+        
+        // Reset button state
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
+      });
+
+      // Google Sign-In
+      const googleBtn = document.getElementById('googleSignInBtn');
+      if (googleBtn) {
+        googleBtn.addEventListener('click', async () => {
+          googleBtn.disabled = true;
+          googleBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> Redirecting to Google...`;
+
+          if (!document.getElementById('spinStyle')) {
+            const style = document.createElement('style');
+            style.id = 'spinStyle';
+            style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
+            document.head.appendChild(style);
+          }
+
+          await Auth.signInWithGoogle();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

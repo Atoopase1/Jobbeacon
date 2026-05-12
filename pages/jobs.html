@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Jobs - JobBeacon</title>
+  <meta name="description" content="Search and filter job opportunities in Ghana.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .jobs-page-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+    }
+    
+    .filters-sidebar {
+      background-color: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .filter-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .filter-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .custom-radio {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    
+    .custom-radio input {
+      display: none;
+    }
+    
+    .radio-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    
+    .custom-radio input:checked ~ .radio-mark {
+      border-color: var(--primary);
+    }
+    
+    .custom-radio input:checked ~ .radio-mark::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--primary);
+    }
+    
+    .custom-radio input:checked ~ span {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    
+    .mobile-filters-btn {
+      display: none;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 3rem;
+    }
+    
+    .page-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background-color: var(--bg-surface);
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    .page-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    @media (max-width: 900px) {
+      .jobs-page-layout {
+        grid-template-columns: 1fr;
+      }
+      .filters-sidebar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+        border-radius: 0;
+        overflow-y: auto;
+      }
+      .filters-sidebar.active {
+        display: block;
+      }
+      .mobile-filters-btn {
+        display: flex;
+      }
+      .close-filters {
+        display: block;
+      }
+    }
+    
+    .close-filters {
+      display: none;
+      margin-left: auto;
+      margin-bottom: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" style="background-color: var(--bg-surface); backdrop-filter: none;">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        Job<span>Beacon</span>
+      </a>
+      
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pages/jobs.html" class="nav-link active">Find Jobs</a>
+        <a href="/pages/login.html" class="nav-link">Employers</a>
+        
+        <button id="themeToggle" class="theme-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div style="background-color: var(--bg-surface); padding: 6rem 0 2rem; border-bottom: 1px solid var(--border);">
+    <div class="container text-center">
+      <h1>Browse Jobs</h1>
+      <p class="text-secondary">Find your next role among thousands of opportunities.</p>
+    </div>
+  </div>
+
+  <main class="container">
+    <div class="jobs-page-layout">
+      <!-- Filters Sidebar -->
+      <button class="btn btn-outline mobile-filters-btn" id="showFiltersBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        Filters
+      </button>
+
+      <aside class="filters-sidebar" id="filtersSidebar">
+        <button class="close-filters" id="closeFiltersBtn">&times;</button>
+        
+        <form id="filtersForm">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.25rem;">Filters</h2>
+            <button type="reset" class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" id="clearFiltersBtn">Clear</button>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">I am looking for</h3>
+            <div class="filter-options">
+              <label class="custom-radio">
+                <input type="radio" name="postType" value="" checked>
+                <div class="radio-mark"></div>
+                <span>Everything</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="postType" value="hiring">
+                <div class="radio-mark"></div>
+                <span>Employers Hiring</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="postType" value="seeking">
+                <div class="radio-mark"></div>
+                <span>Candidates Seeking</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Job Type</h3>
+            <div class="filter-options">
+              <label class="custom-radio">
+                <input type="radio" name="type" value="" checked>
+                <div class="radio-mark"></div>
+                <span>All Types</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="type" value="Full-time">
+                <div class="radio-mark"></div>
+                <span>Full-time</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="type" value="Part-time">
+                <div class="radio-mark"></div>
+                <span>Part-time</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="type" value="Contract">
+                <div class="radio-mark"></div>
+                <span>Contract</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="type" value="Remote">
+                <div class="radio-mark"></div>
+                <span>Remote</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Category</h3>
+            <div class="filter-options">
+              <label class="custom-radio">
+                <input type="radio" name="category" value="" checked>
+                <div class="radio-mark"></div>
+                <span>All Categories</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="category" value="Technology">
+                <div class="radio-mark"></div>
+                <span>Technology</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="category" value="Banking">
+                <div class="radio-mark"></div>
+                <span>Banking & Finance</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="category" value="Marketing">
+                <div class="radio-mark"></div>
+                <span>Marketing & Design</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="category" value="NGO">
+                <div class="radio-mark"></div>
+                <span>NGO & Non-Profit</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="category" value="Telecommunications">
+                <div class="radio-mark"></div>
+                <span>Telecommunications</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Location</h3>
+            <div class="filter-options">
+              <label class="custom-radio">
+                <input type="radio" name="location" value="" checked>
+                <div class="radio-mark"></div>
+                <span>All Locations</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="location" value="Accra">
+                <div class="radio-mark"></div>
+                <span>Accra</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="location" value="Kumasi">
+                <div class="radio-mark"></div>
+                <span>Kumasi</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="location" value="Takoradi">
+                <div class="radio-mark"></div>
+                <span>Takoradi</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="location" value="Tamale">
+                <div class="radio-mark"></div>
+                <span>Tamale</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </aside>
+
+      <!-- Main Content -->
+      <div>
+        <div style="margin-bottom: 2rem;">
+          <div class="search-bar" style="max-width: 100%; border-radius: var(--radius-lg);">
+            <div class="search-input-group">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="searchInput" placeholder="Search by job title or company..." aria-label="Search jobs">
+            </div>
+            <button class="btn btn-primary" id="searchBtn">Search</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.25rem;" id="resultsCount">Loading...</h2>
+        </div>
+
+        <div class="jobs-grid" id="jobsGrid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+          <!-- Jobs injected here -->
+        </div>
+
+        <div class="pagination" id="pagination">
+          <!-- Pagination injected here -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" style="margin-top: 5rem;">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+            Job<span>Beacon</span>
+          </a>
+          <p style="font-size: 0.9rem; max-width: 280px; line-height: 1.7;">Ghana's leading job marketplace connecting talented professionals with top employers.</p>
+          <div class="social-links" style="margin-top: 1.25rem;">
+            <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">For Candidates</h4>
+          <div class="footer-links">
+            <a href="/pages/jobs.html">Browse Jobs</a>
+            <a href="/pages/jobs.html?postType=hiring">Companies Hiring</a>
+            <a href="/pages/jobs.html?type=Remote">Remote Jobs</a>
+            <a href="/pages/login.html?signup=true">Create Profile</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">For Employers</h4>
+          <div class="footer-links">
+            <a href="/pages/login.html?signup=true">Post a Job</a>
+            <a href="/pages/login.html">Employer Dashboard</a>
+            <a href="/pages/jobs.html?postType=seeking">Find Candidates</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">Stay Updated</h4>
+          <p style="font-size: 0.875rem; margin-bottom: 1rem; color: var(--text-secondary);">Get the latest job alerts delivered weekly.</p>
+          <form style="display: flex; gap: 0.5rem;" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').style.background='#10B981';">
+            <input type="email" placeholder="you@email.com" class="form-control" style="flex: 1; padding: 0.625rem 1rem; font-size: 0.875rem;" aria-label="Email for newsletter" required>
+            <button type="submit" class="btn btn-primary" style="padding: 0.625rem 1.25rem; font-size: 0.875rem; white-space: nowrap;">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 JobBeacon. All rights reserved.</p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module">
+    import { Jobs } from '/assets/js/jobs.js';
+    import { supabase } from '/assets/js/app.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // Elements
+      const jobsGrid = document.getElementById('jobsGrid');
+      const resultsCount = document.getElementById('resultsCount');
+      const pagination = document.getElementById('pagination');
+      const searchInput = document.getElementById('searchInput');
+      const searchBtn = document.getElementById('searchBtn');
+      const filtersForm = document.getElementById('filtersForm');
+      
+      // Mobile filters
+      const showFiltersBtn = document.getElementById('showFiltersBtn');
+      const closeFiltersBtn = document.getElementById('closeFiltersBtn');
+      const filtersSidebar = document.getElementById('filtersSidebar');
+      
+      showFiltersBtn.addEventListener('click', () => filtersSidebar.classList.add('active'));
+      closeFiltersBtn.addEventListener('click', () => filtersSidebar.classList.remove('active'));
+      
+      // State
+      let currentPage = 1;
+      const limit = 12;
+      
+      // Parse URL params initially
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialSearch = urlParams.get('search') || '';
+      const initialCategory = urlParams.get('category') || '';
+      const initialLocation = urlParams.get('location') || '';
+      const initialType = urlParams.get('type') || '';
+      const initialPostType = urlParams.get('postType') || '';
+      
+      // Set initial values
+      if (initialSearch) searchInput.value = initialSearch;
+      if (initialCategory) document.querySelector(`input[name="category"][value="${initialCategory}"]`)?.setAttribute('checked', true);
+      if (initialLocation) document.querySelector(`input[name="location"][value="${initialLocation}"]`)?.setAttribute('checked', true);
+      if (initialType) document.querySelector(`input[name="type"][value="${initialType}"]`)?.setAttribute('checked', true);
+      if (initialPostType) document.querySelector(`input[name="postType"][value="${initialPostType}"]`)?.setAttribute('checked', true);
+      
+      // Fetch and render
+      async function loadJobs(page = 1) {
+        currentPage = page;
+        jobsGrid.innerHTML = Jobs.renderSkeletons(6);
+        resultsCount.textContent = 'Loading jobs...';
+        
+        const search = searchInput.value;
+        const formData = new FormData(filtersForm);
+        const category = formData.get('category');
+        const location = formData.get('location');
+        const type = formData.get('type');
+        const postType = formData.get('postType');
+        
+        // Update URL
+        const newUrlParams = new URLSearchParams();
+        if (search) newUrlParams.set('search', search);
+        if (category) newUrlParams.set('category', category);
+        if (location) newUrlParams.set('location', location);
+        if (type) newUrlParams.set('type', type);
+        if (postType) newUrlParams.set('postType', postType);
+        
+        const newUrl = window.location.pathname + (newUrlParams.toString() ? '?' + newUrlParams.toString() : '');
+        window.history.replaceState({}, '', newUrl);
+
+        const { jobs, count, error } = await Jobs.getJobs({
+          page,
+          limit,
+          search,
+          category,
+          location,
+          type,
+          postType
+        });
+        
+        if (error) {
+          jobsGrid.innerHTML = `<div style="grid-column: 1/-1; color: #EF4444;">Failed to load jobs: ${error}</div>`;
+          resultsCount.textContent = 'Error loading results';
+          return;
+        }
+        
+        if (!jobs || jobs.length === 0) {
+          jobsGrid.innerHTML = Jobs.renderEmptyState();
+          resultsCount.textContent = '0 jobs found';
+          pagination.innerHTML = '';
+          return;
+        }
+        
+        resultsCount.textContent = `Showing ${jobs.length} of ${count} job${count !== 1 ? 's' : ''}`;
+        
+        // Get saved jobs if user is logged in
+        const { data: { session } } = await supabase.auth.getSession();
+        let savedJobIds = [];
+        if (session) {
+          const { savedJobs } = await Jobs.getSavedJobs(session.user.id);
+          if (savedJobs) savedJobIds = savedJobs.map(sj => sj.job_id);
+        }
+        
+        jobsGrid.innerHTML = jobs.map(job => Jobs.renderJobCard(job, savedJobIds.includes(job.id))).join('');
+        
+
+        renderPagination(count);
+      }
+      
+      function renderPagination(totalCount) {
+        const totalPages = Math.ceil(totalCount / limit);
+        if (totalPages <= 1) {
+          pagination.innerHTML = '';
+          return;
+        }
+        
+        let html = `
+          <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+        `;
+        
+        for (let i = 1; i <= totalPages; i++) {
+          // Simple pagination logic, assuming small number of pages
+          html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" data-page="${i}">${i}</button>`;
+        }
+        
+        html += `
+          <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        `;
+        
+        pagination.innerHTML = html;
+        
+        // Add listeners
+        pagination.querySelectorAll('.page-btn:not(:disabled)').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const page = parseInt(btn.getAttribute('data-page'));
+            loadJobs(page);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        });
+      }
+      
+      // Listeners
+      searchBtn.addEventListener('click', () => loadJobs(1));
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') loadJobs(1);
+      });
+      
+      filtersForm.addEventListener('change', () => {
+        loadJobs(1);
+        if (window.innerWidth <= 900) {
+          filtersSidebar.classList.remove('active');
+        }
+      });
+      
+      document.getElementById('clearFiltersBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        filtersForm.reset();
+        searchInput.value = '';
+        loadJobs(1);
+      });
+      
+      // Initial load
+      loadJobs(1);
+    });
+  </script>
+</body>
+</html>

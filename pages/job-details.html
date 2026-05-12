@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Details - JobBeacon</title>
+  <meta name="description" content="View job details and apply for opportunities in Ghana.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .job-details-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 3rem;
+      padding: 3rem 0;
+    }
+    
+    .job-header {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .job-title-large {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .job-meta-large {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      align-items: center;
+    }
+    
+    .job-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .job-content-section {
+      margin-bottom: 3rem;
+    }
+    
+    .job-content-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+    
+    .job-content-text {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      font-size: 1.0625rem;
+    }
+    
+    .job-content-text ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .job-content-text li {
+      margin-bottom: 0.75rem;
+    }
+    
+    /* Sticky Sidebar */
+    .apply-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+    
+    .apply-card {
+      background-color: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+    
+    .company-logo-large {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--radius-lg);
+      object-fit: contain;
+      background-color: white;
+      border: 1px solid var(--border);
+      padding: 0.5rem;
+      margin: 0 auto 1.5rem;
+    }
+    
+    .apply-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    
+    .apply-meta-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+    
+    @media (max-width: 900px) {
+      .job-details-layout {
+        grid-template-columns: 1fr;
+      }
+      .apply-sidebar {
+        position: static;
+        order: -1;
+        margin-bottom: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" style="background-color: var(--bg-surface); backdrop-filter: none;">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        Job<span>Beacon</span>
+      </a>
+      
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pages/jobs.html" class="nav-link active">Find Jobs</a>
+        <a href="/pages/login.html" class="nav-link">Employers</a>
+        
+        <button id="themeToggle" class="theme-toggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <main class="container" id="mainContainer">
+    <!-- Loading State -->
+    <div id="loadingState" style="padding: 10rem 0; text-align: center;">
+      <div class="skeleton skeleton-avatar" style="width: 80px; height: 80px; margin: 0 auto 2rem; border-radius: 50%;"></div>
+      <div class="skeleton skeleton-text" style="width: 300px; height: 2rem; margin: 0 auto 1rem;"></div>
+      <div class="skeleton skeleton-text short" style="margin: 0 auto;"></div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden" style="padding: 10rem 0; text-align: center;">
+      <h2 style="color: #EF4444; margin-bottom: 1rem;">Job Not Found</h2>
+      <p class="text-secondary" style="margin-bottom: 2rem;">The job you are looking for does not exist or has been removed.</p>
+      <a href="/pages/jobs.html" class="btn btn-primary">Browse Other Jobs</a>
+    </div>
+
+    <!-- Content (injected via JS) -->
+    <div id="jobContent" class="hidden">
+      <!-- Layout skeleton structure just to show where things go, filled by JS -->
+    </div>
+
+    <!-- Apply Modal -->
+    <div class="modal-overlay" id="applyModal">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h2 style="font-size: 1.25rem;">Apply for <span id="applyJobTitle">this job</span></h2>
+          <button class="btn btn-outline" style="padding: 0.5rem; border: none;" onclick="document.getElementById('applyModal').classList.remove('active')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="text-secondary" style="margin-bottom: 1.5rem;">The employer will receive a link to your JobBeacon profile.</p>
+          <form id="applyForm">
+            <div class="form-group">
+              <label for="coverNote" class="form-label">Cover Note (Optional)</label>
+              <textarea id="coverNote" class="form-control" placeholder="Introduce yourself and explain why you're a good fit for this role..." style="min-height: 120px;"></textarea>
+            </div>
+            <div class="modal-footer" style="padding: 1.5rem 0 0; border: none;">
+              <button type="button" class="btn btn-outline" onclick="document.getElementById('applyModal').classList.remove('active')">Cancel</button>
+              <button type="submit" class="btn btn-primary" id="submitApplicationBtn">Submit Application</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Similar Jobs -->
+  <section class="section" style="background-color: var(--bg-surface); margin-top: 5rem;" id="similarJobsSection">
+    <div class="container">
+      <h2 style="margin-bottom: 2rem;">Similar Jobs</h2>
+      <div class="jobs-grid" id="similarJobsContainer">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            </svg>
+            Job<span>Beacon</span>
+          </a>
+          <p style="font-size: 0.9rem; max-width: 280px; line-height: 1.7;">Ghana's leading job marketplace connecting talented professionals with top employers.</p>
+          <div class="social-links" style="margin-top: 1.25rem;">
+            <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">For Candidates</h4>
+          <div class="footer-links">
+            <a href="/pages/jobs.html">Browse Jobs</a>
+            <a href="/pages/jobs.html?postType=hiring">Companies Hiring</a>
+            <a href="/pages/jobs.html?type=Remote">Remote Jobs</a>
+            <a href="/pages/login.html?signup=true">Create Profile</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">For Employers</h4>
+          <div class="footer-links">
+            <a href="/pages/login.html?signup=true">Post a Job</a>
+            <a href="/pages/login.html">Employer Dashboard</a>
+            <a href="/pages/jobs.html?postType=seeking">Find Candidates</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">Stay Updated</h4>
+          <p style="font-size: 0.875rem; margin-bottom: 1rem; color: var(--text-secondary);">Get the latest job alerts delivered weekly.</p>
+          <form style="display: flex; gap: 0.5rem;" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').style.background='#10B981';">
+            <input type="email" placeholder="you@email.com" class="form-control" style="flex: 1; padding: 0.625rem 1rem; font-size: 0.875rem;" aria-label="Email for newsletter" required>
+            <button type="submit" class="btn btn-primary" style="padding: 0.625rem 1.25rem; font-size: 0.875rem; white-space: nowrap;">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 JobBeacon. All rights reserved.</p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module">
+    import { Jobs } from '/assets/js/jobs.js';
+    import { UI, supabase } from '/assets/js/app.js';
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const jobId = urlParams.get('id');
+      
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const jobContent = document.getElementById('jobContent');
+      const similarJobsContainer = document.getElementById('similarJobsContainer');
+      const similarJobsSection = document.getElementById('similarJobsSection');
+      const applyModal = document.getElementById('applyModal');
+      const applyForm = document.getElementById('applyForm');
+      
+      let currentJob = null;
+      
+      if (!jobId) {
+        loadingState.classList.add('hidden');
+        errorState.classList.remove('hidden');
+        similarJobsSection.classList.add('hidden');
+        return;
+      }
+      
+      // Fetch job details
+      const { job, error } = await Jobs.getJobById(jobId);
+      
+      if (error || !job) {
+        loadingState.classList.add('hidden');
+        errorState.classList.remove('hidden');
+        similarJobsSection.classList.add('hidden');
+        return;
+      }
+      
+      // Setup title
+      document.title = `${job.title} at ${job.company} - JobBeacon`;
+      
+      const logoUrl = job.company_logo || UI.getInitialsAvatar(job.company);
+      const formattedSalary = UI.formatCurrency(job.salary);
+      const postedTimeAgo = UI.timeAgo(job.created_at);
+      
+      // Format text content with paragraphs
+      const formatText = (text) => {
+        if (!text) return '';
+        return text.split('\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
+      };
+      
+      const formatList = (text) => {
+        if (!text) return '';
+        const items = text.split('\n').filter(i => i.trim());
+        return `<ul>${items.map(item => `<li>${item.replace(/^- /, '')}</li>`).join('')}</ul>`;
+      };
+      
+      // Check user session and saved/applied status
+      const ADMIN_EMAILS = ['atoopase@gmail.com', 'www.atoopasechristopher@gmail.com'];
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      let isSaved = false;
+      let applicationStatus = null;
+      let currentUserId = null;
+      let isOwner = false;
+      let isAdmin = false;
+      
+      if (session) {
+        currentUserId = session.user.id;
+        isAdmin = ADMIN_EMAILS.includes(session.user.email);
+        isOwner = job.user_id === currentUserId;
+        
+        const [savedRes, appRes] = await Promise.all([
+          Jobs.getSavedJobs(currentUserId),
+          Jobs.getApplications(currentUserId)
+        ]);
+        
+        if (savedRes.savedJobs) {
+          isSaved = savedRes.savedJobs.some(sj => sj.job_id === jobId);
+        }
+        
+        if (appRes.applications) {
+          const existingApp = appRes.applications.find(a => a.jobs && a.jobs.id === jobId);
+          if (existingApp) {
+            applicationStatus = existingApp.status;
+          }
+        }
+      }
+      
+      const applyUrl = job.apply_url || `mailto:careers@company.com?subject=Application for ${job.title}`;
+      
+      const isSeeking = job.post_type === 'seeking';
+      const postTypeBadge = isSeeking 
+        ? `<span class="badge" style="background-color: #F3E8FF; color: #7E22CE; font-weight: 600; border: 1px solid #D8B4FE;">CANDIDATE</span>`
+        : `<span class="badge" style="background-color: #E0F2FE; color: #0369A1; font-weight: 600; border: 1px solid #BAE6FD;">HIRING</span>`;
+        
+      const html = `
+        <div class="job-details-layout">
+          <!-- Main Content -->
+          <div>
+            <div class="job-header">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <h1 class="job-title-large" style="margin-bottom: 0;">${job.title}</h1>
+                ${postTypeBadge}
+                <span id="editPostBtnSlot"></span>
+              </div>
+              <div class="job-meta-large">
+                <div class="job-meta-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  ${job.location}
+                </div>
+                <div class="job-meta-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                  ${job.type}
+                </div>
+                <div class="job-meta-item">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  Posted ${postedTimeAgo}
+                </div>
+              </div>
+            </div>
+            
+            <div class="job-content-section">
+              <h2>${isSeeking ? 'Professional Summary' : 'Job Description'}</h2>
+              <div class="job-content-text">
+                ${formatText(job.description)}
+              </div>
+            </div>
+            
+            ${job.responsibilities ? `
+            <div class="job-content-section">
+              <h2>${isSeeking ? 'Experience & Skills' : 'Key Responsibilities'}</h2>
+              <div class="job-content-text">
+                ${formatList(job.responsibilities)}
+              </div>
+            </div>
+            ` : ''}
+            
+            ${job.requirements ? `
+            <div class="job-content-section">
+              <h2>Requirements</h2>
+              <div class="job-content-text">
+                ${formatList(job.requirements)}
+              </div>
+            </div>
+            ` : ''}
+          </div>
+          
+          <!-- Sticky Sidebar -->
+          <div>
+            <div class="apply-sidebar">
+              <div class="apply-card">
+                <img src="${logoUrl}" alt="${job.company} logo" class="company-logo-large" onerror="this.src='${UI.getInitialsAvatar(job.company)}'">
+                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">${job.company}</h3>
+                <a href="#" style="color: var(--primary); font-weight: 500;">${isSeeking ? 'View Candidate Profile' : 'View Company Profile'}</a>
+                
+                <div class="apply-meta">
+                  <div class="apply-meta-row">
+                    <span class="text-secondary">Salary</span>
+                    <span style="font-weight: 600; color: var(--text-primary);">${formattedSalary}</span>
+                  </div>
+                  <div class="apply-meta-row">
+                    <span class="text-secondary">Category</span>
+                    <span style="font-weight: 500; color: var(--text-primary);">${job.category || 'N/A'}</span>
+                  </div>
+                </div>
+                
+                ${applicationStatus ? `
+                  <div style="background-color: #ECFDF5; border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: var(--radius-md); text-align: center; margin-bottom: 1rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 0.5rem;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <div style="font-weight: 600; font-size: 1.125rem;">You Applied</div>
+                    <div style="font-size: 0.875rem;">Status: ${applicationStatus}</div>
+                  </div>
+                ` : `
+                  <div style="display: flex; gap: 0.5rem;">
+                    <button id="applyBtn" class="btn btn-primary" style="flex: 1; padding: 1rem; font-size: 1rem; font-weight: 600;">${isSeeking ? 'Contact Candidate' : 'Apply Now'}</button>
+                    <button id="saveBtn" class="btn btn-outline" style="padding: 1rem; color: ${isSaved ? 'var(--primary)' : 'var(--text-secondary)'}; border-color: ${isSaved ? 'var(--primary)' : 'var(--border)'};" title="${isSaved ? 'Unsave Job' : 'Save Job'}">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                `}
+                
+                ${!applicationStatus && applyUrl !== 'internal' && !applyUrl.startsWith('mailto') ? `
+                  <div style="text-align: center; margin-top: 1rem;">
+                    <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 0.875rem; color: var(--primary); font-weight: 500;">Apply on Employer's Website &rarr;</a>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      loadingState.classList.add('hidden');
+      jobContent.innerHTML = html;
+      jobContent.classList.remove('hidden');
+      
+      // Wire up Apply/Save buttons if they exist
+      const applyBtn = document.getElementById('applyBtn');
+      if (applyBtn) {
+        applyBtn.addEventListener('click', () => {
+          if (!session) {
+            UI.showToast('Please log in to apply', 'info');
+            window.location.href = `/pages/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            return;
+          }
+          if (isOwner) {
+            UI.showToast('You cannot apply to your own post', 'error');
+            return;
+          }
+          
+          document.getElementById('applyJobTitle').textContent = job.title;
+          applyModal.classList.add('active');
+        });
+      }
+      
+      const saveBtn = document.getElementById('saveBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', async () => {
+          if (!session) {
+            UI.showToast('Please log in to save jobs', 'info');
+            window.location.href = '/pages/login.html';
+            return;
+          }
+          
+          saveBtn.disabled = true;
+          saveBtn.style.opacity = '0.5';
+          
+          if (isSaved) {
+            const res = await Jobs.unsaveJob(jobId, currentUserId);
+            if (res.success) {
+              isSaved = false;
+              saveBtn.style.color = 'var(--text-secondary)';
+              saveBtn.style.borderColor = 'var(--border)';
+              saveBtn.querySelector('svg').setAttribute('fill', 'none');
+              UI.showToast('Job removed from saved list');
+            }
+          } else {
+            const res = await Jobs.saveJob(jobId, currentUserId);
+            if (res.success) {
+              isSaved = true;
+              saveBtn.style.color = 'var(--primary)';
+              saveBtn.style.borderColor = 'var(--primary)';
+              saveBtn.querySelector('svg').setAttribute('fill', 'currentColor');
+              UI.showToast('Job saved successfully');
+            }
+          }
+          
+          saveBtn.disabled = false;
+          saveBtn.style.opacity = '1';
+        });
+      }
+      
+      // Handle Application Submit
+      if (applyForm) {
+        applyForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const coverNote = document.getElementById('coverNote').value.trim();
+          const submitBtn = document.getElementById('submitApplicationBtn');
+          
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Submitting...';
+          
+          const res = await Jobs.applyForJob(jobId, currentUserId, coverNote);
+          
+          if (res.success) {
+            applyModal.classList.remove('active');
+            UI.showToast('Application submitted successfully!', 'success');
+            setTimeout(() => window.location.reload(), 1500); // Reload to show status
+          } else {
+            UI.showToast('Failed to submit application: ' + res.error, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Application';
+          }
+        });
+      }
+      
+      // Edit Post Button Logic
+      if (isOwner || isAdmin) {
+        const editSlot = document.getElementById('editPostBtnSlot');
+          if (editSlot) {
+            editSlot.innerHTML = `
+              <a href="/pages/dashboard.html?edit=${job.id}" class="btn btn-outline" style="padding: 0.4rem 1rem; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Edit Post
+              </a>
+            `;
+          }
+        }
+      }
+      
+      // Fetch similar jobs
+      const { jobs: similarJobs } = await Jobs.getJobs({
+        category: job.category,
+        limit: 4
+      });
+      
+      const filteredSimilar = similarJobs?.filter(j => j.id !== job.id).slice(0, 3);
+      
+      if (filteredSimilar && filteredSimilar.length > 0) {
+        similarJobsContainer.innerHTML = filteredSimilar.map(j => Jobs.renderJobCard(j)).join('');
+      } else {
+        similarJobsSection.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
