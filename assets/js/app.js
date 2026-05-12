@@ -104,8 +104,7 @@ export const UI = {
 };
 
 // Initialization
-
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   // 1. Theme Toggle
   const themeToggle = document.getElementById('themeToggle');
 
@@ -187,4 +186,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
