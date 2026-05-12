@@ -1,11 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" fill="#0F766E" rx="100" />
-  <g stroke="#ffffff" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(106, 106) scale(12.5)">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-    <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
-    <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
-    <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
-    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+  <defs>
+    <!-- Vibrant teal background -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+
+    <!-- Darker interior gradient inside the hexagon -->
+    <linearGradient id="hexInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="100%" stop-color="#0e7490" />
+    </linearGradient>
+
+    <!-- Subtle light beams radiating from the beacon -->
+    <linearGradient id="beamLeft" x1="100%" y1="50%" x2="0%" y2="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+    <linearGradient id="beamRight" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Clip path to perfectly crop the PWA icon frame without white margins -->
+    <clipPath id="appFrame">
+      <rect width="512" height="512" rx="115" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#appFrame)">
+    <!-- Base perfectly cropped to frame -->
+    <rect width="512" height="512" fill="url(#bgGrad)" />
+
+    <!-- White Hexagon Outline -->
+    <!-- R = 170. Center = (256, 256) -->
+    <polygon points="256,86 403,171 403,341 256,426 109,341 109,171" 
+             fill="url(#hexInnerGrad)" 
+             stroke="#ffffff" 
+             stroke-width="24" 
+             stroke-linejoin="round" />
+
+    <!-- Light Beams -->
+    <!-- Left Beam -->
+    <polygon points="256,191 109,211 109,300 256,231" fill="url(#beamLeft)" />
+    <!-- Right Beam -->
+    <polygon points="256,191 403,211 403,300 256,231" fill="url(#beamRight)" />
+
+    <!-- Lighthouse Base -->
+    <path d="M 226 231 L 286 231 L 326 426 L 186 426 Z" 
+          fill="#ffffff" 
+          stroke="#ffffff" 
+          stroke-width="8" 
+          stroke-linejoin="round" />
+
+    <!-- Arched Door -->
+    <path d="M 236 426 L 236 366 A 20 20 0 0 1 276 366 L 276 426 Z" 
+          fill="#0e7490" />
+
+    <!-- Glowing Yellow Beacon Ring -->
+    <!-- White center with a thick yellow stroke -->
+    <circle cx="256" cy="191" r="32" fill="#ffffff" stroke="#facc15" stroke-width="16" />
   </g>
 </svg>

@@ -596,9 +596,9 @@ p {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-md);
-  object-fit: contain;
+  object-fit: cover;
   background-color: white; /* Always white background for logos to pop */
-  padding: 0.25rem;
+  padding: 0; /* Remove padding if using cover so it fully fills the frame */
   border: 1px solid var(--border);
 }
 
