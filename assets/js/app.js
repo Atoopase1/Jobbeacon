@@ -161,4 +161,30 @@ document.addEventListener('DOMContentLoaded', () => {
     
     revealElements.forEach(el => revealObserver.observe(el));
   }
+
+  // 4. Account Button — update based on auth session
+  const accountBtn = document.getElementById('accountBtn');
+  if (accountBtn) {
+    // Check immediately on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        accountBtn.textContent = 'My Account';
+        accountBtn.href = '/pages/dashboard.html';
+      } else {
+        accountBtn.textContent = 'Sign In';
+        accountBtn.href = '/pages/login.html';
+      }
+    });
+
+    // Also react to live auth changes (login / logout)
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        accountBtn.textContent = 'My Account';
+        accountBtn.href = '/pages/dashboard.html';
+      } else {
+        accountBtn.textContent = 'Sign In';
+        accountBtn.href = '/pages/login.html';
+      }
+    });
+  }
 });
