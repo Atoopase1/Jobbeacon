@@ -107,25 +107,35 @@ export const Dashboard = {
       return null;
     }
 
+    console.log('[Logo] File:', file.name, '| Size:', file.size, '| Type:', file.type);
+
     try {
+      // Verify auth session is active
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) console.error('[Logo] Session error:', sessionError.message);
+      console.log('[Logo] Session active:', !!session, '| User:', session?.user?.id);
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      console.log('[Logo] Uploading to: company_logos/' + fileName);
 
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('company_logos')
-        .upload(filePath, file);
+        .upload(fileName, file, { upsert: true });
+
+      console.log('[Logo] Upload response:', uploadData, uploadError);
 
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage
         .from('company_logos')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
+      console.log('[Logo] Public URL:', data.publicUrl);
       return data.publicUrl;
     } catch (error) {
-      console.error('Error uploading logo:', error.message);
-      UI.showToast('Failed to upload logo', 'error');
+      console.error('[Logo] FAILED:', error);
+      UI.showToast('Failed to upload logo: ' + error.message, 'error');
       return null;
     }
   },
