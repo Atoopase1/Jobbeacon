@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employers - JobBeacon</title>
+  <meta name="description" content="Browse registered employers and companies actively hiring on JobBeacon Ghana.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .employers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .employer-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+      will-change: transform, box-shadow;
+    }
+
+    .employer-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(15, 118, 110, 0.3);
+    }
+
+    .employer-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+      background: var(--bg-body);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      background-color: var(--primary-light);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .employer-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .employer-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .employer-company {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .employer-stats {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 0.25rem;
+    }
+
+    .employer-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--bg-body);
+      padding: 0.3rem 0.7rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+    }
+
+    .employer-stat svg {
+      color: var(--primary);
+    }
+
+    .view-jobs-btn {
+      margin-top: auto;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      border-radius: var(--radius-full);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .employer-card:hover .view-jobs-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #064E3B 100%);
+      color: white;
+      padding: 7rem 0 3rem;
+      text-align: center;
+    }
+
+    .page-header h1 { color: white; margin-bottom: 0.75rem; }
+    .page-header p { color: rgba(255,255,255,0.8); max-width: 500px; margin: 0 auto; font-size: 1.1rem; }
+
+    .search-wrap {
+      max-width: 480px;
+      margin: 2rem auto 0;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .search-wrap input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-full);
+      border: none;
+      font-size: 1rem;
+      outline: none;
+      background: white;
+      color: #0F172A;
+    }
+
+    .search-wrap button {
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-full);
+      background: var(--secondary);
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .employers-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .employer-card { padding: 1.25rem; }
+    }
+    @media (max-width: 380px) {
+      .employers-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        Job<span>Beacon</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pages/jobs.html" class="nav-link">Find Jobs</a>
+        <a href="/pages/employers.html" class="nav-link active">Employers</a>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <a href="/pages/login.html" class="btn btn-primary" id="accountBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Sign In</a>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="container">
+      <h1>Registered Employers</h1>
+      <p>Connect with companies actively posting jobs on JobBeacon</p>
+      <div class="search-wrap">
+        <input type="text" id="employerSearch" placeholder="Search company or employer name..." aria-label="Search employers">
+        <button id="searchBtn">Search</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container" style="padding: 2rem 1.5rem 5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem;">
+      <p id="employerCount" style="color: var(--text-secondary); margin: 0;">Loading employers...</p>
+    </div>
+
+    <div class="employers-grid" id="employersGrid">
+      <!-- Skeletons -->
+      ${Array(8).fill(`
+        <div class="employer-card" style="pointer-events:none;">
+          <div class="skeleton" style="width:80px;height:80px;border-radius:50%;"></div>
+          <div class="skeleton skeleton-text" style="width:60%;height:1rem;"></div>
+          <div class="skeleton skeleton-text short" style="width:40%;height:0.8rem;"></div>
+          <div class="skeleton" style="width:100%;height:2rem;border-radius:999px;margin-top:0.5rem;"></div>
+        </div>
+      `).join('')}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div style="text-align:center; padding: 1rem 0;">
+        <p style="color: var(--text-muted); font-size: 0.875rem;">© 2026 JobBeacon. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module">
+    import { supabase } from '/assets/js/app.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Account button
+      const { data: { session } } = await supabase.auth.getSession();
+      const accountBtn = document.getElementById('accountBtn');
+      if (session && accountBtn) {
+        accountBtn.textContent = 'My Account';
+        accountBtn.href = '/pages/dashboard.html';
+      }
+
+      let allEmployers = [];
+
+      async function loadEmployers() {
+        const grid = document.getElementById('employersGrid');
+        const countEl = document.getElementById('employerCount');
+
+        // Fetch all jobs to extract unique employers
+        const { data: jobs, error } = await supabase
+          .from('jobs')
+          .select('user_id, company, company_logo, location, category, created_at')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          grid.innerHTML = `<div style="grid-column:1/-1;color:var(--error);text-align:center;padding:3rem;">Failed to load employers: ${error.message}</div>`;
+          return;
+        }
+
+        if (!jobs || jobs.length === 0) {
+          grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-muted);">No employers found yet.</div>`;
+          countEl.textContent = '0 employers';
+          return;
+        }
+
+        // Deduplicate by user_id
+        const employerMap = {};
+        jobs.forEach(job => {
+          if (!employerMap[job.user_id]) {
+            employerMap[job.user_id] = {
+              user_id: job.user_id,
+              company: job.company || 'Unknown Company',
+              company_logo: job.company_logo,
+              location: job.location,
+              jobCount: 0,
+              categories: new Set()
+            };
+          }
+          employerMap[job.user_id].jobCount++;
+          if (job.category) employerMap[job.user_id].categories.add(job.category);
+        });
+
+        const userIds = Object.keys(employerMap);
+
+        // Fetch profiles for those user_ids
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, bio')
+          .in('id', userIds);
+
+        profiles?.forEach(p => {
+          if (employerMap[p.id]) {
+            employerMap[p.id].profile = p;
+          }
+        });
+
+        allEmployers = Object.values(employerMap);
+        renderEmployers(allEmployers);
+      }
+
+      function renderEmployers(employers) {
+        const grid = document.getElementById('employersGrid');
+        const countEl = document.getElementById('employerCount');
+
+        countEl.textContent = `${employers.length} employer${employers.length !== 1 ? 's' : ''} found`;
+
+        if (employers.length === 0) {
+          grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--text-muted);">No employers match your search.</div>`;
+          return;
+        }
+
+        grid.innerHTML = employers.map(emp => {
+          const name = emp.profile?.full_name || emp.company || 'Employer';
+          const avatar = emp.profile?.avatar_url || emp.company_logo;
+          const initial = name.charAt(0).toUpperCase();
+
+          const avatarHtml = avatar
+            ? `<div class="employer-avatar"><img src="${avatar}" alt="${name}" onerror="this.parentElement.innerHTML='${initial}'"></div>`
+            : `<div class="employer-avatar">${initial}</div>`;
+
+          const categories = [...emp.categories].slice(0, 2).join(', ') || 'Various';
+
+          return `
+            <a class="employer-card" href="/pages/employer-profile.html?id=${emp.user_id}" id="emp-${emp.user_id}">
+              ${avatarHtml}
+              <p class="employer-name">${name}</p>
+              <p class="employer-company">${emp.company}</p>
+              <div class="employer-stats">
+                <span class="employer-stat">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                  ${emp.jobCount} job${emp.jobCount !== 1 ? 's' : ''}
+                </span>
+                ${emp.location ? `<span class="employer-stat">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  ${emp.location}
+                </span>` : ''}
+              </div>
+              <div class="view-jobs-btn">View Profile & Jobs</div>
+            </a>
+          `;
+        }).join('');
+      }
+
+      // Search
+      const searchInput = document.getElementById('employerSearch');
+      const searchBtn = document.getElementById('searchBtn');
+
+      function doSearch() {
+        const q = searchInput.value.toLowerCase().trim();
+        if (!q) {
+          renderEmployers(allEmployers);
+          return;
+        }
+        const filtered = allEmployers.filter(e =>
+          (e.company || '').toLowerCase().includes(q) ||
+          (e.profile?.full_name || '').toLowerCase().includes(q)
+        );
+        renderEmployers(filtered);
+      }
+
+      searchBtn.addEventListener('click', doSearch);
+      searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') doSearch(); });
+
+      await loadEmployers();
+    });
+  </script>
+</body>
+</html>

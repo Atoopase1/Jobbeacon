@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employer Profile - JobBeacon</title>
+  <meta name="description" content="View employer profile and job listings on JobBeacon Ghana.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .profile-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #064E3B 100%);
+      padding: 7rem 0 4rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .profile-avatar-wrap {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      border: 4px solid rgba(255,255,255,0.4);
+      margin: 0 auto 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .profile-avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-hero h1 {
+      color: white;
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      margin-bottom: 0.4rem;
+    }
+
+    .profile-hero .company-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-hero .location-tag {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+
+    .profile-bio {
+      max-width: 560px;
+      margin: 1rem auto 0;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .profile-stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 1.5rem 0;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .profile-stat-item {
+      text-align: center;
+    }
+
+    .profile-stat-item .stat-num {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary);
+      display: block;
+    }
+
+    .profile-stat-item .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .jobs-section {
+      padding: 3rem 0 5rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .no-jobs {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover { color: white; }
+
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .contact-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    #loadingHero {
+      padding: 7rem 0 4rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        Job<span>Beacon</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pages/jobs.html" class="nav-link">Find Jobs</a>
+        <a href="/pages/employers.html" class="nav-link active">Employers</a>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <a href="/pages/login.html" class="btn btn-primary" id="accountBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Sign In</a>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Profile Header (injected by JS) -->
+  <div id="profileHero">
+    <!-- Loading state -->
+    <div id="loadingHero">
+      <div class="skeleton" style="width:110px;height:110px;border-radius:50%;margin:0 auto 1.25rem;"></div>
+      <div class="skeleton skeleton-text" style="width:220px;height:1.75rem;margin:0 auto 0.75rem;"></div>
+      <div class="skeleton skeleton-text short" style="width:150px;height:1rem;margin:0 auto;"></div>
+    </div>
+  </div>
+
+  <!-- Stats bar (injected) -->
+  <div id="statsBar"></div>
+
+  <!-- Jobs Section -->
+  <main class="container jobs-section">
+    <h2 class="section-title" id="jobsHeading">Jobs Posted</h2>
+    <div class="jobs-grid" id="employerJobsGrid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+      <!-- Loading skeletons -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div style="text-align:center;padding:1rem 0;">
+        <p style="color:var(--text-muted);font-size:0.875rem;">© 2026 JobBeacon. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module">
+    import { supabase } from '/assets/js/app.js';
+    import { Jobs } from '/assets/js/jobs.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Account button
+      const { data: { session } } = await supabase.auth.getSession();
+      const accountBtn = document.getElementById('accountBtn');
+      if (session && accountBtn) {
+        accountBtn.textContent = 'My Account';
+        accountBtn.href = '/pages/dashboard.html';
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get('id');
+
+      if (!userId) {
+        window.location.href = '/pages/employers.html';
+        return;
+      }
+
+      // Fetch profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      // Fetch all jobs by this employer
+      const { jobs } = await Jobs.getJobs({ userId, limit: 0 });
+
+      const heroEl = document.getElementById('profileHero');
+      const statsBar = document.getElementById('statsBar');
+      const jobsGrid = document.getElementById('employerJobsGrid');
+      const jobsHeading = document.getElementById('jobsHeading');
+
+      // Pick display info from profile or first job
+      const firstJob = jobs?.[0];
+      const displayName = profile?.full_name || firstJob?.company || 'Employer';
+      const company = firstJob?.company || '';
+      const location = firstJob?.location || profile?.location || '';
+      const avatar = profile?.avatar_url || firstJob?.company_logo;
+      const bio = profile?.bio || '';
+      const contactEmail = profile?.contact_email || '';
+      const initial = displayName.charAt(0).toUpperCase();
+
+      // Update page title
+      document.title = `${displayName} — JobBeacon`;
+
+      const avatarHtml = avatar
+        ? `<div class="profile-avatar-wrap"><img src="${avatar}" alt="${displayName}" onerror="this.parentElement.innerHTML='${initial}'"></div>`
+        : `<div class="profile-avatar-wrap">${initial}</div>`;
+
+      heroEl.innerHTML = `
+        <div class="profile-hero">
+          <div class="container">
+            <a href="/pages/employers.html" class="back-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              All Employers
+            </a>
+            ${avatarHtml}
+            <h1>${displayName}</h1>
+            ${company ? `<div class="company-tag">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              ${company}
+            </div>` : ''}
+            ${location ? `<div class="location-tag">📍 ${location}</div>` : ''}
+            ${bio ? `<p class="profile-bio">${bio}</p>` : ''}
+            ${contactEmail ? `<a href="mailto:${contactEmail}" class="contact-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              Contact Employer
+            </a>` : ''}
+          </div>
+        </div>
+      `;
+
+      // Stats bar
+      const uniqueCategories = [...new Set((jobs || []).map(j => j.category).filter(Boolean))];
+      statsBar.innerHTML = `
+        <div class="profile-stats-bar">
+          <div class="profile-stat-item">
+            <span class="stat-num">${jobs?.length || 0}</span>
+            <span class="stat-label">Jobs Posted</span>
+          </div>
+          <div class="profile-stat-item">
+            <span class="stat-num">${uniqueCategories.length}</span>
+            <span class="stat-label">Categories</span>
+          </div>
+          ${location ? `<div class="profile-stat-item">
+            <span class="stat-num" style="font-size:1rem;">${location}</span>
+            <span class="stat-label">Location</span>
+          </div>` : ''}
+        </div>
+      `;
+
+      // Jobs grid
+      jobsHeading.textContent = `Jobs by ${displayName}`;
+
+      if (!jobs || jobs.length === 0) {
+        jobsGrid.innerHTML = `
+          <div class="no-jobs" style="grid-column:1/-1">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin:0 auto 1rem;display:block;"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <p>This employer hasn't posted any jobs yet.</p>
+            <a href="/pages/jobs.html" class="btn btn-primary" style="margin-top:1rem;">Browse All Jobs</a>
+          </div>
+        `;
+      } else {
+        jobsGrid.innerHTML = jobs.map(job => Jobs.renderJobCard(job)).join('');
+      }
+    });
+  </script>
+</body>
+</html>
