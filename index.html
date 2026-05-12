@@ -423,6 +423,7 @@
 
   <script type="module">
     import { Jobs } from '/assets/js/jobs.js';
+    import { supabase } from '/assets/js/app.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       const container = document.getElementById('featuredJobsContainer');
@@ -441,7 +442,6 @@
       }
 
       // Get saved jobs if user is logged in
-      import { supabase } from '/assets/js/app.js';
       const { data: { session } } = await supabase.auth.getSession();
       let savedJobIds = [];
       if (session) {

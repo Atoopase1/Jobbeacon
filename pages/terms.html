@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service & Privacy Policy - JobBeacon</title>
+  <meta name="description" content="JobBeacon Terms of Service and Privacy Policy — understand how we handle your data and what you agree to by using our platform.">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <style>
+    .terms-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #064E3B 100%);
+      padding: 7rem 0 3.5rem;
+      text-align: center;
+    }
+    .terms-hero h1 { color: white; margin-bottom: 0.75rem; font-size: clamp(1.75rem, 4vw, 2.5rem); }
+    .terms-hero p  { color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto; }
+
+    .terms-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 3rem;
+      padding: 3rem 0 6rem;
+      align-items: start;
+    }
+
+    /* Sticky sidebar TOC */
+    .terms-toc {
+      position: sticky;
+      top: 90px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+    }
+
+    .toc-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .toc-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toc-link {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-md);
+      transition: var(--transition-fast);
+      border-left: 2px solid transparent;
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      border-left-color: var(--primary);
+    }
+
+    /* Content */
+    .terms-content section {
+      margin-bottom: 3.5rem;
+      scroll-margin-top: 90px;
+    }
+
+    .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-full);
+      margin-bottom: 1rem;
+    }
+
+    .terms-content h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .terms-content h3 {
+      font-size: 1.1rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .terms-content p, .terms-content li {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+
+    .terms-content ul {
+      list-style: none;
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .terms-content ul li {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+
+    .terms-content ul li::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-top: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .highlight-box {
+      background: var(--primary-light);
+      border: 1px solid rgba(15,118,110,0.2);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .highlight-box p { color: var(--primary); margin: 0; font-weight: 500; }
+
+    .warning-box {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .warning-box p { color: var(--secondary-hover); margin: 0; font-weight: 500; }
+
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 3rem 0;
+    }
+
+    .effective-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--bg-surface-hover);
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      margin-bottom: 2rem;
+    }
+
+    .agree-banner {
+      position: sticky;
+      bottom: 1.5rem;
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 8px 32px rgba(15,118,110,0.35);
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .agree-banner p { color: rgba(255,255,255,0.9); margin: 0; font-size: 0.9rem; }
+
+    .agree-banner-btns { display: flex; gap: 0.75rem; flex-shrink: 0; }
+
+    .btn-accept {
+      background: white;
+      color: var(--primary);
+      font-weight: 700;
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .btn-accept:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+    @media (max-width: 900px) {
+      .terms-layout { grid-template-columns: 1fr; }
+      .terms-toc { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        Job<span>Beacon</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pages/jobs.html" class="nav-link">Find Jobs</a>
+        <a href="/pages/employers.html" class="nav-link">Employers</a>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <a href="/pages/login.html" class="btn btn-primary" id="accountBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="terms-hero">
+    <div class="container">
+      <h1>Terms of Service & Privacy Policy</h1>
+      <p>Please read these terms carefully before using JobBeacon. By creating an account, you agree to be bound by these terms.</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <div class="terms-layout">
+
+      <!-- Sidebar TOC -->
+      <aside class="terms-toc" aria-label="Table of Contents">
+        <p class="toc-title">Contents</p>
+        <nav class="toc-links">
+          <a href="#terms" class="toc-link">Terms of Service</a>
+          <a href="#acceptance" class="toc-link">1. Acceptance</a>
+          <a href="#services" class="toc-link">2. Our Services</a>
+          <a href="#accounts" class="toc-link">3. Accounts</a>
+          <a href="#employers" class="toc-link">4. Employers</a>
+          <a href="#candidates" class="toc-link">5. Candidates</a>
+          <a href="#prohibited" class="toc-link">6. Prohibited Use</a>
+          <a href="#liability" class="toc-link">7. Liability</a>
+          <a href="#termination" class="toc-link">8. Termination</a>
+          <a href="#privacy" class="toc-link">Privacy Policy</a>
+          <a href="#data-collect" class="toc-link">9. Data We Collect</a>
+          <a href="#data-use" class="toc-link">10. How We Use It</a>
+          <a href="#data-share" class="toc-link">11. Data Sharing</a>
+          <a href="#cookies" class="toc-link">12. Cookies</a>
+          <a href="#rights" class="toc-link">13. Your Rights</a>
+          <a href="#contact-us" class="toc-link">14. Contact Us</a>
+        </nav>
+      </aside>
+
+      <!-- Terms Content -->
+      <div class="terms-content">
+        <div class="effective-date">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Effective Date: May 12, 2026 &nbsp;·&nbsp; Last Updated: May 12, 2026
+        </div>
+
+        <!-- ── TERMS OF SERVICE ── -->
+        <section id="terms">
+          <div class="section-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            Legal Document
+          </div>
+          <h2>Terms of Service</h2>
+          <p>These Terms of Service ("Terms") govern your access to and use of the JobBeacon platform, website, and services (collectively, the "Service"). Please read them carefully. By registering, accessing, or using JobBeacon, you agree to be legally bound by these Terms.</p>
+        </section>
+
+        <section id="acceptance">
+          <h3>1. Acceptance of Terms</h3>
+          <p>By creating an account or using any part of the Service, you confirm that:</p>
+          <ul>
+            <li>You are at least 18 years old or have parental/guardian consent.</li>
+            <li>You have read, understood, and agree to these Terms and our Privacy Policy.</li>
+            <li>You have the legal authority to enter into this agreement on behalf of yourself or your organization.</li>
+          </ul>
+          <div class="highlight-box">
+            <p>⚠️ If you do not agree with any part of these Terms, you must not use our Service.</p>
+          </div>
+        </section>
+
+        <section id="services">
+          <h3>2. Description of Services</h3>
+          <p>JobBeacon is an online job marketplace connecting employers with job seekers in Ghana and surrounding regions. Our platform enables:</p>
+          <ul>
+            <li>Employers to create company profiles and post job listings.</li>
+            <li>Job seekers to browse opportunities, apply for positions, and save listings.</li>
+            <li>Public discovery of registered employers and their open roles.</li>
+          </ul>
+          <p>We reserve the right to modify, suspend, or discontinue any part of the Service at any time without liability.</p>
+        </section>
+
+        <section id="accounts">
+          <h3>3. User Accounts &amp; Registration</h3>
+          <p>When you register:</p>
+          <ul>
+            <li>You must provide accurate, current, and complete information.</li>
+            <li>You are responsible for maintaining the confidentiality of your account credentials.</li>
+            <li>You must notify us immediately of any unauthorized access at <strong>atoopase@gmail.com</strong>.</li>
+            <li>One person or legal entity may not maintain more than one account.</li>
+            <li>You may not sell, transfer, or assign your account to any other party.</li>
+          </ul>
+        </section>
+
+        <section id="employers">
+          <h3>4. Employer Responsibilities</h3>
+          <p>As an employer posting jobs on JobBeacon, you agree that:</p>
+          <ul>
+            <li>All job listings are genuine, lawful, and accurately describe real employment opportunities.</li>
+            <li>You will not post discriminatory, fraudulent, or misleading job advertisements.</li>
+            <li>You have authority to recruit on behalf of the organization named in the listing.</li>
+            <li>You will handle candidate information in compliance with applicable data protection laws.</li>
+            <li>You will not collect application fees from candidates through our platform.</li>
+          </ul>
+          <div class="warning-box">
+            <p>⚡ Fraudulent or misleading job posts will result in immediate account termination and may be reported to relevant authorities.</p>
+          </div>
+        </section>
+
+        <section id="candidates">
+          <h3>5. Job Seeker Responsibilities</h3>
+          <p>As a job seeker using JobBeacon, you agree that:</p>
+          <ul>
+            <li>Information in your profile is truthful, accurate, and up to date.</li>
+            <li>You will not misrepresent your qualifications, experience, or identity.</li>
+            <li>You will use contact details shared by employers solely for job-related communication.</li>
+            <li>You will not scrape, harvest, or systematically collect employer or job data from the platform.</li>
+          </ul>
+        </section>
+
+        <section id="prohibited">
+          <h3>6. Prohibited Activities</h3>
+          <p>You may not use JobBeacon to:</p>
+          <ul>
+            <li>Post or transmit any unlawful, harmful, defamatory, or abusive content.</li>
+            <li>Impersonate any person, company, or organization.</li>
+            <li>Distribute spam, unsolicited messages, or phishing content.</li>
+            <li>Attempt to gain unauthorized access to any system, data, or account.</li>
+            <li>Introduce malware, viruses, or other harmful code.</li>
+            <li>Use automated tools, bots, or scrapers without our written permission.</li>
+          </ul>
+        </section>
+
+        <section id="liability">
+          <h3>7. Limitation of Liability</h3>
+          <p>To the maximum extent permitted by law, JobBeacon and its operators shall not be liable for:</p>
+          <ul>
+            <li>Any indirect, incidental, special, or consequential damages arising from your use of the Service.</li>
+            <li>The accuracy, completeness, or reliability of any job listing or employer/candidate profile.</li>
+            <li>Any employment decisions made based on information found on the platform.</li>
+            <li>Unauthorized access to or alteration of your data by third parties.</li>
+          </ul>
+          <p>JobBeacon is provided "as is" without warranties of any kind. Use the platform at your own risk.</p>
+        </section>
+
+        <section id="termination">
+          <h3>8. Termination</h3>
+          <p>We reserve the right to suspend or terminate your account at any time, with or without notice, if we determine that you have violated these Terms. Upon termination:</p>
+          <ul>
+            <li>Your right to use the Service immediately ceases.</li>
+            <li>We may retain your data as required by law or for legitimate business purposes.</li>
+            <li>Provisions regarding liability, intellectual property, and dispute resolution survive termination.</li>
+          </ul>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- ── PRIVACY POLICY ── -->
+        <section id="privacy">
+          <div class="section-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Data Protection
+          </div>
+          <h2>Privacy Policy</h2>
+          <p>This Privacy Policy explains how JobBeacon ("we", "us", "our") collects, uses, and protects your personal information when you use our platform. We are committed to protecting your privacy and complying with applicable data protection laws.</p>
+        </section>
+
+        <section id="data-collect">
+          <h3>9. Information We Collect</h3>
+          <p><strong>Information you provide directly:</strong></p>
+          <ul>
+            <li>Name, email address, and password when you register.</li>
+            <li>Profile details: bio, location, contact information, profile picture.</li>
+            <li>Job listings: title, description, company name, salary, and requirements.</li>
+            <li>Application data when you apply for jobs.</li>
+          </ul>
+          <p><strong>Information collected automatically:</strong></p>
+          <ul>
+            <li>Log data: IP address, browser type, pages visited, and timestamps.</li>
+            <li>Device information: operating system and screen resolution.</li>
+            <li>Usage patterns and feature interactions.</li>
+          </ul>
+          <p><strong>Information from third parties:</strong></p>
+          <ul>
+            <li>When you sign in with Google, we receive your name, email address, and profile picture from Google as permitted by your Google account settings.</li>
+          </ul>
+        </section>
+
+        <section id="data-use">
+          <h3>10. How We Use Your Information</h3>
+          <p>We use your information to:</p>
+          <ul>
+            <li>Create and manage your account and profile.</li>
+            <li>Match job seekers with relevant job listings.</li>
+            <li>Display employer profiles and listings to site visitors.</li>
+            <li>Send important service notifications and updates.</li>
+            <li>Improve the functionality and user experience of our platform.</li>
+            <li>Investigate and prevent fraudulent activity or abuse.</li>
+            <li>Comply with legal obligations.</li>
+          </ul>
+          <div class="highlight-box">
+            <p>🔒 We do not sell your personal data to third-party advertisers or data brokers.</p>
+          </div>
+        </section>
+
+        <section id="data-share">
+          <h3>11. Data Sharing &amp; Disclosure</h3>
+          <p>We may share your information with:</p>
+          <ul>
+            <li><strong>Service providers:</strong> Supabase (database and authentication), Vercel (hosting). These providers process data on our behalf under strict confidentiality agreements.</li>
+            <li><strong>Other users:</strong> Employer profiles and job listings are publicly visible. Candidate applications are shared with the relevant employer only.</li>
+            <li><strong>Legal requirements:</strong> When required by law, court order, or to protect the rights and safety of users.</li>
+          </ul>
+        </section>
+
+        <section id="cookies">
+          <h3>12. Cookies &amp; Local Storage</h3>
+          <p>JobBeacon uses browser local storage and cookies to:</p>
+          <ul>
+            <li>Maintain your login session securely.</li>
+            <li>Remember your theme preference (light/dark mode).</li>
+            <li>Improve performance by caching preferences.</li>
+          </ul>
+          <p>You can clear cookies and local storage via your browser settings. Doing so will sign you out of the platform.</p>
+        </section>
+
+        <section id="rights">
+          <h3>13. Your Rights</h3>
+          <p>You have the right to:</p>
+          <ul>
+            <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
+            <li><strong>Correction:</strong> Update or correct inaccurate information via your profile settings.</li>
+            <li><strong>Deletion:</strong> Request deletion of your account and associated data.</li>
+            <li><strong>Portability:</strong> Request your data in a portable format.</li>
+            <li><strong>Objection:</strong> Object to certain processing activities.</li>
+          </ul>
+          <p>To exercise any of these rights, contact us at <strong>atoopase@gmail.com</strong>. We will respond within 30 days.</p>
+        </section>
+
+        <section id="contact-us">
+          <h3>14. Contact Us</h3>
+          <p>If you have any questions, concerns, or requests regarding these Terms or your privacy, please contact:</p>
+          <ul>
+            <li><strong>Platform:</strong> JobBeacon Ghana</li>
+            <li><strong>Email:</strong> atoopase@gmail.com</li>
+            <li><strong>Response time:</strong> Within 5 business days</li>
+          </ul>
+          <p>We may update these Terms and Privacy Policy from time to time. We will notify you of significant changes via email or a prominent notice on the platform. Continued use after changes constitutes acceptance.</p>
+        </section>
+
+        <!-- Sticky agree banner (shown only when navigated from signup) -->
+        <div class="agree-banner" id="agreeBanner" style="display: none;">
+          <p>You've read the Terms of Service &amp; Privacy Policy.</p>
+          <div class="agree-banner-btns">
+            <button class="btn-accept" id="acceptAndReturn">✓ I Agree — Return to Sign Up</button>
+          </div>
+        </div>
+
+      </div><!-- end terms-content -->
+    </div><!-- end terms-layout -->
+  </main>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script>
+    // Show agree banner if user came from signup
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from') === 'signup') {
+      document.getElementById('agreeBanner').style.display = 'flex';
+    }
+
+    document.getElementById('acceptAndReturn')?.addEventListener('click', () => {
+      // Pass accepted=true back to login page
+      window.location.href = '/pages/login.html?signup=true&accepted=true';
+    });
+
+    // Active TOC link on scroll
+    const sections = document.querySelectorAll('.terms-content section[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-80px 0px -60% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
