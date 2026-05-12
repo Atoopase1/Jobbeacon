@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login / Sign Up - JobBeacon</title>
+  <meta name="theme-color" content="#0F766E">
+  <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/assets/css/style.css">
   <style>
     body {
@@ -166,9 +168,14 @@
           <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
         </div>
         
-        <div class="checkbox-group">
+        <div class="checkbox-group" id="rememberGroup">
           <input type="checkbox" id="remember">
           <label for="remember">Remember me for 30 days</label>
+        </div>
+        
+        <div class="checkbox-group" id="termsGroup" style="display: none;">
+          <input type="checkbox" id="termsAgree">
+          <label for="termsAgree">I agree to the <a href="/pages/terms.html" style="color: var(--primary); text-decoration: underline;" target="_blank">Professional Policy & Terms of Service</a></label>
         </div>
         
         <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%;">
@@ -217,7 +224,9 @@
       const pageTitle = document.getElementById('pageTitle');
       const pageSubtitle = document.getElementById('pageSubtitle');
       const toggleText = document.getElementById('toggleText');
-      const rememberDiv = document.querySelector('.checkbox-group');
+      const rememberGroup = document.getElementById('rememberGroup');
+      const termsGroup = document.getElementById('termsGroup');
+      const termsAgree = document.getElementById('termsAgree');
       
       let isSignUpMode = false;
       
@@ -230,14 +239,16 @@
           loginBtn.innerText = 'Sign Up';
           toggleText.innerText = 'Already have an account?';
           toggleBtn.innerText = 'Sign In';
-          rememberDiv.style.display = 'none';
+          rememberGroup.style.display = 'none';
+          termsGroup.style.display = 'flex';
         } else {
           pageTitle.innerText = 'Welcome Back';
           pageSubtitle.innerText = 'Sign in to your dashboard';
           loginBtn.innerText = 'Sign In';
           toggleText.innerText = 'Don\'t have an account?';
           toggleBtn.innerText = 'Sign Up';
-          rememberDiv.style.display = 'flex';
+          rememberGroup.style.display = 'flex';
+          termsGroup.style.display = 'none';
         }
       };
       
@@ -260,6 +271,11 @@
         
         if (!email || !password) {
           UI.showToast('Please enter both email and password', 'error');
+          return;
+        }
+
+        if (isSignUpMode && !termsAgree.checked) {
+          UI.showToast('You must agree to the Professional Policy & Terms of Service', 'error');
           return;
         }
         
@@ -292,6 +308,10 @@
       const googleBtn = document.getElementById('googleSignInBtn');
       if (googleBtn) {
         googleBtn.addEventListener('click', async () => {
+          if (isSignUpMode && !termsAgree.checked) {
+            UI.showToast('You must agree to the Professional Policy & Terms of Service', 'error');
+            return;
+          }
           googleBtn.disabled = true;
           googleBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> Redirecting to Google...`;
 

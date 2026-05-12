@@ -186,6 +186,68 @@ function initApp() {
       }
     });
   }
+
+  // 5. PWA Registration & Install Prompt
+  if ('serviceWorker' in navigator) {
+    // We register the SW even outside window load for fast loading
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.warn('SW registration failed:', err);
+    });
+  }
+
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    
+    // Update UI to notify the user they can install the PWA
+    const navLinks = document.getElementById('navLinks');
+    if (navLinks && !document.getElementById('pwaInstallBtn')) {
+      const installBtn = document.createElement('button');
+      installBtn.id = 'pwaInstallBtn';
+      installBtn.className = 'btn btn-outline';
+      installBtn.style.padding = '0.5rem 1rem';
+      installBtn.style.fontSize = '0.875rem';
+      installBtn.style.marginLeft = '0.5rem';
+      installBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 0.25rem;">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Install App
+      `;
+      
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.remove();
+        }
+        deferredPrompt = null;
+      });
+      
+      // Insert before the account button or at the end
+      const accBtn = document.getElementById('accountBtn');
+      if (accBtn) {
+        navLinks.insertBefore(installBtn, accBtn);
+      } else {
+        navLinks.appendChild(installBtn);
+      }
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    const installBtn = document.getElementById('pwaInstallBtn');
+    if (installBtn) installBtn.remove();
+    deferredPrompt = null;
+    UI.showToast('App installed successfully!', 'success');
+  });
 }
 
 if (document.readyState === 'loading') {
