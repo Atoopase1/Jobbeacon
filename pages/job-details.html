@@ -189,6 +189,16 @@
         </div>
         <div class="modal-body">
           <p class="text-secondary" style="margin-bottom: 1.5rem;">The employer will receive a link to your JobBeacon profile.</p>
+          
+          <!-- Candidate Profile Preview -->
+          <div id="applyProfilePreview" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 1.5rem;">
+            <div class="skeleton skeleton-avatar" style="width: 48px; height: 48px;"></div>
+            <div style="flex: 1;">
+              <div class="skeleton skeleton-text" style="width: 120px; margin-bottom: 0.5rem;"></div>
+              <div class="skeleton skeleton-text short"></div>
+            </div>
+          </div>
+
           <form id="applyForm">
             <div class="form-group">
               <label for="coverNote" class="form-label">Cover Note (Optional)</label>
@@ -358,6 +368,13 @@
         }
       }
       
+      // Fetch user profile for the application modal preview
+      let userProfile = null;
+      if (session) {
+        const { data } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+        userProfile = data;
+      }
+      
       const applyUrl = job.apply_url || `mailto:careers@company.com?subject=Application for ${job.title}`;
       
       const isSeeking = job.post_type === 'seeking';
@@ -483,6 +500,33 @@
           }
           
           document.getElementById('applyJobTitle').textContent = job.title;
+          
+          // Render the profile preview
+          const previewContainer = document.getElementById('applyProfilePreview');
+          if (userProfile) {
+            const avatarHtml = userProfile.avatar_url 
+              ? `<img src="${userProfile.avatar_url}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">`
+              : `<div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.25rem;">${(userProfile.full_name || session.user.email).charAt(0).toUpperCase()}</div>`;
+            
+            previewContainer.innerHTML = `
+              ${avatarHtml}
+              <div style="flex: 1;">
+                <div style="font-weight: 600; color: var(--text-primary);">${userProfile.full_name || 'Anonymous User'}</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">${userProfile.contact_email || session.user.email}</div>
+              </div>
+              <a href="/pages/dashboard.html" style="font-size: 0.875rem; color: var(--primary); font-weight: 500;">Edit Profile</a>
+            `;
+          } else {
+            previewContainer.innerHTML = `
+              <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--bg-surface); border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted);">?</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; color: var(--text-primary);">${session?.user?.email}</div>
+                <div style="font-size: 0.875rem; color: var(--error);">Profile incomplete</div>
+              </div>
+              <a href="/pages/dashboard.html" style="font-size: 0.875rem; color: var(--primary); font-weight: 500;">Complete Profile</a>
+            `;
+          }
+          
           applyModal.classList.add('active');
         });
       }

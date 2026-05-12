@@ -145,13 +145,24 @@ export const Dashboard = {
       return null;
     }
 
+    console.log('[Avatar] File:', file.name, '| Size:', file.size, '| Type:', file.type);
+    console.log('[Avatar] User ID:', userId);
+
     try {
+      // Verify auth session is active
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) console.error('[Avatar] Session error:', sessionError.message);
+      console.log('[Avatar] Session active:', !!session, '| Role:', session?.user?.role);
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}_${Date.now()}.${fileExt}`;
+      console.log('[Avatar] Uploading to: avatars/' + fileName);
 
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { upsert: true });
+
+      console.log('[Avatar] Upload response:', uploadData, uploadError);
 
       if (uploadError) throw uploadError;
 
@@ -159,9 +170,10 @@ export const Dashboard = {
         .from('avatars')
         .getPublicUrl(fileName);
 
+      console.log('[Avatar] Public URL:', data.publicUrl);
       return data.publicUrl;
     } catch (error) {
-      console.error('Error uploading avatar:', error.message);
+      console.error('[Avatar] FAILED:', error);
       UI.showToast('Failed to upload avatar: ' + error.message, 'error');
       return null;
     }
