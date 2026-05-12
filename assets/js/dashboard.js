@@ -131,6 +131,43 @@ export const Dashboard = {
   },
 
   /**
+   * Upload a user avatar to Supabase Storage
+   * @param {File} file - The image file
+   * @param {string} userId - The user's ID for namespacing
+   * @returns {Promise<string|null>} Public URL of the uploaded image
+   */
+  async uploadAvatar(file, userId) {
+    if (!file) return null;
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      UI.showToast('File size must be less than 2MB', 'error');
+      return null;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}_${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error uploading avatar:', error.message);
+      UI.showToast('Failed to upload avatar: ' + error.message, 'error');
+      return null;
+    }
+  },
+
+  /**
    * Fetch User Profile
    */
   async getProfile(userId) {
@@ -256,11 +293,14 @@ export const Dashboard = {
       const avatarUpload = document.getElementById('profileAvatarUpload');
       avatarUpload.addEventListener('change', async (e) => {
         if (e.target.files && e.target.files[0]) {
-          // Re-use logo upload method for MVP simplicity
-          const uploadUrl = await this.uploadLogo(e.target.files[0]);
+          const preview = document.getElementById('profileAvatarPreview');
+          preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-secondary);">Uploading...</span>`;
+          const uploadUrl = await this.uploadAvatar(e.target.files[0], user.id);
           if (uploadUrl) {
             document.getElementById('profileAvatarUrl').value = uploadUrl;
-            document.getElementById('profileAvatarPreview').innerHTML = `<img src="${uploadUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            preview.innerHTML = `<img src="${uploadUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+          } else {
+            preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--error);">Upload failed</span>`;
           }
         }
       });

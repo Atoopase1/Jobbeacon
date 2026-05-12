@@ -177,6 +177,27 @@ CREATE POLICY "Admin users can delete logos"
   ON storage.objects FOR DELETE
   USING ( bucket_id = 'company_logos' AND auth.role() = 'authenticated' AND (auth.jwt() ->> 'email') IN ('atoopase@gmail.com', 'www.atoopasechristopher@gmail.com') );
 
+-- 3.5 Create Storage Bucket for User Avatars (any authenticated user can upload)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('avatars', 'avatars', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Avatars are publicly accessible"
+  ON storage.objects FOR SELECT
+  USING ( bucket_id = 'avatars' );
+
+CREATE POLICY "Authenticated users can upload avatars"
+  ON storage.objects FOR INSERT
+  WITH CHECK ( bucket_id = 'avatars' AND auth.role() = 'authenticated' );
+
+CREATE POLICY "Users can update their own avatars"
+  ON storage.objects FOR UPDATE
+  USING ( bucket_id = 'avatars' AND auth.role() = 'authenticated' );
+
+CREATE POLICY "Users can delete their own avatars"
+  ON storage.objects FOR DELETE
+  USING ( bucket_id = 'avatars' AND auth.role() = 'authenticated' );
+
 -- ==============================================================================
 -- 4. Seed Data (Realistic Ghana Jobs)
 -- ==============================================================================
