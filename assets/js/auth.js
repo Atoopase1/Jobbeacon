@@ -156,8 +156,53 @@ export const Auth = {
 };
 
 // Initialize auth state listener
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN' && session) {
+    const user = session.user;
+    const meta = user.user_metadata || {};
+    const provider = user.app_metadata?.provider || 'email';
+
+    // Auto-seed profile from Google / OAuth metadata
+    if (provider !== 'email') {
+      const googleName  = meta.full_name || meta.name || '';
+      const googleAvatar = meta.avatar_url || meta.picture || '';
+      const googleEmail  = user.email || '';
+
+      try {
+        // Check if a profile row already exists
+        const { data: existing } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url')
+          .eq('id', user.id)
+          .single();
+
+        if (!existing) {
+          // First Google login — create a full profile
+          await supabase.from('profiles').insert({
+            id: user.id,
+            full_name: googleName,
+            avatar_url: googleAvatar,
+            contact_email: googleEmail,
+            updated_at: new Date().toISOString()
+          });
+          console.log('[Auth] Profile created from Google metadata');
+        } else {
+          // Returning user — only fill in blank fields, never overwrite
+          const updates = {};
+          if (!existing.full_name  && googleName)   updates.full_name  = googleName;
+          if (!existing.avatar_url && googleAvatar) updates.avatar_url = googleAvatar;
+
+          if (Object.keys(updates).length > 0) {
+            updates.updated_at = new Date().toISOString();
+            await supabase.from('profiles').update(updates).eq('id', user.id);
+            console.log('[Auth] Profile updated with missing Google fields:', updates);
+          }
+        }
+      } catch (err) {
+        console.error('[Auth] Profile seed error:', err.message);
+      }
+    }
+
     // Handle OAuth redirect callback (e.g. Google sign-in)
     const isLoginPage = window.location.pathname.includes('/login.html');
     if (isLoginPage) {
@@ -168,7 +213,6 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 
   if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-    // Delete cookies/local storage if necessary
     const isProtected = window.location.pathname.includes('/dashboard.html');
     if (isProtected) {
       window.location.href = '/pages/login.html';
