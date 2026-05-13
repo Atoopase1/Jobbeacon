@@ -714,6 +714,9 @@ p {
     padding: 1.25rem 1.5rem;
     gap: 1.25rem;
     justify-content: flex-start;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
   }
   .category-icon {
     width: 52px;
@@ -723,6 +726,11 @@ p {
   .category-card h3 {
     font-size: 1rem;
     margin: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    flex: 1;
+    min-width: 0;
   }
 }
 
