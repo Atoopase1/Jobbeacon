@@ -287,6 +287,12 @@ export const Dashboard = {
       } else if (activeNav === navApplications) {
         this.loadApplications(user.id);
       }
+
+      // Close sidebar on mobile
+      if (sidebar && overlay && window.innerWidth <= 1024) {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+      }
     };
 
     if (navJobs && viewJobs) navJobs.addEventListener('click', (e) => { e.preventDefault(); switchTab(navJobs, viewJobs); });
