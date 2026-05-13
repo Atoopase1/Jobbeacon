@@ -698,34 +698,25 @@ p {
   color: var(--primary);
 }
 
-/* Mobile: ONLY categories scroll horizontally — everything else stays locked */
+/* Mobile: ONLY categories scroll horizontally — page stays fully locked */
 @media (max-width: 640px) {
   /*
-   * The .categories-grid lives inside .container (overflow-x: clip) and
-   * .section (overflow-x: hidden). Both of those would normally clip the
-   * horizontal scroll. We override them here ONLY for the categories context
-   * so the grid's internal scroll container can actually function.
-   * The page-level html { overflow-x: hidden } still prevents any real page
-   * scroll — only the content INSIDE .categories-grid scrolls.
+   * .categories-grid is width:100% so it never overflows its parent.
+   * Only the CONTENT inside it (the cards) scrolls horizontally within itself.
+   * DO NOT set overflow-x: visible on the parent section/container — that
+   * is what causes the whole page to scroll sideways.
    */
-  .section:has(.categories-grid),
-  .section:has(.categories-grid) .container {
-    overflow-x: visible;
-  }
-
   .categories-grid {
     display: flex;
     flex-direction: row;
-    overflow-x: auto; /* allow horizontal scroll for this element only */
+    overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     gap: 1rem;
     padding-bottom: 0.75rem;
-    /* Visually hide the scrollbar but keep touch-scrolling */
     scrollbar-width: none;
     -ms-overflow-style: none;
-    /* Stretch full width so it doesn't cause page-level overflow */
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
