@@ -698,44 +698,31 @@ p {
   color: var(--primary);
 }
 
-/* Mobile: ONLY categories scroll horizontally — page stays fully locked */
+/* Mobile: single-column category tiles — no horizontal overflow */
 @media (max-width: 640px) {
-  /*
-   * .categories-grid is width:100% so it never overflows its parent.
-   * Only the CONTENT inside it (the cards) scrolls horizontally within itself.
-   * DO NOT set overflow-x: visible on the parent section/container — that
-   * is what causes the whole page to scroll sideways.
-   */
   .categories-grid {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
-    padding-bottom: 0.75rem;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
-  .categories-grid::-webkit-scrollbar {
-    display: none;
-  }
   .categories-grid .card.category-card {
-    flex: 0 0 140px;
-    min-width: 140px;
-    padding: 1.25rem 0.75rem;
-    scroll-snap-align: start;
+    flex-direction: row;
+    text-align: left;
+    padding: 1.25rem 1.5rem;
+    gap: 1.25rem;
+    justify-content: flex-start;
   }
   .category-icon {
     width: 52px;
     height: 52px;
+    flex-shrink: 0;
   }
   .category-card h3 {
-    font-size: 0.85rem;
+    font-size: 1rem;
+    margin: 0;
   }
 }
 
