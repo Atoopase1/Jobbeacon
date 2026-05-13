@@ -152,6 +152,26 @@
         display: block;
       }
     }
+
+    @media (max-width: 480px) {
+      .jobs-page-layout {
+        padding: 1rem 0;
+        gap: 1rem;
+      }
+      #jobsGrid {
+        grid-template-columns: 1fr !important;
+      }
+      .pagination {
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        margin-top: 2rem;
+      }
+      .page-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.875rem;
+      }
+    }
     
     .close-filters {
       display: none;
