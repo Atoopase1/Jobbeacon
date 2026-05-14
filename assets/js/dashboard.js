@@ -10,7 +10,7 @@ export const Dashboard = {
     try {
       const { count: totalJobs, error: jobsError } = await supabase
         .from('jobs')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'estimated', head: true });
         
       if (jobsError) throw jobsError;
       

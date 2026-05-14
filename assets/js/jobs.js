@@ -20,7 +20,7 @@ export const Jobs = {
     try {
       let query = supabase
         .from('jobs')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'estimated' });
 
       // Apply filters
       if (search) {
