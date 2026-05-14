@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skill Guide | JobBeacon</title>
+  <meta name="theme-color" content="#0F766E" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sq-bg: #f0faf9;
+      --sq-surface: #ffffff;
+      --sq-card: #f8fafc;
+      --sq-border: #d1e9e7;
+      --sq-teal: #0F766E;
+      --sq-orange: #F59E0B;
+      --sq-text: #0F172A;
+      --sq-muted: #475569;
+      --sq-dim: #94A3B8;
+      --sq-red: #EF4444;
+      --sq-green: #10B981;
+      --sq-purple: #7C3AED;
+    }
+
+    [data-theme="dark"] {
+      --sq-bg: #080E17;
+      --sq-surface: #0D1620;
+      --sq-card: #111F2E;
+      --sq-border: #1A3045;
+      --sq-teal: #2DD4BF;
+      --sq-orange: #F59E0B;
+      --sq-text: #F1F5F9;
+      --sq-muted: #7A92A8;
+      --sq-dim: #445A6F;
+      --sq-red: #F87171;
+      --sq-green: #4ADE80;
+      --sq-purple: #A78BFA;
+    }
+
+    body {
+      background: var(--sq-bg);
+      color: var(--sq-text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(ellipse 800px 500px at 50% -20%, rgba(15, 118, 110, 0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 90% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
+    }
+
+    [data-theme="dark"] body::before {
+      background-image:
+        radial-gradient(ellipse 800px 500px at 50% -20%, rgba(45, 212, 191, 0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 90% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 70%),
+        radial-gradient(rgba(45, 212, 191, 0.035) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 26px 26px;
+    }
+
+    .container-guide {
+      max-width: 1400px;
+      margin: 120px auto 60px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--sq-muted);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 24px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--sq-teal);
+    }
+
+    /* Loading State */
+    #loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .spinner-lg {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--sq-border);
+      border-top-color: var(--sq-teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .loading-sub {
+      color: var(--sq-muted);
+      max-width: 400px;
+    }
+
+    /* Error State */
+    #error-state {
+      display: none;
+      text-align: center;
+      padding: 80px 0;
+      background: var(--sq-surface);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 24px;
+    }
+
+    #error-state h2 {
+      font-family: 'Syne', sans-serif;
+      margin-bottom: 12px;
+    }
+
+    /* Content Layout */
+    #content-state {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .guide-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .guide-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      display: inline-block;
+      padding: 20px;
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .guide-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .guide-desc {
+      font-size: 1.1rem;
+      color: var(--sq-muted);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Quick Stats Badges */
+    .quick-stats {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--sq-text);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    .stat-badge i {
+      color: var(--sq-teal);
+    }
+
+    /* Grid layout */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-block {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .block-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .block-title i {
+      color: var(--sq-teal);
+    }
+
+    .block-text {
+      color: var(--sq-text);
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    /* Lists */
+    .feature-list {
+      list-style: none;
+    }
+
+    .feature-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 14px;
+      line-height: 1.6;
+      color: var(--sq-text);
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      color: var(--sq-teal);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .pros-cons-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    @media (max-width: 600px) {
+      .pros-cons-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pro-list li::before {
+      content: '✓';
+      color: var(--sq-green);
+    }
+    .con-list li::before {
+      content: '✕';
+      color: var(--sq-red);
+    }
+
+    /* Steps */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+    }
+
+    .timeline-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--sq-teal), #0D9488);
+      color: #080E17;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .timeline-content h4 {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .timeline-content p {
+      color: var(--sq-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Tools & Projects */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .tool-card {
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .tool-name {
+      font-weight: 700;
+      color: var(--sq-teal);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tool-desc {
+      font-size: 0.85rem;
+      color: var(--sq-muted);
+      line-height: 1.5;
+    }
+
+    .project-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      background: var(--sq-border);
+      color: var(--sq-teal);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    /* FAQs */
+    .faq-item {
+      border: 1px solid var(--sq-border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: var(--sq-surface);
+    }
+    
+    .faq-q {
+      font-weight: 700;
+      color: var(--sq-text);
+      margin-bottom: 8px;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .faq-a {
+      color: var(--sq-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding-left: 28px;
+    }
+
+    /* Tags */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .skill-tag {
+      background: rgba(15, 118, 110, 0.1);
+      color: var(--sq-teal);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Visuals */
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .images-grid img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    /* Recommended Platform */
+    .platform-card {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.08), rgba(245, 158, 11, 0.05));
+      border: 1px solid rgba(45, 212, 191, 0.3);
+      border-radius: 24px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    .platform-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+
+    .platform-card p {
+      color: var(--sq-muted);
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+    }
+
+    .btn-main {
+      background: var(--sq-teal);
+      color: #080E17;
+      font-weight: 700;
+      padding: 16px 32px;
+      border-radius: 16px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    /* Small Tags */
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(167, 139, 250, 0.15);
+      color: var(--sq-purple);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 7.5 14.6 3 12"></polyline><polyline points="21 12 16.5 14.6 16.5 19.79"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Job<span>Beacon</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="jobs.html" class="nav-link">Find Jobs</a>
+        <a href="employers.html" class="nav-link">Employers</a>
+        <a href="learn.html" class="nav-link active">SkillQuest</a>
+        <a href="login.html" class="nav-link" style="font-weight: 700; color: var(--sq-teal);">Sign In</a>
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-guide">
+    <a href="learn.html" class="back-link"><i data-lucide="arrow-left"></i> Back to Skills</a>
+
+    <div id="loading-state">
+      <div class="spinner-lg"></div>
+      <h2 class="loading-text">Generating Full Professional Guide...</h2>
+      <p class="loading-sub">Our AI is compiling the best tools, learning paths, and resources for <strong id="skill-name-display">this skill</strong>.</p>
+    </div>
+
+    <div id="error-state">
+      <h2>Failed to load guide.</h2>
+      <p id="error-text">Please check your connection and try again.</p>
+      <button onclick="window.location.reload()" class="btn-main" style="margin-top: 20px;">Try Again</button>
+    </div>
+
+    <div id="content-state">
+      <div class="guide-header">
+        <h1 class="guide-title" id="g-title">Skill Title</h1>
+        <p class="guide-desc" id="g-desc">Description goes here.</p>
+        
+        <div class="quick-stats">
+          <div class="stat-badge"><i data-lucide="bar-chart"></i> <span id="g-diff">Beginner</span></div>
+          <div class="stat-badge"><i data-lucide="clock"></i> <span id="g-time">3-6 Months</span></div>
+          <div class="stat-badge"><i data-lucide="banknote"></i> <span id="g-salary">$0</span></div>
+        </div>
+      </div>
+
+      <div class="grid-layout">
+        <!-- Main Column -->
+        <div class="col-main">
+          
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="briefcase"></i> What You'll Actually Do</h2>
+            <p class="block-text" id="g-do">Daily tasks go here.</p>
+          </div>
+
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="map"></i> Step-by-Step Learning Roadmap</h2>
+            <div class="timeline" id="g-steps"></div>
+          </div>
+          
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="folder-git-2"></i> Real-World Project Ideas</h2>
+            <p style="color: var(--sq-muted); margin-bottom: 16px;">Build these to show employers you know your stuff:</p>
+            <div class="tools-grid" id="g-projects"></div>
+          </div>
+
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="wrench"></i> Essential Tools & Software</h2>
+            <div class="tools-grid" id="g-tools"></div>
+          </div>
+
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="cpu"></i> AI Platforms & Automation</h2>
+            <p style="color: var(--sq-muted); margin-bottom: 16px;">How to leverage AI to learn faster and do this job better:</p>
+            <div class="tools-grid" id="g-ai"></div>
+            <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+              <a href="https://chatgpt.com/" target="_blank" class="btn-main" style="flex: 1; background: #10a37f; color: white; padding: 10px 16px; font-size: 0.95rem; min-width: 180px; justify-content: center;">
+                <i data-lucide="bot"></i> Ask ChatGPT
+              </a>
+              <a href="https://claude.ai/" target="_blank" class="btn-main" style="flex: 1; background: #d97757; color: white; padding: 10px 16px; font-size: 0.95rem; min-width: 180px; justify-content: center;">
+                <i data-lucide="cpu"></i> Ask Claude
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-side">
+          
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="scale"></i> Pros & Cons</h2>
+            <div class="pros-cons-grid">
+              <div>
+                <h4 style="margin-bottom: 10px; color: var(--sq-text);">Advantages</h4>
+                <ul class="feature-list pro-list" id="g-pros"></ul>
+              </div>
+              <div>
+                <h4 style="margin-bottom: 10px; color: var(--sq-text);">Challenges</h4>
+                <ul class="feature-list con-list" id="g-cons"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="target"></i> Where It's Useful</h2>
+            <ul class="feature-list" id="g-useful"></ul>
+          </div>
+
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="trending-up"></i> Opportunities</h2>
+            <ul class="feature-list" id="g-opportunities"></ul>
+          </div>
+          
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="lightbulb"></i> Beginner Tips</h2>
+            <ul class="feature-list" id="g-tips"></ul>
+          </div>
+          
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="layers"></i> Related Skills</h2>
+            <div class="tags-container" id="g-related"></div>
+          </div>
+
+          <div class="card-block">
+            <h2 class="block-title"><i data-lucide="image"></i> Visuals</h2>
+            <div class="images-grid" id="g-images"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Full Width Footer Content -->
+      <div class="card-block" style="margin-top: 24px;">
+        <h2 class="block-title"><i data-lucide="help-circle"></i> Frequently Asked Questions</h2>
+        <div id="g-faqs"></div>
+      </div>
+
+      <div class="platform-card">
+        <div class="ai-badge"><i data-lucide="award"></i> Top Recommended Platform</div>
+        <h3 id="g-plat-name">Platform Name</h3>
+        <p id="g-plat-reason">Reasoning goes here.</p>
+        <a href="#" id="g-plat-link" target="_blank" class="btn-main" style="width: 100%; max-width: 400px; justify-content: center; margin: 0 auto;">Start Learning Here <i data-lucide="external-link"></i></a>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="../index.html" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+            </svg>
+            Job<span>Beacon</span>
+          </a>
+          <p style="font-size: 0.9rem; max-width: 280px; line-height: 1.7;">Ghana's leading job marketplace connecting
+            talented professionals with top employers. Find your next opportunity today.</p>
+          <div class="social-links" style="margin-top: 1.25rem;">
+            <a href="#" aria-label="Twitter">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
+                </path>
+              </svg>
+            </a>
+            <a href="#" aria-label="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">For Candidates</h4>
+          <div class="footer-links">
+            <a href="jobs.html">Browse Jobs</a>
+            <a href="jobs.html?postType=hiring">Companies Hiring</a>
+            <a href="jobs.html?type=Remote">Remote Jobs</a>
+            <a href="login.html?signup=true">Create Profile</a>
+            <a href="login.html">My Dashboard</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">For Employers</h4>
+          <div class="footer-links">
+            <a href="login.html?signup=true">Post a Job</a>
+            <a href="login.html">Employer Dashboard</a>
+            <a href="jobs.html?postType=seeking">Find Candidates</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Stay Updated</h4>
+          <p style="font-size: 0.875rem; margin-bottom: 1rem; color: var(--text-secondary);">Get the latest job alerts
+            and career tips delivered weekly.</p>
+          <form style="display: flex; gap: 0.5rem;"
+            onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').style.background='#10B981';">
+            <input type="email" placeholder="you@email.com" class="form-control"
+              style="flex: 1; padding: 0.625rem 1rem; font-size: 0.875rem;" aria-label="Email for newsletter" required>
+            <button type="submit" class="btn btn-primary"
+              style="padding: 0.625rem 1.25rem; font-size: 0.875rem; white-space: nowrap;">Subscribe</button>
+          </form>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem;">No spam. Unsubscribe anytime.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 JobBeacon. All rights reserved.</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">Built by <a href="https://technoidfix.online"
+            target="_blank" rel="noopener" style="color: var(--primary); font-weight: 500;">technoidfix</a></p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="../assets/js/app.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    if(window.lucide) window.lucide.createIcons();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const skillParam = urlParams.get('skill');
+
+    const SYS_PROMPT = `You are a career and skills expert AI. The user wants a highly detailed, professional guide on the skill: "${skillParam}".
+Respond ONLY with a valid, clean JSON object. Do not use markdown blocks.
+Structure EXACTLY like this JSON format:
+{
+  "title": "${skillParam}",
+  "introduction": "2-3 sentences explaining what it is and why it matters.",
+  "whatPeopleDo": "Brief explanation of daily tasks and responsibilities in this career.",
+  "salaryInfo": "e.g., $50k - $120k / year depending on experience",
+  "difficulty": "Beginner | Intermediate | Advanced",
+  "learningTime": "e.g., 3-6 months",
+  "pros": ["Pro 1", "Pro 2", "Pro 3"],
+  "cons": ["Con 1", "Con 2"],
+  "whereUseful": ["industry 1", "industry 2"],
+  "opportunities": ["career opp 1", "freelance opp 2"],
+  "tools": [
+    {"name": "Tool 1", "howToUse": "Briefly how it's used"}
+  ],
+  "aiPlatforms": [
+    {"name": "AI Tool 1", "useCase": "How this AI accelerates the skill"}
+  ],
+  "steps": [
+    {"title": "Step 1: Basics", "detail": "What to learn first"},
+    {"title": "Step 2: Intermediate", "detail": "What to do"}
+  ],
+  "projectIdeas": [
+    {"title": "Project 1", "desc": "What to build", "difficulty": "Beginner"}
+  ],
+  "beginnerTips": ["Tip 1", "Tip 2"],
+  "faqs": [
+    {"q": "Common question?", "a": "Answer"}
+  ],
+  "relatedSkills": ["Skill 1", "Skill 2", "Skill 3"],
+  "imageKeywords": ["keyword1", "keyword2", "keyword3"],
+  "bestSite": {
+    "name": "Platform Name (e.g., Coursera, Udemy)",
+    "url": "https://actual-url-to-platform.com",
+    "reason": "Why this is the best place to learn it"
+  }
+}`;
+
+    if (!skillParam) {
+      window.location.href = 'learn.html';
+    } else {
+      document.getElementById('skill-name-display').textContent = skillParam;
+      document.title = skillParam + " | Skill Guide | JobBeacon";
+      fetchGuide(skillParam);
+    }
+
+    async function fetchGuide(skill) {
+      try {
+        const url = `https://text.pollinations.ai/${encodeURIComponent('Generate guide for: ' + skill)}?system=${encodeURIComponent(SYS_PROMPT)}&json=true`;
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        
+        let raw = '';
+        try {
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            raw = await res.text();
+          }
+        } catch (fetchErr) {
+          console.warn('Fetch failed or timed out, using fallback.', fetchErr);
+        }
+
+        let data = null;
+        
+        if (raw) {
+          try {
+            const s = raw.indexOf('{');
+            const e = raw.lastIndexOf('}');
+            if (s !== -1 && e !== -1) {
+              data = JSON.parse(raw.slice(s, e + 1));
+            }
+          } catch (parseErr) {
+            console.warn('Failed to parse API response, using fallback.', parseErr);
+          }
+        }
+
+        if (!data || !data.title) {
+          data = {
+            title: skill,
+            introduction: `A comprehensive guide to mastering ${skill}. This skill is currently in high demand across multiple industries and offers excellent remote opportunities.`,
+            whatPeopleDo: "Professionals in this field spend their day solving complex problems, building solutions, and collaborating with cross-functional teams to deliver value.",
+            salaryInfo: "$60,000 - $140,000+ / year",
+            difficulty: "Intermediate",
+            learningTime: "3-6 months of consistent study",
+            pros: ["High demand", "Remote friendly", "Great salary potential"],
+            cons: ["Requires constant learning", "Can be challenging initially"],
+            whereUseful: ["Tech Startups", "Enterprise Companies", "Freelance & Consulting"],
+            opportunities: ["Senior Specialist", "Remote Consultant", "Team Lead"],
+            tools: [
+              {"name": "Industry Standard Tool", "howToUse": "The primary software used for this skill."},
+              {"name": "Collaboration Platform", "howToUse": "For team communication and project tracking."}
+            ],
+            aiPlatforms: [
+              {"name": "ChatGPT / Claude", "useCase": "Accelerates learning and problem-solving."},
+              {"name": "Copilot / AI Assistants", "useCase": "Automates repetitive tasks in your workflow."}
+            ],
+            steps: [
+              {"title": "Step 1: The Fundamentals", "detail": "Master the core concepts and basic terminology."},
+              {"title": "Step 2: Hands-on Practice", "detail": "Build small projects to apply what you've learned."},
+              {"title": "Step 3: Advanced Concepts", "detail": "Dive into complex workflows and best practices."},
+              {"title": "Step 4: Build a Portfolio", "detail": "Create real-world examples to show employers."}
+            ],
+            projectIdeas: [
+              {"title": "Starter Project", "desc": "A simple implementation to test your grasp of the basics.", "difficulty": "Beginner"},
+              {"title": "Portfolio Showcase", "desc": "A complex, real-world application demonstrating advanced concepts.", "difficulty": "Advanced"}
+            ],
+            beginnerTips: ["Don't rush the basics", "Practice consistently", "Build real projects instead of just watching tutorials"],
+            faqs: [
+              {"q": "Do I need a degree?", "a": "Not necessarily! A strong portfolio often matters more than formal education."},
+              {"q": "Is it hard to learn?", "a": "Like anything valuable, it takes time. Start small and stay consistent."}
+            ],
+            relatedSkills: ["Communication", "Problem Solving", "Project Management"],
+            imageKeywords: [skill + " professional", skill + " modern", "technology abstract", "success professional"],
+            bestSite: {
+              "name": "Coursera / Udemy",
+              "url": "https://www.coursera.org",
+              "reason": "Offers industry-recognized certificates and high-quality practical courses."
+            }
+          };
+        }
+        
+        renderGuide(data);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('error-state').style.display = 'block';
+        document.getElementById('error-text').textContent = err.message || 'Failed to generate AI response.';
+      }
+    }
+
+    function imgUrl(kw, i) {
+      const parts = kw.split(' ');
+      const safeKw = encodeURIComponent(parts[0] + (parts[1] ? ',' + parts[1] : ''));
+      return `https://loremflickr.com/600/400/${safeKw}?lock=${i * 42 + 9}`;
+    }
+
+    function renderGuide(data) {
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('content-state').style.display = 'block';
+
+      document.getElementById('g-title').textContent = data.title || skillParam;
+      document.getElementById('g-desc').textContent = data.introduction || data.description || '';
+      
+      document.getElementById('g-diff').textContent = data.difficulty || 'Intermediate';
+      document.getElementById('g-time').textContent = data.learningTime || '3-6 months';
+      document.getElementById('g-salary').textContent = data.salaryInfo || 'Variable';
+      
+      document.getElementById('g-do').textContent = data.whatPeopleDo || 'Tasks vary by specific role and industry.';
+
+      // Steps
+      const stepsHtml = (data.steps || []).map((s, i) => `
+        <div class="timeline-item">
+          <div class="timeline-num">${i + 1}</div>
+          <div class="timeline-content">
+            <h4>${s.title}</h4>
+            <p>${s.detail}</p>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('g-steps').innerHTML = stepsHtml || '<p>Start with the basics, practice, and build a portfolio.</p>';
+
+      // Projects
+      const projHtml = (data.projectIdeas || []).map(p => `
+        <div class="tool-card">
+          <span class="project-badge">${p.difficulty || 'Project'}</span>
+          <div class="tool-name">${p.title}</div>
+          <div class="tool-desc">${p.desc}</div>
+        </div>
+      `).join('');
+      document.getElementById('g-projects').innerHTML = projHtml || '<p>No specific projects provided.</p>';
+
+      // Tools
+      const toolsHtml = (data.tools || []).map(t => `
+        <div class="tool-card">
+          <div class="tool-name"><i data-lucide="box"></i> ${t.name}</div>
+          <div class="tool-desc">${t.howToUse || t.desc}</div>
+        </div>
+      `).join('');
+      document.getElementById('g-tools').innerHTML = toolsHtml || '<p>Varies by industry.</p>';
+
+      // AI Platforms
+      const aiHtml = (data.aiPlatforms || []).map(t => `
+        <div class="tool-card" style="border-color: rgba(167, 139, 250, 0.3);">
+          <div class="tool-name" style="color: var(--sq-purple);"><i data-lucide="bot"></i> ${t.name}</div>
+          <div class="tool-desc">${t.useCase}</div>
+        </div>
+      `).join('');
+      document.getElementById('g-ai').innerHTML = aiHtml || '<p>No specific AI tools needed.</p>';
+
+      // Lists
+      document.getElementById('g-pros').innerHTML = (data.pros || []).map(i => `<li>${i}</li>`).join('');
+      document.getElementById('g-cons').innerHTML = (data.cons || []).map(i => `<li>${i}</li>`).join('');
+      document.getElementById('g-useful').innerHTML = (data.whereUseful || []).map(i => `<li>${i}</li>`).join('');
+      document.getElementById('g-opportunities').innerHTML = (data.opportunities || []).map(i => `<li>${i}</li>`).join('');
+      document.getElementById('g-tips').innerHTML = (data.beginnerTips || []).map(i => `<li>${i}</li>`).join('');
+      
+      // Related Skills
+      document.getElementById('g-related').innerHTML = (data.relatedSkills || []).map(s => `<span class="skill-tag">${s}</span>`).join('');
+
+      // FAQs
+      const faqsHtml = (data.faqs || []).map(f => `
+        <div class="faq-item">
+          <div class="faq-q"><i data-lucide="message-circle" style="color: var(--sq-teal);"></i> ${f.q}</div>
+          <div class="faq-a">${f.a}</div>
+        </div>
+      `).join('');
+      document.getElementById('g-faqs').innerHTML = faqsHtml || '<p>No FAQs available.</p>';
+
+      // Visuals
+      document.getElementById('g-images').innerHTML = (data.imageKeywords || []).slice(0, 4).map((kw, i) => `
+        <img src="${imgUrl(kw, i)}" alt="${kw}" onerror="this.style.display='none'" />
+      `).join('');
+
+      // Platform
+      if (data.bestSite) {
+        document.getElementById('g-plat-name').textContent = data.bestSite.name;
+        document.getElementById('g-plat-reason').textContent = data.bestSite.reason;
+        document.getElementById('g-plat-link').href = data.bestSite.url;
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
