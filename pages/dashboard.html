@@ -32,7 +32,7 @@
       </div>
       
       <nav class="sidebar-nav">
-        <a href="#" class="nav-item active" id="navJobs">
+        <a href="#" class="nav-item" id="navJobs">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
           Manage Jobs / Overview
         </a>
@@ -44,7 +44,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
           Saved Jobs
         </a>
-        <a href="#" class="nav-item" id="navProfile">
+        <a href="#" class="nav-item active" id="navProfile">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           My Profile
         </a>
@@ -93,7 +93,7 @@
 
       <div class="dashboard-content">
         <!-- JOBS VIEW -->
-        <div id="viewJobs">
+        <div id="viewJobs" style="display: none;">
           <!-- Stats -->
           <div class="stats-grid">
           <div class="stat-card">
@@ -186,7 +186,7 @@
         </div>
 
         <!-- PROFILE VIEW -->
-        <div id="viewProfile" style="display: none;">
+        <div id="viewProfile">
           <div style="max-width: 600px;">
             <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">My Profile</h2>
             <div class="card" style="padding: 2rem;">

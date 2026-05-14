@@ -286,6 +286,8 @@ export const Dashboard = {
         this.loadSavedJobs(user.id);
       } else if (activeNav === navApplications) {
         this.loadApplications(user.id);
+      } else if (activeNav === navJobs) {
+        if (window.loadJobsTable) window.loadJobsTable();
       }
 
       // Close sidebar on mobile
