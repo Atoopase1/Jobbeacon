@@ -2,11 +2,9 @@
  * imageAdmin.js
  * ─────────────────────────────────────────────────────────────────────────────
  * Admin-only Site Editor for JobBeacon.
- * When atoopase@gmail.com (or another admin) is signed in:
- *  • The admin can toggle "Admin Mode" using a discrete icon in the bottom right.
- *  • When active, hovering is disabled for normal visitors, but the admin can:
- *    - Double tap an image to edit its URL or upload a new one.
- *    - Double tap text to add/edit/repost its content.
+ * When atoopase@gmail.com is signed in and has activated Admin Mode from Dashboard:
+ *  • Explicit "Edit" buttons appear over images and text elements on hover.
+ *  • Clicking Edit opens modals to change image URLs, upload files, or edit HTML.
  *  • Changes are saved to Supabase tables `site_images` and `site_text`.
  *  • On every page load, saved overrides are applied automatically for ALL visitors.
  * ─────────────────────────────────────────────────────────────────────────────
@@ -21,7 +19,7 @@ const BUCKET        = 'site-images';
 
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-let adminModeActive = false;
+let adminModeActive = localStorage.getItem('jobbeacon_admin_mode') === 'true';
 
 /* ─── Utility ─────────────────────────────────────────────────────────────── */
 function pageKey() {
@@ -86,43 +84,39 @@ function injectAdminStyles() {
   const s = document.createElement('style');
   s.id = 'site-admin-styles';
   s.textContent = `
-    /* Discrete Toggle Button */
-    #admin-mode-toggle {
+    /* Floating Global Edit Button */
+    .global-admin-edit-btn {
       position: fixed;
-      bottom: 16px;
-      right: 16px;
-      width: 32px;
-      height: 32px;
-      background: transparent;
-      border: none;
-      opacity: 0.15;
+      z-index: 999998;
+      background: #F59E0B;
+      color: #080E17;
+      border: 2px solid #080E17;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 800;
+      border-radius: 8px;
       cursor: pointer;
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.3s, background 0.3s, transform 0.2s;
-      border-radius: 50%;
-      color: var(--text-primary, #000);
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      pointer-events: auto;
+      transition: background 0.2s, transform 0.1s;
     }
-    #admin-mode-toggle:hover { opacity: 0.8; }
-    #admin-mode-toggle.active {
-      opacity: 1;
-      background: var(--sq-teal, #0F766E);
-      color: #fff;
-      transform: scale(1.1);
-      box-shadow: 0 4px 12px rgba(15,118,110,0.4);
+    .global-admin-edit-btn:hover {
+      background: #D97706;
+      transform: scale(1.05);
     }
-    
+    .global-admin-edit-btn i { margin-right: 4px; }
+
     /* Crosshair hints ONLY when active */
     body.admin-active img:hover {
-      outline: 2px dashed #2DD4BF;
+      outline: 3px dashed #2DD4BF;
       outline-offset: 2px;
-      cursor: crosshair;
     }
     body.admin-active [data-text-id]:hover {
-      outline: 1px dashed #F59E0B;
-      cursor: crosshair;
+      outline: 2px dashed #F59E0B;
+      outline-offset: 2px;
+      background: rgba(245, 158, 11, 0.05);
     }
 
     /* Modal Styles */
@@ -311,53 +305,114 @@ async function saveText() {
   closeModal();
 }
 
+/* ─── Hover Edit Logic ────────────────────────────────────────────────────── */
+function setupHoverEditButtons() {
+  const editBtn = document.createElement('button');
+  editBtn.className = 'global-admin-edit-btn';
+  editBtn.innerHTML = '✏️ Edit Content';
+  document.body.appendChild(editBtn);
+
+  let currentTarget = null;
+  let hideTimeout = null;
+
+  document.body.addEventListener('mousemove', (e) => {
+    // Ignore if modal is open
+    if (document.getElementById('img-admin-modal-overlay')) {
+      editBtn.style.display = 'none';
+      return;
+    }
+
+    if (e.target === editBtn) return; // hovering the button itself
+
+    // Find closest editable element
+    const target = e.target.closest('img, [data-text-id]');
+    
+    // Ignore layout containers that might accidentally have IDs
+    if (target && (target.tagName === 'DIV' || target.tagName === 'BODY' || target.tagName === 'HTML')) {
+        const isCard = target.classList.contains('skill-card') || target.classList.contains('category-card') || target.classList.contains('job-card');
+        if (!isCard && !target.dataset.textId) {
+             // Let it fall through
+        }
+    }
+
+    if (target) {
+      clearTimeout(hideTimeout);
+      currentTarget = target;
+      
+      const rect = target.getBoundingClientRect();
+      
+      editBtn.style.display = 'flex';
+      
+      // Calculate position (top right corner of the element)
+      let top = rect.top + 5;
+      let left = rect.right - editBtn.offsetWidth - 5;
+      
+      // Ensure button stays on screen
+      if (top < 0) top = 5;
+      if (left < 0) left = 5;
+      if (left > window.innerWidth - editBtn.offsetWidth) left = window.innerWidth - editBtn.offsetWidth - 5;
+      
+      editBtn.style.top = top + 'px';
+      editBtn.style.left = left + 'px';
+      
+      // Change text based on type
+      if (target.tagName === 'IMG') {
+        editBtn.innerHTML = '🖼️ Edit Image';
+      } else {
+        editBtn.innerHTML = '✏️ Edit Text';
+      }
+    } else {
+      // Small delay before hiding to prevent flickering when moving to button
+      hideTimeout = setTimeout(() => {
+        editBtn.style.display = 'none';
+        currentTarget = null;
+      }, 100);
+    }
+  });
+
+  editBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!currentTarget) return;
+    
+    if (currentTarget.tagName === 'IMG') {
+      openImageModal(currentTarget);
+    } else {
+      openTextModal(currentTarget);
+    }
+    editBtn.style.display = 'none';
+  });
+  
+  // Also keep click fallback
+  document.body.addEventListener('click', (e) => {
+    if (e.target.closest('#img-admin-modal-overlay') || e.target === editBtn) return;
+    const target = e.target.closest('img, [data-text-id]');
+    if (target && e.altKey) {
+        // Alt+Click as a fallback to open editor
+        e.preventDefault();
+        e.stopPropagation();
+        if (target.tagName === 'IMG') openImageModal(target);
+        else openTextModal(target);
+    }
+  });
+}
+
 /* ─── Admin Initialization ────────────────────────────────────────────────── */
 async function init() {
   await applyOverrides();
+
+  // If local storage says we're not in admin mode, do nothing further.
+  if (!adminModeActive) return;
 
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return;
   const email = session.user.email?.toLowerCase();
   if (!ADMIN_EMAILS.includes(email)) return;
 
+  // Setup Admin UI
   injectAdminStyles();
-
-  const toggle = document.createElement('button');
-  toggle.id = 'admin-mode-toggle';
-  toggle.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>';
-  toggle.title = "Toggle Admin Edit Mode";
-  document.body.appendChild(toggle);
-
-  toggle.addEventListener('click', () => {
-    adminModeActive = !adminModeActive;
-    if (adminModeActive) {
-      toggle.classList.add('active');
-      document.body.classList.add('admin-active');
-      showToast('Admin Mode ON - Double tap elements to edit');
-    } else {
-      toggle.classList.remove('active');
-      document.body.classList.remove('admin-active');
-      showToast('Admin Mode OFF');
-    }
-  });
-
-  document.body.addEventListener('dblclick', (e) => {
-    if (!adminModeActive) return;
-
-    if (e.target.tagName === 'IMG') {
-      e.preventDefault();
-      e.stopPropagation();
-      openImageModal(e.target);
-      return;
-    }
-
-    const textEl = e.target.closest('[data-text-id]');
-    if (textEl && !textEl.closest('#img-admin-modal-overlay')) {
-      e.preventDefault();
-      e.stopPropagation();
-      openTextModal(textEl);
-    }
-  });
+  document.body.classList.add('admin-active');
+  setupHoverEditButtons();
 }
 
 if (document.readyState === 'loading') {

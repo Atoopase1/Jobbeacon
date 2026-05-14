@@ -226,6 +226,14 @@
                 <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
               </form>
             </div>
+              <!-- Admin Controls (Hidden by Default) -->
+              <div id="adminControlsBlock" style="display: none; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: #F59E0B;">👑 Admin Site Editor</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Enable this mode to point-and-click edit any text or image on the public website pages.</p>
+                <button type="button" id="toggleAdminModeBtn" class="btn btn-outline" style="border-color: #F59E0B; color: #F59E0B; width: 100%;">
+                  Activate Admin Edit Mode
+                </button>
+              </div>
           </div>
         </div> <!-- End viewProfile -->
 
@@ -378,6 +386,28 @@
 
           if (!isAdmin && user) {
             options.userId = user.id;
+          }
+
+          // Admin Edit Mode Toggle Setup
+          if (isAdmin) {
+            const adminBlock = document.getElementById('adminControlsBlock');
+            const adminBtn = document.getElementById('toggleAdminModeBtn');
+            if (adminBlock && adminBtn) {
+              adminBlock.style.display = 'block';
+              const isActive = localStorage.getItem('jobbeacon_admin_mode') === 'true';
+              adminBtn.textContent = isActive ? 'Deactivate Admin Edit Mode' : 'Activate Admin Edit Mode';
+              adminBtn.style.background = isActive ? '#F59E0B' : 'transparent';
+              adminBtn.style.color = isActive ? '#fff' : '#F59E0B';
+              
+              adminBtn.addEventListener('click', () => {
+                const nowActive = localStorage.getItem('jobbeacon_admin_mode') !== 'true';
+                localStorage.setItem('jobbeacon_admin_mode', nowActive ? 'true' : 'false');
+                adminBtn.textContent = nowActive ? 'Deactivate Admin Edit Mode' : 'Activate Admin Edit Mode';
+                adminBtn.style.background = nowActive ? '#F59E0B' : 'transparent';
+                adminBtn.style.color = nowActive ? '#fff' : '#F59E0B';
+                UI.showToast(nowActive ? 'Admin Edit Mode ACTIVATED. Navigate to the site to see Edit buttons.' : 'Admin Edit Mode DEACTIVATED.', 'success');
+              });
+            }
           }
 
           const { jobs, error } = await Jobs.getJobs(options);
