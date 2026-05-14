@@ -1,0 +1,16 @@
+$f = "pages\learn.html"
+$c = [System.IO.File]::ReadAllText($f, [System.Text.Encoding]::UTF8)
+$c = $c.Replace('var(--bg)', 'var(--sq-bg)')
+$c = $c.Replace('var(--surface)', 'var(--sq-surface)')
+$c = $c.Replace('var(--card)', 'var(--sq-card)')
+$c = $c.Replace('var(--border)', 'var(--sq-border)')
+$c = $c.Replace('var(--teal)', 'var(--sq-teal)')
+$c = $c.Replace('var(--orange)', 'var(--sq-orange)')
+$c = $c.Replace('var(--text)', 'var(--sq-text)')
+$c = $c.Replace('var(--muted)', 'var(--sq-muted)')
+$c = $c.Replace('var(--dim)', 'var(--sq-dim)')
+$c = $c.Replace('var(--red)', 'var(--sq-red)')
+$c = $c.Replace('var(--green)', 'var(--sq-green)')
+$c = $c.Replace('var(--purple)', 'var(--sq-purple)')
+[System.IO.File]::WriteAllText($f, $c, [System.Text.Encoding]::UTF8)
+Write-Host "Done"

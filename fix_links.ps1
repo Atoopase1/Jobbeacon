@@ -1,0 +1,16 @@
+$f = "pages\learn.html"
+$c = [System.IO.File]::ReadAllText($f, [System.Text.Encoding]::UTF8)
+$c = $c.Replace('href="/"', 'href="../index.html"')
+$c = $c.Replace('href="/pages/jobs.html"', 'href="jobs.html"')
+$c = $c.Replace('href="/pages/employers.html"', 'href="employers.html"')
+$c = $c.Replace('href="/pages/learn.html"', 'href="learn.html"')
+$c = $c.Replace('href="/pages/login.html"', 'href="login.html"')
+$c = $c.Replace('href="/pages/jobs.html?postType=hiring"', 'href="jobs.html?postType=hiring"')
+$c = $c.Replace('href="/pages/jobs.html?type=Remote"', 'href="jobs.html?type=Remote"')
+$c = $c.Replace('href="/pages/login.html?signup=true"', 'href="login.html?signup=true"')
+$c = $c.Replace('href="/pages/jobs.html?postType=seeking"', 'href="jobs.html?postType=seeking"')
+$c = $c.Replace('href="/manifest.json"', 'href="../manifest.json"')
+$c = $c.Replace('href="/assets/', 'href="../assets/')
+$c = $c.Replace('src="/assets/', 'src="../assets/')
+[System.IO.File]::WriteAllText($f, $c, [System.Text.Encoding]::UTF8)
+Write-Host "Done"

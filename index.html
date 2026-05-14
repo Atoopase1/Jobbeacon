@@ -34,6 +34,7 @@
         <a href="/" class="nav-link active">Home</a>
         <a href="/pages/jobs.html" class="nav-link">Find Jobs</a>
         <a href="/pages/employers.html" class="nav-link">Employers</a>
+        <a href="/pages/learn.html" class="nav-link" style="color: var(--primary); font-weight: 600;">✦ SkillQuest</a>
 
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -56,38 +57,38 @@
   </nav>
 
   <!-- Hero Section -->
-  <header class="hero">
+  <header class="hero" style="background: linear-gradient(135deg, var(--primary) 0%, #064E3B 100%); color: white;">
     <div class="container">
       <div class="hero-content">
-        <h1>Find A Remote <span style="color: var(--primary);">Job in Ghana</span></h1>
-        <p class="hero-subtitle">Discover remote, hybrid, and onsite opportunities from top startups and companies
+        <h1 style="color: white;">Find A Remote <span style="color: #A7F3D0;">Job in Ghana</span></h1>
+        <p class="hero-subtitle" style="color: rgba(255,255,255,0.9);">Discover remote, hybrid, and onsite opportunities from top startups and companies
           across Ghana.</p>
 
-        <form class="search-bar" action="/pages/jobs.html" method="GET">
+        <form class="search-bar" action="pages/jobs.html" method="GET" style="background: white;">
           <div class="search-input-group">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" name="search" placeholder="Job title, keywords, or company" aria-label="Search jobs">
+            <input type="text" name="search" placeholder="Job title, keywords, or company" aria-label="Search jobs" style="color: #0F172A;">
           </div>
-          <div class="search-divider"></div>
+          <div class="search-divider" style="background-color: #E2E8F0;"></div>
           <div class="search-input-group">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
-            <input type="text" name="location" placeholder="City or 'Remote'" aria-label="Location">
+            <input type="text" name="location" placeholder="City or 'Remote'" aria-label="Location" style="color: #0F172A;">
           </div>
           <button type="submit" class="btn btn-primary">Find Jobs</button>
         </form>
 
-        <div style="margin-top: 2rem; color: var(--text-secondary); font-size: 0.875rem;">
-          Popular searches: <a href="/pages/jobs.html?search=Developer" style="color: var(--primary);">Developer</a>, <a
-            href="/pages/jobs.html?search=Marketing" style="color: var(--primary);">Marketing</a>, <a
-            href="/pages/jobs.html?location=Remote" style="color: var(--primary);">Remote Jobs</a>
+        <div style="margin-top: 2rem; color: rgba(255,255,255,0.8); font-size: 0.875rem;">
+          Popular searches: <a href="pages/jobs.html?search=Developer" style="color: #A7F3D0; text-decoration: underline;">Developer</a>, <a
+            href="pages/jobs.html?search=Marketing" style="color: #A7F3D0; text-decoration: underline;">Marketing</a>, <a
+            href="pages/jobs.html?location=Remote" style="color: #A7F3D0; text-decoration: underline;">Remote Jobs</a>
         </div>
       </div>
     </div>

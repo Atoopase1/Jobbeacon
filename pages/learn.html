@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillQuest — Learn Any Skill | JobBeacon</title>
+  <meta name="description"
+    content="Discover, learn and master high-income skills with AI-powered step-by-step guides. Explore trending skills in tech, business, repair and creative fields." />
+  <meta name="theme-color" content="#0F766E" />
+  <link rel="manifest" href="../manifest.json" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ── SkillQuest theme tokens — auto-adapt to JobBeacon light/dark mode ── */
+    :root {
+      --sq-bg: #f0faf9;
+      --sq-surface: #ffffff;
+      --sq-card: #f8fafc;
+      --sq-border: #d1e9e7;
+      --sq-teal: #0F766E;
+      --sq-orange: #F59E0B;
+      --sq-text: #0F172A;
+      --sq-muted: #475569;
+      --sq-dim: #94A3B8;
+      --sq-red: #EF4444;
+      --sq-green: #10B981;
+      --sq-purple: #7C3AED;
+      --sq-overlay: rgba(255, 255, 255, 0.92);
+    }
+
+    [data-theme="dark"] {
+      --sq-bg: #080E17;
+      --sq-surface: #0D1620;
+      --sq-card: #111F2E;
+      --sq-border: #1A3045;
+      --sq-teal: #2DD4BF;
+      --sq-orange: #F59E0B;
+      --sq-text: #F1F5F9;
+      --sq-muted: #7A92A8;
+      --sq-dim: #445A6F;
+      --sq-red: #F87171;
+      --sq-green: #4ADE80;
+      --sq-purple: #A78BFA;
+      --sq-overlay: rgba(8, 14, 23, 0.92);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--sq-bg);
+      color: var(--sq-text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(ellipse 700px 400px at 10% 20%, rgba(15, 118, 110, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 90% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
+      background-size: 100% 100%, 100% 100%;
+    }
+
+    [data-theme="dark"] body::before {
+      background-image:
+        radial-gradient(ellipse 700px 400px at 10% 20%, rgba(45, 212, 191, 0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 90% 80%, rgba(245, 158, 11, 0.04) 0%, transparent 70%),
+        radial-gradient(rgba(45, 212, 191, 0.035) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 26px 26px;
+    }
+
+    #app {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    #main-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 56px 24px 32px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      border-radius: 30px;
+      padding: 6px 18px;
+      font-size: 0.7rem;
+      color: var(--sq-orange);
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-family: ‘DM Sans’, sans-serif;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: ‘Syne’, sans-serif;
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      font-weight: 800;
+      line-height: 1.06;
+      letter-spacing: -2px;
+      margin-bottom: 14px;
+    }
+
+    h1 .white {
+      color: var(--sq-text);
+    }
+
+    h1 .teal {
+      color: var(--sq-teal);
+    }
+
+    .hero p {
+      color: var(--sq-muted);
+      font-size: 0.95rem;
+      max-width: 420px;
+      margin: 0 auto 38px;
+      line-height: 1.7;
+    }
+
+    /* ── SEARCH CARD ── */
+    .search-card {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 20px;
+      padding: 20px 20px 18px;
+      text-align: left;
+      box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      border-radius: 13px;
+      padding: 13px 15px;
+      margin-bottom: 11px;
+      transition: border-color 0.25s;
+    }
+
+    .input-wrap.focused {
+      border-color: var(--sq-teal);
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.08);
+    }
+
+    .input-wrap .ico {
+      color: var(--sq-dim);
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    #skill-input {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--sq-text);
+      font-family: ‘DM Sans’, sans-serif;
+      font-size: 0.94rem;
+    }
+
+    #search-btn {
+      width: 100%;
+      background: var(--sq-teal);
+      border: none;
+      border-radius: 13px;
+      color: #080E17;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 13px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      margin-bottom: 14px;
+      transition: opacity 0.2s, transform 0.15s;
+      font-family: ‘DM Sans’, sans-serif;
+    }
+
+    #search-btn:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    .popular {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .popular-label {
+      color: var(--sq-dim);
+      font-size: 0.72rem;
+      margin-right: 2px;
+      flex-shrink: 0;
+    }
+
+    .chip-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--sq-teal);
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: ‘DM Sans’, sans-serif;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+
+    .chip-btn:hover {
+      color: var(--sq-orange);
+    }
+
+    /* ── SECTIONS ── */
+    .section {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto 36px;
+      padding: 0 24px;
+    }
+
+    /* ── LOADING / ERROR ── */
+    .loading-box {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 16px;
+      padding: 26px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--sq-border);
+      border-top-color: var(--sq-teal);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-title {
+      color: var(--sq-text);
+      font-weight: 600;
+      font-size: 0.93rem;
+    }
+
+    .loading-sub {
+      color: var(--sq-muted);
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
+
+    .loading-sub span {
+      color: var(--sq-teal);
+    }
+
+    .error-box {
+      background: var(--sq-surface);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+      border-radius: 16px;
+      padding: 26px;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .error-title {
+      color: var(--sq-text);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .error-msg {
+      color: var(--sq-muted);
+      font-size: 0.74rem;
+      font-family: monospace;
+      word-break: break-all;
+      margin-bottom: 16px;
+    }
+
+    .retry-btn {
+      background: var(--sq-teal);
+      border: none;
+      border-radius: 10px;
+      color: #080E17;
+      font-weight: 700;
+      padding: 10px 24px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-family: ‘DM Sans’, sans-serif;
+    }
+
+    /* ── RESULT ── */
+    #result-section {
+      margin-bottom: 60px;
+    }
+
+    .result-accent {
+      width: 38px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--sq-orange), var(--sq-teal));
+      margin-bottom: 6px;
+    }
+
+    .result-title {
+      font-family: ‘Syne’, sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      letter-spacing: -0.8px;
+      margin-bottom: 3px;
+    }
+
+    .result-sub {
+      color: var(--sq-muted);
+      font-size: 0.82rem;
+      margin-bottom: 18px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .tag {
+      border-radius: 20px;
+      padding: 4px 13px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .tag-teal {
+      background: rgba(45, 212, 191, 0.1);
+      border: 1px solid rgba(45, 212, 191, 0.25);
+      color: var(--sq-teal);
+    }
+
+    .tag-orange {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--sq-orange);
+    }
+
+    .card {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 18px;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s, transform 0.45s;
+    }
+
+    .card.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-label-bar {
+      width: 3px;
+      height: 18px;
+      border-radius: 2px;
+      background: var(--sq-teal);
+      flex-shrink: 0;
+    }
+
+    .section-label-text {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--sq-teal);
+      font-weight: 700;
+    }
+
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(45, 212, 191, 0.1);
+    }
+
+    .what-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .what-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--sq-teal), #0D9488);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .what-desc {
+      color: var(--sq-muted);
+      line-height: 1.75;
+      font-size: 0.91rem;
+      flex: 1;
+      padding-top: 3px;
+    }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      border-radius: 13px;
+      padding: 13px 16px;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.78rem;
+      color: #080E17;
+    }
+
+    .step-num.even {
+      background: linear-gradient(135deg, var(--sq-teal), #0D9488);
+    }
+
+    .step-num.odd {
+      background: linear-gradient(135deg, var(--sq-orange), #D97706);
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--sq-text);
+      margin-bottom: 2px;
+    }
+
+    .step-detail {
+      font-size: 0.79rem;
+      color: var(--sq-muted);
+      line-height: 1.55;
+    }
+
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .img-wrap {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--sq-card);
+    }
+
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+    }
+
+    .img-wrap:hover img {
+      transform: scale(1.08);
+    }
+
+    .img-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(8, 14, 23, 0.9));
+      padding: 10px 10px 8px;
+      font-size: 0.62rem;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .cta-card {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.07), rgba(245, 158, 11, 0.04));
+      border: 1px solid rgba(45, 212, 191, 0.18);
+      border-radius: 18px;
+      padding: 28px 22px;
+      text-align: center;
+      margin-bottom: 14px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s, transform 0.45s;
+    }
+
+    .cta-card.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-rocket {
+      font-size: 1.9rem;
+      margin-bottom: 10px;
+    }
+
+    .cta-title {
+      font-family: ‘Syne’, sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .cta-desc {
+      color: var(--sq-muted);
+      font-size: 0.87rem;
+      line-height: 1.65;
+      max-width: 380px;
+      margin: 0 auto 20px;
+    }
+
+    .cta-desc strong {
+      color: var(--sq-text);
+    }
+
+    .cta-desc .sk-teal {
+      color: var(--sq-teal);
+    }
+
+    .cta-desc .sk-small {
+      font-size: 0.79rem;
+      opacity: 0.7;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-link {
+      background: var(--sq-teal);
+      border-radius: 12px;
+      color: #080E17;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 13px 28px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .reset-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--sq-border);
+      border-radius: 12px;
+      color: var(--sq-muted);
+      font-family: ‘DM Sans’, sans-serif;
+      font-size: 0.88rem;
+      padding: 13px 20px;
+      cursor: pointer;
+    }
+
+    /* ── ASK AI BUTTON ── */
+    .ask-ai-btn {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), rgba(45, 212, 191, 0.03));
+      border: 1px solid rgba(45, 212, 191, 0.28);
+      border-radius: 16px;
+      color: var(--sq-teal);
+      font-family: ‘DM Sans’, sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.45s, transform 0.45s, background 0.2s;
+      text-decoration: none;
+    }
+
+    .ask-ai-btn.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ask-ai-btn:hover {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(45, 212, 191, 0.08));
+    }
+
+    /* ══════════════════════════════════════
+TRENDING SKILLS SECTION
+══════════════════════════════════════ */
+    #trending-section {
+      max-width: 1200px;
+      margin: 0 auto 70px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .trending-header {
+      margin-bottom: 28px;
+    }
+
+    .trending-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .trending-bar {
+      width: 3px;
+      height: 22px;
+      background: linear-gradient(180deg, var(--sq-orange), var(--sq-teal));
+      border-radius: 2px;
+    }
+
+    .trending-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--sq-orange);
+      font-weight: 700;
+    }
+
+    .trending-title {
+      font-family: ‘Syne’, sans-serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 8px;
+    }
+
+    .trending-sub {
+      color: var(--sq-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Category Cards Grid */
+    .cat-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .cat-card {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .cat-card:hover {
+      border-color: rgba(45, 212, 191, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .cat-card.open {
+      grid-column: 1 / -1;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .cat-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 24px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .cat-header:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .cat-header-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .cat-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cat-icon-wrap::before {
+      content: ‘’;
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+    }
+
+    .cat-icon-wrap.tech {
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.2);
+    }
+
+    .cat-icon-wrap.biz {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .cat-icon-wrap.repair {
+      background: rgba(167, 139, 250, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+    }
+
+    .cat-icon-wrap.creative {
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+    }
+
+    .cat-info {
+      flex: 1;
+    }
+
+    .cat-name {
+      font-family: ‘Syne’, sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+
+    .cat-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cat-count {
+      font-size: 0.72rem;
+      color: var(--sq-muted);
+    }
+
+    .cat-dot {
+      width: 3px;
+      height: 3px;
+      background: var(--sq-dim);
+      border-radius: 50%;
+    }
+
+    .cat-range {
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .cat-range.tech {
+      color: var(--sq-teal);
+    }
+
+    .cat-range.biz {
+      color: var(--sq-orange);
+    }
+
+    .cat-range.repair {
+      color: var(--sq-purple);
+    }
+
+    .cat-range.creative {
+      color: var(--sq-red);
+    }
+
+    .cat-badges {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .cat-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cat-badge.hot {
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.25);
+      color: var(--sq-red);
+    }
+
+    .cat-badge.new {
+      background: rgba(74, 222, 128, 0.1);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: var(--sq-green);
+    }
+
+    .cat-chevron {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      color: var(--sq-dim);
+      font-size: 0.75rem;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, color 0.2s;
+    }
+
+    .cat-card.open .cat-chevron {
+      position: absolute;
+      top: 0;
+      right: 20px;
+      transform: rotate(180deg);
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--sq-teal);
+      border-color: rgba(45, 212, 191, 0.25);
+    }
+
+    /* Big Heading Open State */
+    .cat-card.open .cat-header {
+      align-items: center;
+      text-align: center;
+      padding: 30px 10px 40px;
+      background: transparent;
+    }
+
+    .cat-card.open .cat-header-left {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cat-card.open .cat-icon-wrap {
+      width: 80px;
+      height: 80px;
+      font-size: 2.5rem;
+      border-radius: 24px;
+      margin-bottom: 10px;
+    }
+
+    .cat-card.open .cat-name {
+      font-size: 2.4rem;
+      letter-spacing: -1px;
+    }
+
+    .cat-card.open .cat-meta,
+    .cat-card.open .cat-badges {
+      display: none;
+    }
+
+    /* Skills Grid (children) */
+    .skills-drawer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .cat-card.open .skills-drawer {
+      max-height: 9999px;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 0 16px 20px;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: var(--sq-border);
+      margin: 0 22px 18px;
+    }
+
+    .cat-card.open .divider-line {
+      display: none;
+    }
+
+    /* Skill Card */
+    .sk-card {
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .sk-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(45, 212, 191, 0.3);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sk-img-wrap {
+      position: relative;
+      height: 100px;
+      overflow: hidden;
+      background: #0D1620;
+    }
+
+    .sk-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+      filter: brightness(0.85);
+    }
+
+    .sk-card:hover .sk-img-wrap img {
+      transform: scale(1.08);
+      filter: brightness(1);
+    }
+
+    .sk-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 40%, rgba(8, 14, 23, 0.85));
+    }
+
+    .sk-icon-badge {
+      position: absolute;
+      top: 9px;
+      left: 9px;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(8, 14, 23, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sk-pop-badge {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(8, 14, 23, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sk-pop-badge.hot {
+      color: var(--sq-red);
+      border-color: rgba(248, 113, 113, 0.3);
+    }
+
+    .sk-pop-badge.rising {
+      color: var(--sq-orange);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .sk-pop-badge.steady {
+      color: var(--sq-teal);
+      border-color: rgba(45, 212, 191, 0.3);
+    }
+
+    .sk-pop-badge.new {
+      color: var(--sq-green);
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .sk-body {
+      padding: 12px 13px 14px;
+    }
+
+    .sk-name {
+      font-family: ‘Syne’, sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      margin-bottom: 5px;
+      line-height: 1.2;
+    }
+
+    .sk-desc {
+      font-size: 0.73rem;
+      color: var(--sq-muted);
+      line-height: 1.5;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .sk-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sk-stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .sk-stat-label {
+      font-size: 0.63rem;
+      color: var(--sq-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .sk-stat-val {
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .sk-stat-val.income {
+      color: var(--sq-green);
+    }
+
+    .sk-stat-val.hard {
+      color: var(--sq-red);
+    }
+
+    .sk-stat-val.medium {
+      color: var(--sq-orange);
+    }
+
+    .sk-stat-val.easy {
+      color: var(--sq-green);
+    }
+
+    .sk-stat-val.duration {
+      color: var(--sq-teal);
+    }
+
+    .sk-bottom {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--sq-border);
+    }
+
+    .sk-learn-btn {
+      width: 100%;
+      padding: 8px;
+      border-radius: 9px;
+      border: none;
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--sq-teal);
+      font-family: ‘DM Sans’, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .sk-learn-btn:hover {
+      background: rgba(45, 212, 191, 0.2);
+    }
+
+    /* difficulty stars */
+    .diff-stars {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .diff-stars span {
+      font-size: 0.65rem;
+    }
+
+    /* ── FEATURE SECTION ── */
+    #feature-section {
+      max-width: 1200px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .feat-accent {
+      width: 38px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--sq-orange), var(--sq-teal));
+      margin-bottom: 6px;
+    }
+
+    .feat-title {
+      font-family: ‘Syne’, sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 3px;
+    }
+
+    .feat-sub {
+      color: var(--sq-muted);
+      font-size: 0.83rem;
+      margin-bottom: 22px;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .feat-card {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .feat-img {
+      height: 110px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .feat-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .feat-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 30%, rgba(8, 14, 23, 0.85));
+    }
+
+    .feat-body {
+      padding: 15px 17px;
+    }
+
+    .feat-icon {
+      font-size: 1.2rem;
+      margin-bottom: 7px;
+    }
+
+    .feat-name {
+      font-family: ‘Syne’, sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .feat-desc {
+      font-size: 0.77rem;
+      color: var(--sq-muted);
+      line-height: 1.55;
+    }
+
+    .explore-wrap {
+      text-align: center;
+    }
+
+    .explore-btn {
+      background: none;
+      border: 1px solid var(--sq-border);
+      border-radius: 30px;
+      color: var(--sq-text);
+      font-family: ‘DM Sans’, sans-serif;
+      font-weight: 600;
+      padding: 12px 32px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .explore-btn:hover {
+      border-color: var(--sq-teal);
+      color: var(--sq-teal);
+    }
+
+    /* ── FAB ── */
+    #chat-fab {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    #fab-bubble {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 14px 14px 4px 14px;
+      padding: 12px 30px 12px 14px;
+      max-width: 220px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: var(--sq-text);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      position: relative;
+    }
+
+    #fab-bubble strong {
+      color: var(--sq-teal);
+    }
+
+    #fab-bubble-close {
+      position: absolute;
+      top: 7px;
+      right: 9px;
+      background: none;
+      border: none;
+      color: var(--sq-dim);
+      cursor: pointer;
+      font-size: 0.76rem;
+    }
+
+    #fab-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--sq-teal), #0D9488);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(45, 212, 191, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      animation: float 3s ease-in-out infinite;
+      transition: transform 0.2s;
+      text-decoration: none;
+    }
+
+    #fab-btn:hover {
+      transform: scale(1.08);
+      animation: none;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 680px) {
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        letter-spacing: -1px;
+      }
+
+      .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .search-card {
+        order: -1;
+        margin-bottom: 24px;
+        padding: 16px 16px 14px;
+      }
+
+      .input-wrap {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+      }
+
+      #search-btn {
+        padding: 11px;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+          </path>
+          <polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline>
+          <polyline points="7.5 19.79 7.5 14.6 3 12"></polyline>
+          <polyline points="21 12 16.5 14.6 16.5 19.79"></polyline>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        Job<span>Beacon</span>
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="jobs.html" class="nav-link">Find Jobs</a>
+        <a href="employers.html" class="nav-link">Employers</a>
+        <a href="learn.html" class="nav-link active" style="color: var(--primary); font-weight: 600;">✦ SkillQuest</a>
+
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+        <a href="login.html" class="btn btn-primary" id="accountBtn"
+          style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Sign In</a>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div id="app" style="margin-top: 80px;">
+
+    <!-- ── MAIN ── -->
+
+    <div id="main-col">
+
+      <!-- HERO -->
+
+      <section class="hero">
+        <div class="badge">★ Discover · Learn · Master Any Skill</div>
+        <h1><span class="white">Learn Any Skill Remotely </span><span class="teal">in JobBeacon</span></h1>
+        <div class="search-card">
+          <div class="input-wrap" id="input-wrap">
+            <span class="ico">🔍</span>
+            <input id="skill-input" type="text" placeholder="Skill title, keywords, or category…" />
+          </div>
+          <button id="search-btn">Find Skill Guide</button>
+          <div class="popular">
+            <span class="popular-label">Popular:</span>
+            <!-- chips injected by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- LOADING -->
+
+      <div class="section hidden" id="loading-section">
+        <div class="loading-box">
+          <div class="spinner"></div>
+          <div>
+            <div class="loading-title">Preparing your skill guide…</div>
+            <div class="loading-sub">AI is researching <span id="loading-query"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ERROR -->
+
+      <div class="section hidden" id="error-section">
+        <div class="error-box">
+          <div class="error-icon">⚠️</div>
+          <div class="error-title">Couldn't load skill data</div>
+          <div class="error-msg" id="error-msg"></div>
+          <button class="retry-btn" id="retry-btn">Try Again</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+
+      <div class="section hidden" id="result-section">
+        <div class="result-accent"></div>
+        <h2 class="result-title" id="result-title"></h2>
+        <p class="result-sub">Your complete learning guide — tailored for you.</p>
+        <div class="tags" id="result-tags"></div>
+        <div class="card" id="card-0">
+          <div class="section-label">
+            <div class="section-label-bar"></div><span class="section-label-text">What is it?</span>
+            <div class="section-label-line"></div>
+          </div>
+          <div class="what-row">
+            <div class="what-icon" id="result-icon"></div>
+            <p class="what-desc" id="result-desc"></p>
+          </div>
+        </div>
+        <div class="card" id="card-1">
+          <div class="section-label">
+            <div class="section-label-bar"></div><span class="section-label-text">Learning Path</span>
+            <div class="section-label-line"></div>
+          </div>
+          <div class="steps-list" id="result-steps"></div>
+        </div>
+        <div class="card" id="card-2">
+          <div class="section-label">
+            <div class="section-label-bar"></div><span class="section-label-text">Visual Preview</span>
+            <div class="section-label-line"></div>
+          </div>
+          <div class="images-grid" id="result-images"></div>
+        </div>
+        <a class="ask-ai-btn" id="ask-ai-btn" href="https://tekbot.netlify.app" target="_blank"
+          rel="noopener noreferrer">🤖 Chat with TekBot AI Tutor — ask anything about this skill</a>
+        <div class="cta-card" id="card-3">
+          <div class="cta-rocket">🚀</div>
+          <h3 class="cta-title">Ready to go deeper?</h3>
+          <p class="cta-desc" id="cta-desc"></p>
+          <div class="cta-btns">
+            <a class="cta-link" id="cta-link" href="#" target="_blank" rel="noopener noreferrer">Yes, take me there
+              →</a>
+            <button class="reset-btn" id="reset-btn">Search another skill</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TRENDING SKILLS ══ -->
+
+      <div id="trending-section">
+        <div class="trending-header">
+          <div class="trending-eyebrow">
+            <div class="trending-bar"></div>
+            <span class="trending-label">High-Income Skills 2025</span>
+          </div>
+          <h2 class="trending-title">Trending Skills</h2>
+          <p class="trending-sub">Tap a category to explore all skills inside it.</p>
+        </div>
+        <div class="cat-list" id="cat-list"><!-- injected by JS --></div>
+      </div>
+
+      <!-- FEATURES -->
+
+      <div id="feature-section">
+        <div class="feat-accent"></div>
+        <h2 class="feat-title">Why SkillQuest?</h2>
+        <p class="feat-sub">Everything you need to go from zero to hired.</p>
+        <div class="feat-grid" id="feat-grid"></div>
+        <div class="explore-wrap"><button class="explore-btn" id="explore-btn">Explore All Skills ↓</button></div>
+      </div>
+
+    </div><!-- /main-col -->
+
+    <!-- FAB -->
+
+    <div id="chat-fab">
+      <div id="fab-bubble">
+        <button id="fab-bubble-close">✕</button>
+        🤖 Chat with <strong>TekBot AI</strong> tutor!
+      </div>
+      <a id="fab-btn" href="https://tekbot.netlify.app" target="_blank" rel="noopener noreferrer"
+        title="Open TekBot AI Tutor">🤖</a>
+    </div>
+
+  </div><!-- /app -->
+
+  <script>
+    /* ═══════════════════════════════════════════════════
+       DATA
+    ═══════════════════════════════════════════════════ */
+    const CATEGORIES = [
+      {
+        id: 'tech',
+        icon: '💻',
+        name: 'Tech & Software',
+        colorClass: 'tech',
+        range: '$800–$8,000/mo',
+        badge: 'HOT',
+        badgeType: 'hot',
+        skills: [
+          { name: 'Web Development', icon: '🌐', img: 'web development coding', desc: 'Build websites & full-stack apps used by millions.', income: '$1,500–$6,000', diff: 'Medium', dur: '4–8 mo', pop: 'hot' },
+          { name: 'Frontend Development', icon: '🎨', img: 'frontend css javascript', desc: 'Craft beautiful, responsive UIs with HTML/CSS/JS.', income: '$1,200–$5,000', diff: 'Medium', dur: '3–6 mo', pop: 'hot' },
+          { name: 'Backend Development', icon: '⚙️', img: 'server backend api', desc: 'Power apps with APIs, databases, and server logic.', income: '$1,500–$7,000', diff: 'Hard', dur: '5–9 mo', pop: 'rising' },
+          { name: 'Full Stack Development', icon: '🔗', img: 'fullstack developer laptop', desc: 'Own the entire product — front to back.', income: '$2,000–$8,000', diff: 'Hard', dur: '8–12 mo', pop: 'hot' },
+          { name: 'Mobile App Development', icon: '📱', img: 'mobile app development', desc: 'Build iOS & Android apps that reach billions.', income: '$1,500–$7,000', diff: 'Hard', dur: '6–10 mo', pop: 'hot' },
+          { name: 'Game Development', icon: '🎮', img: 'game developer unity', desc: 'Create games for PC, mobile and console.', income: '$1,000–$5,000', diff: 'Hard', dur: '8–14 mo', pop: 'steady' },
+          { name: 'AI Engineering', icon: '🤖', img: 'artificial intelligence AI', desc: 'Build and deploy real-world AI systems & LLMs.', income: '$3,000–$12,000', diff: 'Hard', dur: '9–14 mo', pop: 'hot' },
+          { name: 'Machine Learning', icon: '🧠', img: 'machine learning data', desc: 'Train models that learn from data automatically.', income: '$2,500–$10,000', diff: 'Hard', dur: '8–14 mo', pop: 'hot' },
+          { name: 'Deep Learning', icon: '🔬', img: 'neural network deep learning', desc: 'Architect neural networks for vision, speech, and NLP.', income: '$3,000–$12,000', diff: 'Hard', dur: '10–16 mo', pop: 'rising' },
+          { name: 'Data Science', icon: '📊', img: 'data science analytics', desc: 'Extract insights from massive datasets to drive decisions.', income: '$2,000–$8,000', diff: 'Hard', dur: '7–12 mo', pop: 'hot' },
+          { name: 'Cybersecurity', icon: '🔒', img: 'cybersecurity hacking', desc: 'Protect systems from hackers and data breaches.', income: '$2,000–$9,000', diff: 'Hard', dur: '8–14 mo', pop: 'rising' },
+          { name: 'Cloud Computing', icon: '☁️', img: 'cloud computing AWS', desc: 'Deploy scalable infrastructure on AWS, Azure, GCP.', income: '$1,800–$8,000', diff: 'Medium', dur: '5–9 mo', pop: 'hot' },
+          { name: 'DevOps', icon: '♾️', img: 'devops CI/CD pipeline', desc: 'Automate deployments and keep systems always running.', income: '$2,000–$9,000', diff: 'Hard', dur: '6–10 mo', pop: 'steady' },
+          { name: 'UI/UX Design', icon: '✏️', img: 'UI UX design wireframe', desc: 'Design products people love to use.', income: '$1,200–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'hot' },
+          { name: 'Graphic Design', icon: '🖼️', img: 'graphic design creative', desc: 'Create visual content for brands, print, and digital.', income: '$600–$3,500', diff: 'Easy', dur: '2–5 mo', pop: 'steady' },
+          { name: 'Motion Graphics', icon: '🎬', img: 'motion graphics animation', desc: 'Animate logos, titles, and cinematic visual effects.', income: '$800–$4,000', diff: 'Medium', dur: '4–7 mo', pop: 'rising' },
+          { name: 'Video Editing', icon: '🎞️', img: 'video editing timeline', desc: 'Tell stories through professional cuts, color, and sound.', income: '$600–$3,500', diff: 'Easy', dur: '1–4 mo', pop: 'hot' },
+          { name: '3D Modeling', icon: '🧊', img: '3D modeling blender', desc: 'Create assets for games, film, architecture, and ads.', income: '$800–$4,500', diff: 'Medium', dur: '5–9 mo', pop: 'steady' },
+          { name: 'Blockchain Development', icon: '⛓️', img: 'blockchain crypto smart contract', desc: 'Build decentralized apps and smart contracts on-chain.', income: '$2,000–$9,000', diff: 'Hard', dur: '8–13 mo', pop: 'rising' },
+          { name: 'Python Programming', icon: '🐍', img: 'python programming code', desc: 'Master the most versatile language in tech.', income: '$1,000–$6,000', diff: 'Easy', dur: '2–5 mo', pop: 'hot' },
+          { name: 'React Development', icon: '⚛️', img: 'React JS development', desc: 'Build fast, component-driven web UIs with React.', income: '$1,500–$6,000', diff: 'Medium', dur: '3–6 mo', pop: 'hot' },
+          { name: 'Database Engineering', icon: '🗄️', img: 'database SQL engineering', desc: 'Design and optimize databases powering the web.', income: '$1,500–$6,500', diff: 'Medium', dur: '4–7 mo', pop: 'steady' },
+          { name: 'Ethical Hacking', icon: '🕵️', img: 'ethical hacking penetration test', desc: 'Find vulnerabilities before the bad guys do.', income: '$1,500–$7,000', diff: 'Hard', dur: '7–12 mo', pop: 'rising' },
+          { name: 'PCB Design', icon: '🔌', img: 'PCB circuit board design', desc: 'Design printed circuit boards for hardware products.', income: '$800–$4,000', diff: 'Hard', dur: '6–10 mo', pop: 'new' },
+        ]
+      },
+      {
+        id: 'biz',
+        icon: '💼',
+        name: 'Digital Business',
+        colorClass: 'biz',
+        range: '$500–$5,000/mo',
+        badge: 'NEW',
+        badgeType: 'new',
+        skills: [
+          { name: 'Digital Marketing', icon: '📣', img: 'digital marketing social media', desc: 'Run campaigns across Google, Meta, TikTok, and more.', income: '$800–$4,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Social Media Marketing', icon: '📲', img: 'social media Instagram marketing', desc: 'Grow brands organically and via paid social.', income: '$600–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'SEO Optimization', icon: '🔎', img: 'SEO search engine optimization', desc: 'Rank websites #1 on Google and drive organic traffic.', income: '$700–$3,500', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Copywriting', icon: '✍️', img: 'copywriting writing laptop', desc: 'Write words that sell products and build brands.', income: '$700–$4,000', diff: 'Easy', dur: '1–3 mo', pop: 'rising' },
+          { name: 'Email Marketing', icon: '📧', img: 'email marketing campaign', desc: 'Design automated email funnels that convert.', income: '$600–$3,000', diff: 'Easy', dur: '1–2 mo', pop: 'steady' },
+          { name: 'Affiliate Marketing', icon: '🤝', img: 'affiliate marketing online', desc: 'Earn commissions promoting other people\'s products.', income: '$500–$5,000', diff: 'Easy', dur: '1–3 mo', pop: 'rising' },
+          { name: 'E-commerce', icon: '🛒', img: 'ecommerce online store shopify', desc: 'Build and scale online stores to generate passive income.', income: '$1,000–$8,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Dropshipping', icon: '📦', img: 'dropshipping logistics shipping', desc: 'Sell products online without holding any inventory.', income: '$500–$5,000', diff: 'Easy', dur: '1–3 mo', pop: 'steady' },
+          { name: 'Branding', icon: '🏷️', img: 'branding logo identity design', desc: 'Build memorable brand identities that command premium prices.', income: '$800–$4,000', diff: 'Medium', dur: '2–4 mo', pop: 'steady' },
+          { name: 'Sales Funnels', icon: '🔽', img: 'sales funnel conversion marketing', desc: 'Engineer automated pipelines that turn visitors into buyers.', income: '$1,000–$5,000', diff: 'Medium', dur: '2–4 mo', pop: 'rising' },
+          { name: 'Content Creation', icon: '🎥', img: 'content creation YouTube filming', desc: 'Build audiences on YouTube, TikTok, Instagram, and beyond.', income: '$500–$10,000', diff: 'Easy', dur: '1–6 mo', pop: 'hot' },
+          { name: 'Product Management', icon: '🗂️', img: 'product management roadmap', desc: 'Lead cross-functional teams from idea to shipped product.', income: '$2,000–$8,000', diff: 'Hard', dur: '6–12 mo', pop: 'rising' },
+          { name: 'Business Analytics', icon: '📈', img: 'business analytics dashboard', desc: 'Turn raw data into strategic decisions using BI tools.', income: '$1,500–$6,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
+          { name: 'Influencer Marketing', icon: '⭐', img: 'influencer marketing brand deal', desc: 'Connect brands with creators for viral campaigns.', income: '$600–$3,500', diff: 'Easy', dur: '1–2 mo', pop: 'steady' },
+          { name: 'Startup Building', icon: '🚀', img: 'startup entrepreneur office', desc: 'Turn your idea into a funded, scaling business.', income: 'Unlimited', diff: 'Hard', dur: '12+ mo', pop: 'rising' },
+        ]
+      },
+      {
+        id: 'repair',
+        icon: '🔧',
+        name: 'Technical & Repair',
+        colorClass: 'repair',
+        range: '$400–$3,000/mo',
+        badge: 'HOT',
+        badgeType: 'hot',
+        skills: [
+          { name: 'Phone Repair', icon: '📱', img: 'phone repair technician', desc: 'Fix cracked screens, batteries, and motherboards.', income: '$600–$2,500', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Laptop Repair', icon: '💻', img: 'laptop repair technician', desc: 'Diagnose and fix hardware and OS issues on any laptop.', income: '$500–$2,500', diff: 'Medium', dur: '2–4 mo', pop: 'hot' },
+          { name: 'TV Repair', icon: '📺', img: 'TV repair electronics', desc: 'Service LED/LCD/OLED TVs for homes and businesses.', income: '$400–$2,000', diff: 'Medium', dur: '2–4 mo', pop: 'steady' },
+          { name: 'CCTV Installation', icon: '📹', img: 'CCTV camera installation security', desc: 'Install and configure surveillance systems for clients.', income: '$600–$2,500', diff: 'Medium', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Solar Installation', icon: '☀️', img: 'solar panel installation roof', desc: 'Set up solar power systems for homes and businesses.', income: '$1,000–$4,000', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
+          { name: 'Electrical Wiring', icon: '⚡', img: 'electrical wiring electrician', desc: 'Wire buildings safely and legally to code.', income: '$700–$3,000', diff: 'Hard', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Electronics Repair', icon: '🔌', img: 'electronics repair PCB', desc: 'Fix consumer electronics from speakers to power supplies.', income: '$500–$2,500', diff: 'Medium', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Drone Repair', icon: '🚁', img: 'drone repair technology', desc: 'Service commercial and hobby drones: motors, ESCs, flight controllers.', income: '$600–$3,000', diff: 'Hard', dur: '3–6 mo', pop: 'new' },
+          { name: 'Camera Repair', icon: '📷', img: 'camera repair mirrorless', desc: 'Clean sensors, fix shutters, and service DSLR/mirrorless cameras.', income: '$500–$2,500', diff: 'Hard', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Car Diagnostics', icon: '🚗', img: 'car diagnostics OBD scan', desc: 'Read fault codes and diagnose modern vehicle ECUs.', income: '$700–$3,000', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
+          { name: 'Generator Repair', icon: '🔋', img: 'generator repair engine', desc: 'Service petrol and diesel generators for power businesses.', income: '$500–$2,500', diff: 'Medium', dur: '2–4 mo', pop: 'hot' },
+          { name: 'Air Conditioner Repair', icon: '❄️', img: 'air conditioner repair HVAC', desc: 'Install, service, and fix AC units for homes and offices.', income: '$600–$3,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Networking Installation', icon: '🌐', img: 'network installation router cable', desc: 'Build LAN/WAN networks for offices, hotels, and schools.', income: '$700–$3,500', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
+          { name: 'Fiber Optic Installation', icon: '💡', img: 'fiber optic cable installation', desc: 'Splice and lay high-speed fiber for ISPs and businesses.', income: '$800–$3,500', diff: 'Hard', dur: '3–6 mo', pop: 'rising' },
+          { name: 'PCB Design & Repair', icon: '🔬', img: 'PCB soldering electronics repair', desc: 'Design and rework circuit boards for product companies.', income: '$800–$4,000', diff: 'Hard', dur: '5–9 mo', pop: 'new' },
+        ]
+      },
+      {
+        id: 'creative',
+        icon: '🎨',
+        name: 'Creative',
+        colorClass: 'creative',
+        range: '$500–$6,000/mo',
+        badge: 'HOT',
+        badgeType: 'hot',
+        skills: [
+          { name: 'Photography', icon: '📷', img: 'photography studio camera', desc: 'Capture stunning images for weddings, brands, and editorial.', income: '$600–$4,000', diff: 'Easy', dur: '1–4 mo', pop: 'hot' },
+          { name: 'Videography', icon: '🎥', img: 'videography camera shooting', desc: 'Shoot and produce high-quality video for any purpose.', income: '$700–$4,500', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Music Production', icon: '🎵', img: 'music production studio DAW', desc: 'Compose, mix, and master tracks for artists worldwide.', income: '$600–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
+          { name: 'Sound Engineering', icon: '🎚️', img: 'sound engineering mixing board', desc: 'Mix and master audio for studios, live events, and broadcast.', income: '$700–$4,000', diff: 'Hard', dur: '5–9 mo', pop: 'steady' },
+          { name: 'Podcast Production', icon: '🎙️', img: 'podcast microphone recording', desc: 'Produce, edit, and distribute professional podcasts.', income: '$500–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Fashion Design', icon: '👗', img: 'fashion design sketching', desc: 'Create clothing lines, costumes, and haute couture.', income: '$600–$4,000', diff: 'Medium', dur: '4–8 mo', pop: 'steady' },
+          { name: 'Interior Design', icon: '🛋️', img: 'interior design living room', desc: 'Transform spaces into functional, beautiful environments.', income: '$800–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
+          { name: 'Architecture Visualization', icon: '🏛️', img: 'architecture 3D visualization render', desc: 'Render photorealistic building visuals for architects.', income: '$1,000–$5,000', diff: 'Hard', dur: '6–10 mo', pop: 'rising' },
+          { name: 'Illustration', icon: '🖌️', img: 'illustration digital art character', desc: 'Create hand-crafted or digital illustrations for books, brands, and games.', income: '$600–$3,500', diff: 'Medium', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Digital Art', icon: '🎭', img: 'digital art painting tablet', desc: 'Paint and create artwork digitally using Procreate, PS, Clip Studio.', income: '$500–$3,500', diff: 'Medium', dur: '2–6 mo', pop: 'hot' },
+          { name: 'Logo Design', icon: '⭕', img: 'logo design branding identity', desc: 'Create iconic logos that define a brand\'s visual identity.', income: '$500–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Animation', icon: '🎞️', img: 'animation cartoon 2D 3D', desc: 'Bring characters and stories to life frame by frame.', income: '$800–$5,000', diff: 'Hard', dur: '6–12 mo', pop: 'rising' },
+        ]
+      },
+    ];
+
+    const CHIPS = ['Web Development', 'Photography', 'Data Science', 'Video Editing', 'UI/UX Design', 'Phone Repair', 'Graphic Design', 'Machine Learning'];
+    const FEATURES = [
+      { icon: '⚡', title: 'Instant Breakdown', desc: 'Full skill overview generated in seconds, no fluff.', img: 'technology learning screen' },
+      { icon: '🗺️', title: 'Clear Roadmap', desc: 'Step-by-step from zero to job-ready in your industry.', img: 'road journey planning map' },
+      { icon: '🔗', title: 'Best Resources', desc: 'Top platform matched specifically to your skill goal.', img: 'online course laptop study' },
+    ];
+
+    const GUIDE_SYS = `You are SkillQuest AI. Respond ONLY with a valid JSON object — no markdown, no backticks, no extra text. Structure: {"icon":"<emoji>","title":"<name>","tags":["<level>","<type>","<time>"],"description":"<2-3 sentences>","steps":[{"title":"<step>","detail":"<instruction>"},{"title":"<step>","detail":"<instruction>"},{"title":"<step>","detail":"<instruction>"},{"title":"<step>","detail":"<instruction>"}],"imageKeywords":["<3-word kw>","<3-word kw>","<3-word kw>"],"bestSite":{"name":"<platform>","url":"<https url>","reason":"<one sentence>"}}`;
+
+    let currentQuery = '';
+    let currentSkill = '';
+
+    const $ = id => document.getElementById(id);
+    const skillInput = $('skill-input');
+    const inputWrap = $('input-wrap');
+    const searchBtn = $('search-btn');
+    const loadingSection = $('loading-section');
+    const loadingQuery = $('loading-query');
+    const errorSection = $('error-section');
+    const errorMsgEl = $('error-msg');
+    const retryBtn = $('retry-btn');
+    const resultSection = $('result-section');
+    const askAiBtn = $('ask-ai-btn');
+    const resetBtn = $('reset-btn');
+    const ctaLink = $('cta-link');
+    const ctaDesc = $('cta-desc');
+    const exploreBtn = $('explore-btn');
+    const fabBubble = $('fab-bubble');
+    const fabBubbleClose = $('fab-bubble-close');
+
+    function imgUrl(kw, seed) { return `https://image.pollinations.ai/prompt/${encodeURIComponent(kw)}?width=600&height=400&nologo=true&seed=${seed}`; }
+    function show(el) { el.classList.remove('hidden'); }
+    function hide(el) { el.classList.add('hidden'); }
+
+    /* ─── CHIPS ─── */
+    const popularWrap = document.querySelector('.popular');
+    CHIPS.forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'chip-btn';
+      btn.textContent = label + (i < CHIPS.length - 1 ? ',' : '');
+      btn.addEventListener('click', () => doSearch(label));
+      popularWrap.appendChild(btn);
+    });
+
+    /* ─── FEATURE CARDS ─── */
+    FEATURES.forEach((f, i) => {
+      $('feat-grid').innerHTML += `<div class="feat-card"><div class="feat-img"><img src="${imgUrl(f.img, i * 83 + 29)}" alt="${f.title}" loading="lazy" onerror="this.style.display='none'"/><div class="feat-img-overlay"></div></div><div class="feat-body"><div class="feat-icon">${f.icon}</div><div class="feat-name">${f.title}</div><div class="feat-desc">${f.desc}</div></div></div>`;
+    });
+
+    /* ════════════════════════════════
+       BUILD TRENDING SKILLS SECTION
+    ════════════════════════════════ */
+    function diffClass(d) { return d === 'Easy' ? 'easy' : d === 'Medium' ? 'medium' : 'hard'; }
+    function popLabel(p) { const m = { hot: '🔥 Hot', rising: '📈 Rising', steady: '⚡ Steady', new: '✨ New' }; return m[p] || p; }
+
+    function buildCategories() {
+      const list = $('cat-list');
+      CATEGORIES.forEach((cat, ci) => {
+        const card = document.createElement('div');
+        card.className = 'cat-card';
+        card.dataset.id = cat.id;
+
+        const header = document.createElement('div');
+        header.className = 'cat-header';
+        header.innerHTML = `
+      <div class="cat-header-left">
+        <div class="cat-icon-wrap ${cat.colorClass}">${cat.icon}</div>
+        <div class="cat-info">
+          <div class="cat-name">${cat.name}</div>
+          <div class="cat-meta">
+            <span class="cat-count">${cat.skills.length} skills</span>
+            <span class="cat-dot"></span>
+            <span class="cat-range ${cat.colorClass}">${cat.range}</span>
+          </div>
+        </div>
+      </div>
+      <div class="cat-badges">
+        <span class="cat-badge ${cat.badgeType}">${cat.badge}</span>
+      </div>
+      <div class="cat-chevron">▼</div>`;
+
+        const drawer = document.createElement('div');
+        drawer.className = 'skills-drawer';
+        const divider = document.createElement('div');
+        divider.className = 'divider-line';
+        const grid = document.createElement('div');
+        grid.className = 'skills-grid';
+
+        cat.skills.forEach((sk, si) => {
+          const delay = (si % 8) * 50;
+          const skCard = document.createElement('div');
+          skCard.className = 'sk-card';
+          skCard.style.animationDelay = delay + 'ms';
+          skCard.style.animationPlayState = 'paused';
+          skCard.innerHTML = `
+        <div class="sk-img-wrap">
+          <img src="${imgUrl(sk.img, ci * 500 + si * 37)}" alt="${sk.name}" loading="lazy" onerror="this.style.background='#111F2E'"/>
+          <div class="sk-img-overlay"></div>
+          <div class="sk-icon-badge">${sk.icon}</div>
+          <div class="sk-pop-badge ${sk.pop}">${popLabel(sk.pop)}</div>
+        </div>
+        <div class="sk-body">
+          <div class="sk-name">${sk.name}</div>
+          <div class="sk-desc">${sk.desc}</div>
+          <div class="sk-stats">
+            <div class="sk-stat"><span class="sk-stat-label">Income</span><span class="sk-stat-val income">$${sk.income.replace('$', '')}/mo</span></div>
+            <div class="sk-stat"><span class="sk-stat-label">Difficulty</span><span class="sk-stat-val ${diffClass(sk.diff)}">${sk.diff}</span></div>
+            <div class="sk-stat"><span class="sk-stat-label">Duration</span><span class="sk-stat-val duration">${sk.dur}</span></div>
+          </div>
+          <div class="sk-bottom">
+            <button class="sk-learn-btn" data-skill="${sk.name}">Get Full Guide →</button>
+          </div>
+        </div>`;
+          skCard.querySelector('.sk-learn-btn').addEventListener('click', e => {
+            e.stopPropagation();
+            doSearch(sk.name);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+          skCard.addEventListener('click', () => {
+            doSearch(sk.name);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+          grid.appendChild(skCard);
+        });
+
+        drawer.appendChild(divider);
+        drawer.appendChild(grid);
+        card.appendChild(header);
+        card.appendChild(drawer);
+
+        header.addEventListener('click', () => {
+          const isOpen = card.classList.contains('open');
+          document.querySelectorAll('.cat-card.open').forEach(c => {
+            c.classList.remove('open');
+            c.querySelectorAll('.sk-card').forEach(s => s.style.animationPlayState = 'paused');
+          });
+          if (!isOpen) {
+            card.classList.add('open');
+            setTimeout(() => {
+              card.querySelectorAll('.sk-card').forEach(s => s.style.animationPlayState = 'running');
+            }, 50);
+          }
+        });
+
+        list.appendChild(card);
+      });
+    }
+
+    buildCategories();
+
+    /* ─── INPUT & EVENTS ─── */
+    skillInput.addEventListener('focus', () => inputWrap.classList.add('focused'));
+    skillInput.addEventListener('blur', () => inputWrap.classList.remove('focused'));
+    skillInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+    searchBtn.addEventListener('click', () => doSearch());
+    retryBtn.addEventListener('click', () => doSearch());
+    resetBtn.addEventListener('click', reset);
+    exploreBtn.addEventListener('click', () => { $('trending-section').scrollIntoView({ behavior: 'smooth' }); });
+    setTimeout(() => fabBubble.classList.add('hidden'), 8000);
+    fabBubbleClose.addEventListener('click', () => fabBubble.classList.add('hidden'));
+
+    /* ════════════ GUIDE SEARCH ════════════ */
+    async function doSearch(skillName) {
+      const skill = (skillName || skillInput.value).trim();
+      if (!skill) { skillInput.focus(); return; }
+      currentQuery = skill;
+      skillInput.value = skill;
+      searchBtn.textContent = 'Searching…';
+      loadingQuery.textContent = skill;
+      show(loadingSection); hide(errorSection); hide(resultSection);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      try {
+        const url = `https://text.pollinations.ai/${encodeURIComponent('Skill: ' + skill)}?model=mistral&system=${encodeURIComponent(GUIDE_SYS)}&json=true`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        const raw = await res.text();
+        const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+        if (s === -1) throw new Error('No JSON returned. Try again.');
+        renderResult(JSON.parse(raw.slice(s, e + 1)));
+      } catch (err) {
+        errorMsgEl.textContent = err.message;
+        hide(loadingSection); show(errorSection);
+      } finally {
+        searchBtn.textContent = 'Find Skill Guide';
+        hide(loadingSection);
+      }
+    }
+
+    function renderResult(r) {
+      currentSkill = r.title || currentQuery;
+      $('result-title').textContent = r.title;
+      const tagsEl = $('result-tags'); tagsEl.innerHTML = '';
+      (r.tags || []).forEach((t, i) => {
+        const s = document.createElement('span');
+        s.className = 'tag ' + (i === 1 ? 'tag-orange' : 'tag-teal');
+        s.textContent = t; tagsEl.appendChild(s);
+      });
+      $('result-icon').textContent = r.icon;
+      $('result-desc').textContent = r.description;
+      const stepsEl = $('result-steps'); stepsEl.innerHTML = '';
+      (r.steps || []).forEach((s, i) => {
+        stepsEl.innerHTML += `<div class="step-item"><div class="step-num ${i % 2 === 0 ? 'even' : 'odd'}">${i + 1}</div><div><div class="step-title">${s.title}</div><div class="step-detail">${s.detail}</div></div></div>`;
+      });
+      const imgsEl = $('result-images'); imgsEl.innerHTML = '';
+      (r.imageKeywords || []).forEach((kw, i) => {
+        imgsEl.innerHTML += `<div class="img-wrap"><img src="${imgUrl(kw, i * 53 + currentQuery.length * 7)}" alt="${kw}" onerror="this.style.display='none'"/><div class="img-caption">${kw}</div></div>`;
+      });
+      ctaDesc.innerHTML = `<strong>${r.bestSite?.name}</strong> is our top pick for mastering <span class="sk-teal">${r.title}</span>.<br><span class="sk-small">${r.bestSite?.reason}</span>`;
+      ctaLink.href = r.bestSite?.url || '#';
+      show(resultSection);
+      [0, 1, 2].forEach(i => { const c = $(`card-${i}`); c.classList.remove('revealed'); setTimeout(() => c.classList.add('revealed'), 260 + i * 230); });
+      askAiBtn.classList.remove('revealed'); setTimeout(() => askAiBtn.classList.add('revealed'), 260 + 2.5 * 230);
+      const cta = $('card-3'); cta.classList.remove('revealed'); setTimeout(() => cta.classList.add('revealed'), 260 + 3 * 230);
+      setTimeout(() => resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 130);
+    }
+
+    function reset() {
+      hide(resultSection); hide(errorSection);
+      skillInput.value = ''; currentQuery = ''; currentSkill = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => skillInput.focus(), 200);
+    }
+  </script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="../index.html" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+            </svg>
+            Job<span>Beacon</span>
+          </a>
+          <p style="font-size: 0.9rem; max-width: 280px; line-height: 1.7;">Ghana's leading job marketplace connecting
+            talented professionals with top employers. Find your next opportunity today.</p>
+          <div class="social-links" style="margin-top: 1.25rem;">
+            <a href="#" aria-label="Twitter">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
+                </path>
+              </svg>
+            </a>
+            <a href="#" aria-label="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">For Candidates</h4>
+          <div class="footer-links">
+            <a href="jobs.html">Browse Jobs</a>
+            <a href="jobs.html?postType=hiring">Companies Hiring</a>
+            <a href="jobs.html?type=Remote">Remote Jobs</a>
+            <a href="login.html?signup=true">Create Profile</a>
+            <a href="login.html">My Dashboard</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">For Employers</h4>
+          <div class="footer-links">
+            <a href="login.html?signup=true">Post a Job</a>
+            <a href="login.html">Employer Dashboard</a>
+            <a href="jobs.html?postType=seeking">Find Candidates</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Stay Updated</h4>
+          <p style="font-size: 0.875rem; margin-bottom: 1rem; color: var(--text-secondary);">Get the latest job alerts
+            and career tips delivered weekly.</p>
+          <form style="display: flex; gap: 0.5rem;"
+            onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓'; this.querySelector('button').style.background='#10B981';">
+            <input type="email" placeholder="you@email.com" class="form-control"
+              style="flex: 1; padding: 0.625rem 1rem; font-size: 0.875rem;" aria-label="Email for newsletter" required>
+            <button type="submit" class="btn btn-primary"
+              style="padding: 0.625rem 1.25rem; font-size: 0.875rem; white-space: nowrap;">Subscribe</button>
+          </form>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem;">No spam. Unsubscribe anytime.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 JobBeacon. All rights reserved.</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">Built by <a href="https://technoidfix.online"
+            target="_blank" rel="noopener" style="color: var(--primary); font-weight: 500;">technoidfix</a></p>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script type="module" src="../assets/js/app.js"></script>
+</body>
+
+</html>
