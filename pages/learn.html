@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 
@@ -17,10 +17,10 @@
   <style>
     /* ── SkillQuest theme tokens — auto-adapt to JobBeacon light/dark mode ── */
     :root {
-      --sq-bg: #f0faf9;
-      --sq-surface: #ffffff;
-      --sq-card: #f8fafc;
-      --sq-border: #d1e9e7;
+      --sq-bg: #edf7f6;
+      --sq-surface: #f2faf8;
+      --sq-card: #e8f5f2;
+      --sq-border: #b8ddd9;
       --sq-teal: #0F766E;
       --sq-orange: #F59E0B;
       --sq-text: #0F172A;
@@ -29,7 +29,7 @@
       --sq-red: #EF4444;
       --sq-green: #10B981;
       --sq-purple: #7C3AED;
-      --sq-overlay: rgba(255, 255, 255, 0.92);
+      --sq-overlay: rgba(242, 250, 248, 0.92);
     }
 
     [data-theme="dark"] {
@@ -720,12 +720,44 @@ TRENDING SKILLS SECTION
       border-radius: 20px;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
+    /* Per-category subtle tint in light mode */
+    /* Light-mode: start with a visible green-white, blend to category accent */
+    .cat-card[data-id="tech"]     { background: linear-gradient(160deg, rgba(15,118,110,0.13) 0%, var(--sq-surface) 65%); }
+    .cat-card[data-id="biz"]      { background: linear-gradient(160deg, rgba(15,118,110,0.08) 0%, rgba(245,158,11,0.07) 50%, var(--sq-surface) 75%); }
+    .cat-card[data-id="repair"]   { background: linear-gradient(160deg, rgba(15,118,110,0.07) 0%, rgba(167,139,250,0.08) 50%, var(--sq-surface) 75%); }
+    .cat-card[data-id="creative"] { background: linear-gradient(160deg, rgba(15,118,110,0.07) 0%, rgba(248,113,113,0.07) 50%, var(--sq-surface) 75%); }
+    /* Dark mode resets are handled by the dark theme token overrides */
+    [data-theme="dark"] .cat-card[data-id="tech"]     { background: linear-gradient(160deg, rgba(45,212,191,0.06) 0%, var(--sq-surface) 60%); }
+    [data-theme="dark"] .cat-card[data-id="biz"]      { background: linear-gradient(160deg, rgba(245,158,11,0.06) 0%, var(--sq-surface) 60%); }
+    [data-theme="dark"] .cat-card[data-id="repair"]   { background: linear-gradient(160deg, rgba(167,139,250,0.06) 0%, var(--sq-surface) 60%); }
+    [data-theme="dark"] .cat-card[data-id="creative"] { background: linear-gradient(160deg, rgba(248,113,113,0.06) 0%, var(--sq-surface) 60%); }
+
+    /* Coloured top accent bar */
+    .cat-card::before {
+      content: '';
+      display: block;
+      height: 3px;
+      width: 100%;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 5;
+      border-radius: 20px 20px 0 0;
+    }
+    .cat-card[data-id="tech"]::before    { background: linear-gradient(90deg, #0F766E, #2DD4BF); }
+    .cat-card[data-id="biz"]::before     { background: linear-gradient(90deg, #D97706, #F59E0B); }
+    .cat-card[data-id="repair"]::before  { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+    .cat-card[data-id="creative"]::before{ background: linear-gradient(90deg, #DC2626, #F87171); }
+
     .cat-card:hover {
-      border-color: rgba(45, 212, 191, 0.25);
+      border-color: rgba(45, 212, 191, 0.3);
       transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 12px 32px rgba(15, 118, 110, 0.1), 0 2px 8px rgba(0,0,0,0.06);
+    }
+    [data-theme="dark"] .cat-card:hover {
+      box-shadow: 0 12px 32px rgba(45, 212, 191, 0.08), 0 2px 8px rgba(0,0,0,0.3);
     }
 
     .cat-card.open {
@@ -832,6 +864,68 @@ TRENDING SKILLS SECTION
       flex: 1;
     }
 
+    /* ── Income chip inside card ── */
+    .cat-income-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(15, 118, 110, 0.09);
+      border: 1px solid rgba(15, 118, 110, 0.22);
+      border-radius: 20px;
+      padding: 3px 11px 3px 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #0F766E;
+      margin-top: 6px;
+      letter-spacing: 0.2px;
+    }
+    [data-theme="dark"] .cat-income-chip {
+      background: rgba(45, 212, 191, 0.08);
+      border-color: rgba(45, 212, 191, 0.2);
+      color: var(--sq-teal);
+    }
+    .cat-card[data-id="biz"] .cat-income-chip {
+      background: rgba(245, 158, 11, 0.09);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #B45309;
+    }
+    [data-theme="dark"] .cat-card[data-id="biz"] .cat-income-chip { color: var(--sq-orange); }
+    .cat-card[data-id="repair"] .cat-income-chip {
+      background: rgba(167, 139, 250, 0.09);
+      border-color: rgba(167, 139, 250, 0.25);
+      color: #6D28D9;
+    }
+    [data-theme="dark"] .cat-card[data-id="repair"] .cat-income-chip { color: var(--sq-purple); }
+    .cat-card[data-id="creative"] .cat-income-chip {
+      background: rgba(248, 113, 113, 0.09);
+      border-color: rgba(248, 113, 113, 0.25);
+      color: #B91C1C;
+    }
+    [data-theme="dark"] .cat-card[data-id="creative"] .cat-income-chip { color: var(--sq-red); }
+
+    /* ── Skill count pill ── */
+    .cat-skill-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      border-radius: 12px;
+      padding: 2px 9px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--sq-muted);
+    }
+
+    /* ── Category description ── */
+    .cat-card-desc {
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: var(--sq-muted);
+      margin: 5px 0 8px;
+      max-width: 280px;
+    }
+
     .cat-name {
       font-family: ‘Syne’, sans-serif;
       font-weight: 700;
@@ -911,28 +1005,46 @@ TRENDING SKILLS SECTION
     }
 
     .cat-chevron {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+      height: 34px;
+      padding: 0 16px;
+      border-radius: 17px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--sq-card);
-      border: 1px solid var(--sq-border);
-      color: var(--sq-dim);
-      font-size: 0.75rem;
-      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, color 0.2s;
+      gap: 6px;
+      background: rgba(15, 118, 110, 0.14);
+      border: 1px solid rgba(15, 118, 110, 0.38);
+      color: #0F766E;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .cat-chevron {
+      background: rgba(45, 212, 191, 0.08);
+      border-color: rgba(45, 212, 191, 0.2);
+      color: var(--sq-teal);
+    }
+
+    .cat-card:hover .cat-chevron {
+      background: var(--sq-teal);
+      color: #080E17;
+      border-color: var(--sq-teal);
     }
 
     .cat-card.open .cat-chevron {
       position: absolute;
       top: 0;
       right: 20px;
-      transform: rotate(180deg);
       background: rgba(45, 212, 191, 0.1);
       color: var(--sq-teal);
       border-color: rgba(45, 212, 191, 0.25);
+    }
+
+    .cat-card.open .cat-chevron i {
+      transform: rotate(180deg);
+      transition: transform 0.3s ease;
     }
 
     /* Big Heading Open State */
@@ -1446,6 +1558,157 @@ TRENDING SKILLS SECTION
         font-size: 0.9rem;
       }
     }
+
+    /* Market Insights Section */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 40px 0 60px;
+    }
+    
+    @media (max-width: 900px) {
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .insight-card {
+      background: var(--sq-surface);
+      border: 1px solid var(--sq-border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    
+    .insight-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .insight-title i {
+      color: var(--sq-teal);
+    }
+
+    /* Chart */
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .chart-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chart-label {
+      width: 140px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--sq-text);
+      text-align: right;
+    }
+
+    .chart-track {
+      flex: 1;
+      height: 12px;
+      background: var(--sq-bg);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1s ease-out;
+    }
+
+    .chart-pct {
+      width: 40px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--sq-muted);
+    }
+
+    /* Flowchart */
+    .flowchart-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--sq-card);
+      border: 1px solid var(--sq-border);
+      padding: 16px;
+      border-radius: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .flow-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--sq-teal), #0D9488);
+      color: #080E17;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .flow-content h4 {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+      color: var(--sq-text);
+    }
+
+    .flow-content p {
+      font-size: 0.85rem;
+      color: var(--sq-muted);
+      line-height: 1.4;
+    }
+
+    .flow-arrow {
+      width: 2px;
+      height: 20px;
+      background: var(--sq-border);
+      margin: -8px 0 -8px 39px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (min-width: 900px) {
+      .flowchart-grid {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .flow-step {
+        flex-direction: column;
+        text-align: center;
+        flex: 1;
+        padding: 24px 16px;
+      }
+      .flow-arrow {
+        width: 30px;
+        height: 2px;
+        margin: 40px -10px 0;
+      }
+    }
   </style>
 
 </head>
@@ -1575,7 +1838,8 @@ TRENDING SKILLS SECTION
           <div class="images-grid" id="result-images"></div>
         </div>
         <a class="ask-ai-btn" id="ask-ai-btn" href="https://tekbot.netlify.app" target="_blank"
-          rel="noopener noreferrer"><i data-lucide="bot"></i> Chat with TekBot AI Tutor — ask anything about this skill</a>
+          rel="noopener noreferrer"><i data-lucide="bot"></i> Chat with TekBot AI Tutor — ask anything about this
+          skill</a>
         <div class="cta-card" id="card-3">
           <div class="cta-rocket"><i data-lucide="rocket"></i></div>
           <h3 class="cta-title">Ready to go deeper?</h3>
@@ -1584,6 +1848,79 @@ TRENDING SKILLS SECTION
             <a class="cta-link" id="cta-link" href="#" target="_blank" rel="noopener noreferrer">Yes, take me there
               →</a>
             <button class="reset-btn" id="reset-btn">Search another skill</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ MARKET INSIGHTS ══ -->
+      <div class="insights-grid">
+        <!-- Chart -->
+        <div class="insight-card">
+          <h2 class="insight-title"><i data-lucide="bar-chart-3"></i> 2026 Job Market Demand</h2>
+          <div class="chart-container">
+            <div class="chart-bar-wrap">
+              <div class="chart-label">Software Eng. & AI</div>
+              <div class="chart-track"><div class="chart-bar" style="width: 95%; background: var(--sq-teal);"></div></div>
+              <div class="chart-pct">95%</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-label">Cloud Computing</div>
+              <div class="chart-track"><div class="chart-bar" style="width: 88%; background: var(--sq-purple);"></div></div>
+              <div class="chart-pct">88%</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-label">Cybersecurity</div>
+              <div class="chart-track"><div class="chart-bar" style="width: 82%; background: var(--sq-red);"></div></div>
+              <div class="chart-pct">82%</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-label">Digital Marketing</div>
+              <div class="chart-track"><div class="chart-bar" style="width: 75%; background: var(--sq-orange);"></div></div>
+              <div class="chart-pct">75%</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-label">UI/UX Design</div>
+              <div class="chart-track"><div class="chart-bar" style="width: 68%; background: var(--sq-green);"></div></div>
+              <div class="chart-pct">68%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flowchart -->
+        <div class="insight-card" style="background: linear-gradient(135deg, rgba(15, 118, 110, 0.05), rgba(124, 58, 237, 0.05)); border: 1px solid rgba(15, 118, 110, 0.2);">
+          <h2 class="insight-title"><i data-lucide="workflow"></i> How to Learn Smarter</h2>
+          <div class="flowchart-grid">
+            <div class="flow-step">
+              <div class="flow-icon"><i data-lucide="search"></i></div>
+              <div class="flow-content">
+                <h4>1. Identify</h4>
+                <p>Pick a high-income skill from categories below.</p>
+              </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-step">
+              <div class="flow-icon"><i data-lucide="bot"></i></div>
+              <div class="flow-content">
+                <h4>2. Accelerate</h4>
+                <p>Use AI guides & TekBot Tutor to learn 10x faster.</p>
+              </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-step">
+              <div class="flow-icon"><i data-lucide="hammer"></i></div>
+              <div class="flow-content">
+                <h4>3. Build</h4>
+                <p>Create real-world projects for your portfolio.</p>
+              </div>
+            </div>
+            <div class="flow-arrow"></div>
+            <div class="flow-step" style="border-color: var(--sq-teal);">
+              <div class="flow-icon"><i data-lucide="briefcase"></i></div>
+              <div class="flow-content">
+                <h4>4. Get Hired</h4>
+                <p>Apply for jobs directly on JobBeacon.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1636,6 +1973,7 @@ TRENDING SKILLS SECTION
         id: 'tech',
         icon: 'monitor',
         name: 'Tech & Software',
+        desc: 'From web apps to AI — master the digital skills driving the highest salaries in 2025.',
         colorClass: 'tech',
         range: '$800–$8,000/mo',
         badge: 'HOT',
@@ -1671,6 +2009,7 @@ TRENDING SKILLS SECTION
         id: 'biz',
         icon: 'briefcase',
         name: 'Digital Business',
+        desc: 'Build, market, and scale online businesses — no office required.',
         colorClass: 'biz',
         range: '$500–$5,000/mo',
         badge: 'NEW',
@@ -1697,6 +2036,7 @@ TRENDING SKILLS SECTION
         id: 'repair',
         icon: 'wrench',
         name: 'Technical & Repair',
+        desc: 'Hands-on technical skills with strong local and remote demand worldwide.',
         colorClass: 'repair',
         range: '$400–$3,000/mo',
         badge: 'HOT',
@@ -1723,6 +2063,7 @@ TRENDING SKILLS SECTION
         id: 'creative',
         icon: 'palette',
         name: 'Creative',
+        desc: 'Turn your artistic talent into a freelance or studio career people pay well for.',
         colorClass: 'creative',
         range: '$500–$6,000/mo',
         badge: 'HOT',
@@ -1819,13 +2160,12 @@ TRENDING SKILLS SECTION
       </div>
       <div class="cat-header-content">
         <div class="cat-header-left">
-          <div class="cat-icon-wrap ${cat.colorClass}"><i data-lucide="${cat.icon}"></i></div>
           <div class="cat-info">
             <div class="cat-name">${cat.name}</div>
+            <p class="cat-card-desc">${cat.desc}</p>
             <div class="cat-meta">
-              <span class="cat-count">${cat.skills.length} skills</span>
-              <span class="cat-dot"></span>
-              <span class="cat-range ${cat.colorClass}">${cat.range}</span>
+              <span class="cat-skill-pill"><i data-lucide="layers" style="width:11px;height:11px;"></i> ${cat.skills.length} skills</span>
+              <span class="cat-income-chip"><i data-lucide="banknote" style="width:11px;height:11px;"></i> ${cat.range}</span>
             </div>
           </div>
         </div>
@@ -1833,7 +2173,7 @@ TRENDING SKILLS SECTION
       <div class="cat-badges">
         <span class="cat-badge ${cat.badgeType}">${cat.badge}</span>
       </div>
-      <div class="cat-chevron">▼</div>`;
+      <div class="cat-chevron"><span>Explore</span> <i data-lucide="chevron-down" style="width: 16px; height: 16px;"></i></div>`;
 
         const drawer = document.createElement('div');
         drawer.className = 'skills-drawer';
@@ -1870,11 +2210,9 @@ TRENDING SKILLS SECTION
           skCard.querySelector('.sk-learn-btn').addEventListener('click', e => {
             e.stopPropagation();
             doSearch(sk.name);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           });
           skCard.addEventListener('click', () => {
             doSearch(sk.name);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           });
           grid.appendChild(skCard);
         });
@@ -1902,83 +2240,25 @@ TRENDING SKILLS SECTION
       });
     }
 
-    setTimeout(() => { if(window.lucide) window.lucide.createIcons(); }, 50);
-      buildCategories();
-      setTimeout(() => { if(window.lucide) window.lucide.createIcons(); }, 50);
 
     /* ─── INPUT & EVENTS ─── */
     skillInput.addEventListener('focus', () => inputWrap.classList.add('focused'));
     skillInput.addEventListener('blur', () => inputWrap.classList.remove('focused'));
     skillInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
     searchBtn.addEventListener('click', () => doSearch());
-    retryBtn.addEventListener('click', () => doSearch());
-    resetBtn.addEventListener('click', reset);
     exploreBtn.addEventListener('click', () => { $('trending-section').scrollIntoView({ behavior: 'smooth' }); });
-    setTimeout(() => fabBubble.classList.add('hidden'), 8000);
+    setTimeout(() => fabBubble.classList.remove('hidden'), 8000);
     fabBubbleClose.addEventListener('click', () => fabBubble.classList.add('hidden'));
 
     /* ════════════ GUIDE SEARCH ════════════ */
-    async function doSearch(skillName) {
+    function doSearch(skillName) {
       const skill = (skillName || skillInput.value).trim();
       if (!skill) { skillInput.focus(); return; }
-      currentQuery = skill;
-      skillInput.value = skill;
-      searchBtn.textContent = 'Searching…';
-      loadingQuery.textContent = skill;
-      show(loadingSection); hide(errorSection); hide(resultSection);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      try {
-        const url = `https://text.pollinations.ai/${encodeURIComponent('Skill: ' + skill)}?model=mistral&system=${encodeURIComponent(GUIDE_SYS)}&json=true`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Server error ' + res.status);
-        const raw = await res.text();
-        const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
-        if (s === -1) throw new Error('No JSON returned. Try again.');
-        renderResult(JSON.parse(raw.slice(s, e + 1)));
-      } catch (err) {
-        errorMsgEl.textContent = err.message;
-        hide(loadingSection); show(errorSection);
-      } finally {
-        searchBtn.textContent = 'Find Skill Guide';
-        hide(loadingSection);
-      }
+      window.location.href = 'skill-guide.html?skill=' + encodeURIComponent(skill);
     }
 
-    function renderResult(r) {
-      currentSkill = r.title || currentQuery;
-      $('result-title').textContent = r.title;
-      const tagsEl = $('result-tags'); tagsEl.innerHTML = '';
-      (r.tags || []).forEach((t, i) => {
-        const s = document.createElement('span');
-        s.className = 'tag ' + (i === 1 ? 'tag-orange' : 'tag-teal');
-        s.textContent = t; tagsEl.appendChild(s);
-      });
-      $('result-icon').textContent = r.icon;
-      $('result-desc').textContent = r.description;
-      const stepsEl = $('result-steps'); stepsEl.innerHTML = '';
-      (r.steps || []).forEach((s, i) => {
-        stepsEl.innerHTML += `<div class="step-item"><div class="step-num ${i % 2 === 0 ? 'even' : 'odd'}">${i + 1}</div><div><div class="step-title">${s.title}</div><div class="step-detail">${s.detail}</div></div></div>`;
-      });
-      const imgsEl = $('result-images'); imgsEl.innerHTML = '';
-      (r.imageKeywords || []).forEach((kw, i) => {
-        imgsEl.innerHTML += `<div class="img-wrap"><img src="${imgUrl(kw, i * 53 + currentQuery.length * 7)}" alt="${kw}" onerror="this.style.display='none'"/><div class="img-caption">${kw}</div></div>`;
-      });
-      ctaDesc.innerHTML = `<strong>${r.bestSite?.name}</strong> is our top pick for mastering <span class="sk-teal">${r.title}</span>.<br><span class="sk-small">${r.bestSite?.reason}</span>`;
-      ctaLink.href = r.bestSite?.url || '#';
-      show(resultSection);
-      [0, 1, 2].forEach(i => { const c = $(`card-${i}`); c.classList.remove('revealed'); setTimeout(() => c.classList.add('revealed'), 260 + i * 230); });
-      askAiBtn.classList.remove('revealed'); setTimeout(() => askAiBtn.classList.add('revealed'), 260 + 2.5 * 230);
-      const cta = $('card-3'); cta.classList.remove('revealed'); setTimeout(() => cta.classList.add('revealed'), 260 + 3 * 230);
-      setTimeout(() => resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 130);
-    }
-
-    function reset() {
-      hide(resultSection); hide(errorSection);
-      skillInput.value = ''; currentQuery = ''; currentSkill = '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => skillInput.focus(), 200);
-    }
+    buildCategories();
+    setTimeout(() => { if (window.lucide) window.lucide.createIcons(); }, 50);
   </script>
 
   <!-- Footer -->
@@ -2082,7 +2362,7 @@ TRENDING SKILLS SECTION
   </footer>
   <script type="module" src="../assets/js/app.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script>if(window.lucide) window.lucide.createIcons();</script>
+  <script>if (window.lucide) window.lucide.createIcons();</script>
 </body>
 
 </html>
