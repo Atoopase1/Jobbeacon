@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 
@@ -740,13 +740,40 @@ TRENDING SKILLS SECTION
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 16px;
-      padding: 24px;
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
+    }
+
+    .cat-banner {
+      width: 100%;
+      height: 120px;
+      position: relative;
+    }
+
+    .cat-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cat-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(17, 31, 46, 0) 0%, var(--sq-surface) 100%);
+    }
+
+    .cat-header-content {
+      padding: 0 24px 24px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: -26px;
+      position: relative;
+      z-index: 2;
     }
 
     .cat-header:hover {
@@ -854,11 +881,12 @@ TRENDING SKILLS SECTION
 
     .cat-badges {
       position: absolute;
-      top: 24px;
-      right: 24px;
+      top: 16px;
+      right: 16px;
       display: flex;
       gap: 6px;
       align-items: center;
+      z-index: 3;
     }
 
     .cat-badge {
@@ -908,6 +936,16 @@ TRENDING SKILLS SECTION
     }
 
     /* Big Heading Open State */
+    .cat-card.open .cat-banner {
+      display: none;
+    }
+
+    .cat-card.open .cat-header-content {
+      padding: 0;
+      margin-top: 0;
+      align-items: center;
+    }
+
     .cat-card.open .cat-header {
       align-items: center;
       text-align: center;
@@ -1435,7 +1473,7 @@ TRENDING SKILLS SECTION
         <a href="../index.html" class="nav-link">Home</a>
         <a href="jobs.html" class="nav-link">Find Jobs</a>
         <a href="employers.html" class="nav-link">Employers</a>
-        <a href="learn.html" class="nav-link active" style="color: var(--primary); font-weight: 600;">✦ SkillQuest</a>
+        <a href="learn.html" class="nav-link active">SkillQuest</a>
 
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1467,11 +1505,11 @@ TRENDING SKILLS SECTION
       <!-- HERO -->
 
       <section class="hero">
-        <div class="badge">★ Discover · Learn · Master Any Skill</div>
+        <div class="badge"><i data-lucide="star"></i> Discover · Learn · Master Any Skill</div>
         <h1><span class="white">Learn Any Skill Remotely </span><span class="teal">in JobBeacon</span></h1>
         <div class="search-card">
           <div class="input-wrap" id="input-wrap">
-            <span class="ico">🔍</span>
+            <span class="ico"><i data-lucide="search"></i></span>
             <input id="skill-input" type="text" placeholder="Skill title, keywords, or category…" />
           </div>
           <button id="search-btn">Find Skill Guide</button>
@@ -1537,9 +1575,9 @@ TRENDING SKILLS SECTION
           <div class="images-grid" id="result-images"></div>
         </div>
         <a class="ask-ai-btn" id="ask-ai-btn" href="https://tekbot.netlify.app" target="_blank"
-          rel="noopener noreferrer">🤖 Chat with TekBot AI Tutor — ask anything about this skill</a>
+          rel="noopener noreferrer"><i data-lucide="bot"></i> Chat with TekBot AI Tutor — ask anything about this skill</a>
         <div class="cta-card" id="card-3">
-          <div class="cta-rocket">🚀</div>
+          <div class="cta-rocket"><i data-lucide="rocket"></i></div>
           <h3 class="cta-title">Ready to go deeper?</h3>
           <p class="cta-desc" id="cta-desc"></p>
           <div class="cta-btns">
@@ -1581,10 +1619,10 @@ TRENDING SKILLS SECTION
     <div id="chat-fab">
       <div id="fab-bubble">
         <button id="fab-bubble-close">✕</button>
-        🤖 Chat with <strong>TekBot AI</strong> tutor!
+        <i data-lucide="bot"></i> Chat with <strong>TekBot AI</strong> tutor!
       </div>
       <a id="fab-btn" href="https://tekbot.netlify.app" target="_blank" rel="noopener noreferrer"
-        title="Open TekBot AI Tutor">🤖</a>
+        title="Open TekBot AI Tutor"><i data-lucide="bot"></i></a>
     </div>
 
   </div><!-- /app -->
@@ -1596,121 +1634,121 @@ TRENDING SKILLS SECTION
     const CATEGORIES = [
       {
         id: 'tech',
-        icon: '💻',
+        icon: 'monitor',
         name: 'Tech & Software',
         colorClass: 'tech',
         range: '$800–$8,000/mo',
         badge: 'HOT',
         badgeType: 'hot',
         skills: [
-          { name: 'Web Development', icon: '🌐', img: 'web development coding', desc: 'Build websites & full-stack apps used by millions.', income: '$1,500–$6,000', diff: 'Medium', dur: '4–8 mo', pop: 'hot' },
-          { name: 'Frontend Development', icon: '🎨', img: 'frontend css javascript', desc: 'Craft beautiful, responsive UIs with HTML/CSS/JS.', income: '$1,200–$5,000', diff: 'Medium', dur: '3–6 mo', pop: 'hot' },
-          { name: 'Backend Development', icon: '⚙️', img: 'server backend api', desc: 'Power apps with APIs, databases, and server logic.', income: '$1,500–$7,000', diff: 'Hard', dur: '5–9 mo', pop: 'rising' },
-          { name: 'Full Stack Development', icon: '🔗', img: 'fullstack developer laptop', desc: 'Own the entire product — front to back.', income: '$2,000–$8,000', diff: 'Hard', dur: '8–12 mo', pop: 'hot' },
-          { name: 'Mobile App Development', icon: '📱', img: 'mobile app development', desc: 'Build iOS & Android apps that reach billions.', income: '$1,500–$7,000', diff: 'Hard', dur: '6–10 mo', pop: 'hot' },
-          { name: 'Game Development', icon: '🎮', img: 'game developer unity', desc: 'Create games for PC, mobile and console.', income: '$1,000–$5,000', diff: 'Hard', dur: '8–14 mo', pop: 'steady' },
-          { name: 'AI Engineering', icon: '🤖', img: 'artificial intelligence AI', desc: 'Build and deploy real-world AI systems & LLMs.', income: '$3,000–$12,000', diff: 'Hard', dur: '9–14 mo', pop: 'hot' },
-          { name: 'Machine Learning', icon: '🧠', img: 'machine learning data', desc: 'Train models that learn from data automatically.', income: '$2,500–$10,000', diff: 'Hard', dur: '8–14 mo', pop: 'hot' },
-          { name: 'Deep Learning', icon: '🔬', img: 'neural network deep learning', desc: 'Architect neural networks for vision, speech, and NLP.', income: '$3,000–$12,000', diff: 'Hard', dur: '10–16 mo', pop: 'rising' },
-          { name: 'Data Science', icon: '📊', img: 'data science analytics', desc: 'Extract insights from massive datasets to drive decisions.', income: '$2,000–$8,000', diff: 'Hard', dur: '7–12 mo', pop: 'hot' },
-          { name: 'Cybersecurity', icon: '🔒', img: 'cybersecurity hacking', desc: 'Protect systems from hackers and data breaches.', income: '$2,000–$9,000', diff: 'Hard', dur: '8–14 mo', pop: 'rising' },
-          { name: 'Cloud Computing', icon: '☁️', img: 'cloud computing AWS', desc: 'Deploy scalable infrastructure on AWS, Azure, GCP.', income: '$1,800–$8,000', diff: 'Medium', dur: '5–9 mo', pop: 'hot' },
-          { name: 'DevOps', icon: '♾️', img: 'devops CI/CD pipeline', desc: 'Automate deployments and keep systems always running.', income: '$2,000–$9,000', diff: 'Hard', dur: '6–10 mo', pop: 'steady' },
-          { name: 'UI/UX Design', icon: '✏️', img: 'UI UX design wireframe', desc: 'Design products people love to use.', income: '$1,200–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'hot' },
-          { name: 'Graphic Design', icon: '🖼️', img: 'graphic design creative', desc: 'Create visual content for brands, print, and digital.', income: '$600–$3,500', diff: 'Easy', dur: '2–5 mo', pop: 'steady' },
-          { name: 'Motion Graphics', icon: '🎬', img: 'motion graphics animation', desc: 'Animate logos, titles, and cinematic visual effects.', income: '$800–$4,000', diff: 'Medium', dur: '4–7 mo', pop: 'rising' },
-          { name: 'Video Editing', icon: '🎞️', img: 'video editing timeline', desc: 'Tell stories through professional cuts, color, and sound.', income: '$600–$3,500', diff: 'Easy', dur: '1–4 mo', pop: 'hot' },
-          { name: '3D Modeling', icon: '🧊', img: '3D modeling blender', desc: 'Create assets for games, film, architecture, and ads.', income: '$800–$4,500', diff: 'Medium', dur: '5–9 mo', pop: 'steady' },
-          { name: 'Blockchain Development', icon: '⛓️', img: 'blockchain crypto smart contract', desc: 'Build decentralized apps and smart contracts on-chain.', income: '$2,000–$9,000', diff: 'Hard', dur: '8–13 mo', pop: 'rising' },
-          { name: 'Python Programming', icon: '🐍', img: 'python programming code', desc: 'Master the most versatile language in tech.', income: '$1,000–$6,000', diff: 'Easy', dur: '2–5 mo', pop: 'hot' },
-          { name: 'React Development', icon: '⚛️', img: 'React JS development', desc: 'Build fast, component-driven web UIs with React.', income: '$1,500–$6,000', diff: 'Medium', dur: '3–6 mo', pop: 'hot' },
-          { name: 'Database Engineering', icon: '🗄️', img: 'database SQL engineering', desc: 'Design and optimize databases powering the web.', income: '$1,500–$6,500', diff: 'Medium', dur: '4–7 mo', pop: 'steady' },
-          { name: 'Ethical Hacking', icon: '🕵️', img: 'ethical hacking penetration test', desc: 'Find vulnerabilities before the bad guys do.', income: '$1,500–$7,000', diff: 'Hard', dur: '7–12 mo', pop: 'rising' },
-          { name: 'PCB Design', icon: '🔌', img: 'PCB circuit board design', desc: 'Design printed circuit boards for hardware products.', income: '$800–$4,000', diff: 'Hard', dur: '6–10 mo', pop: 'new' },
+          { name: 'Web Development', icon: 'globe', img: 'web development coding', desc: 'Build websites & full-stack apps used by millions.', income: '$1,500–$6,000', diff: 'Medium', dur: '4–8 mo', pop: 'hot' },
+          { name: 'Frontend Development', icon: 'palette', img: 'frontend css javascript', desc: 'Craft beautiful, responsive UIs with HTML/CSS/JS.', income: '$1,200–$5,000', diff: 'Medium', dur: '3–6 mo', pop: 'hot' },
+          { name: 'Backend Development', icon: 'settings', img: 'server backend api', desc: 'Power apps with APIs, databases, and server logic.', income: '$1,500–$7,000', diff: 'Hard', dur: '5–9 mo', pop: 'rising' },
+          { name: 'Full Stack Development', icon: 'link', img: 'fullstack developer laptop', desc: 'Own the entire product — front to back.', income: '$2,000–$8,000', diff: 'Hard', dur: '8–12 mo', pop: 'hot' },
+          { name: 'Mobile App Development', icon: 'smartphone', img: 'mobile app development', desc: 'Build iOS & Android apps that reach billions.', income: '$1,500–$7,000', diff: 'Hard', dur: '6–10 mo', pop: 'hot' },
+          { name: 'Game Development', icon: 'gamepad-2', img: 'game developer unity', desc: 'Create games for PC, mobile and console.', income: '$1,000–$5,000', diff: 'Hard', dur: '8–14 mo', pop: 'steady' },
+          { name: 'AI Engineering', icon: 'bot', img: 'artificial intelligence AI', desc: 'Build and deploy real-world AI systems & LLMs.', income: '$3,000–$12,000', diff: 'Hard', dur: '9–14 mo', pop: 'hot' },
+          { name: 'Machine Learning', icon: 'brain', img: 'machine learning data', desc: 'Train models that learn from data automatically.', income: '$2,500–$10,000', diff: 'Hard', dur: '8–14 mo', pop: 'hot' },
+          { name: 'Deep Learning', icon: 'microscope', img: 'neural network deep learning', desc: 'Architect neural networks for vision, speech, and NLP.', income: '$3,000–$12,000', diff: 'Hard', dur: '10–16 mo', pop: 'rising' },
+          { name: 'Data Science', icon: 'bar-chart-2', img: 'data science analytics', desc: 'Extract insights from massive datasets to drive decisions.', income: '$2,000–$8,000', diff: 'Hard', dur: '7–12 mo', pop: 'hot' },
+          { name: 'Cybersecurity', icon: 'lock', img: 'cybersecurity hacking', desc: 'Protect systems from hackers and data breaches.', income: '$2,000–$9,000', diff: 'Hard', dur: '8–14 mo', pop: 'rising' },
+          { name: 'Cloud Computing', icon: 'cloud', img: 'cloud computing AWS', desc: 'Deploy scalable infrastructure on AWS, Azure, GCP.', income: '$1,800–$8,000', diff: 'Medium', dur: '5–9 mo', pop: 'hot' },
+          { name: 'DevOps', icon: 'infinity', img: 'devops CI/CD pipeline', desc: 'Automate deployments and keep systems always running.', income: '$2,000–$9,000', diff: 'Hard', dur: '6–10 mo', pop: 'steady' },
+          { name: 'UI/UX Design', icon: 'pencil', img: 'UI UX design wireframe', desc: 'Design products people love to use.', income: '$1,200–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'hot' },
+          { name: 'Graphic Design', icon: 'image', img: 'graphic design creative', desc: 'Create visual content for brands, print, and digital.', income: '$600–$3,500', diff: 'Easy', dur: '2–5 mo', pop: 'steady' },
+          { name: 'Motion Graphics', icon: 'clapperboard', img: 'motion graphics animation', desc: 'Animate logos, titles, and cinematic visual effects.', income: '$800–$4,000', diff: 'Medium', dur: '4–7 mo', pop: 'rising' },
+          { name: 'Video Editing', icon: 'film', img: 'video editing timeline', desc: 'Tell stories through professional cuts, color, and sound.', income: '$600–$3,500', diff: 'Easy', dur: '1–4 mo', pop: 'hot' },
+          { name: '3D Modeling', icon: 'box', img: '3D modeling blender', desc: 'Create assets for games, film, architecture, and ads.', income: '$800–$4,500', diff: 'Medium', dur: '5–9 mo', pop: 'steady' },
+          { name: 'Blockchain Development', icon: 'link-2', img: 'blockchain crypto smart contract', desc: 'Build decentralized apps and smart contracts on-chain.', income: '$2,000–$9,000', diff: 'Hard', dur: '8–13 mo', pop: 'rising' },
+          { name: 'Python Programming', icon: 'terminal', img: 'python programming code', desc: 'Master the most versatile language in tech.', income: '$1,000–$6,000', diff: 'Easy', dur: '2–5 mo', pop: 'hot' },
+          { name: 'React Development', icon: 'atom', img: 'React JS development', desc: 'Build fast, component-driven web UIs with React.', income: '$1,500–$6,000', diff: 'Medium', dur: '3–6 mo', pop: 'hot' },
+          { name: 'Database Engineering', icon: 'database', img: 'database SQL engineering', desc: 'Design and optimize databases powering the web.', income: '$1,500–$6,500', diff: 'Medium', dur: '4–7 mo', pop: 'steady' },
+          { name: 'Ethical Hacking', icon: 'user-search', img: 'ethical hacking penetration test', desc: 'Find vulnerabilities before the bad guys do.', income: '$1,500–$7,000', diff: 'Hard', dur: '7–12 mo', pop: 'rising' },
+          { name: 'PCB Design', icon: 'plug', img: 'PCB circuit board design', desc: 'Design printed circuit boards for hardware products.', income: '$800–$4,000', diff: 'Hard', dur: '6–10 mo', pop: 'new' },
         ]
       },
       {
         id: 'biz',
-        icon: '💼',
+        icon: 'briefcase',
         name: 'Digital Business',
         colorClass: 'biz',
         range: '$500–$5,000/mo',
         badge: 'NEW',
         badgeType: 'new',
         skills: [
-          { name: 'Digital Marketing', icon: '📣', img: 'digital marketing social media', desc: 'Run campaigns across Google, Meta, TikTok, and more.', income: '$800–$4,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
-          { name: 'Social Media Marketing', icon: '📲', img: 'social media Instagram marketing', desc: 'Grow brands organically and via paid social.', income: '$600–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
-          { name: 'SEO Optimization', icon: '🔎', img: 'SEO search engine optimization', desc: 'Rank websites #1 on Google and drive organic traffic.', income: '$700–$3,500', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
-          { name: 'Copywriting', icon: '✍️', img: 'copywriting writing laptop', desc: 'Write words that sell products and build brands.', income: '$700–$4,000', diff: 'Easy', dur: '1–3 mo', pop: 'rising' },
-          { name: 'Email Marketing', icon: '📧', img: 'email marketing campaign', desc: 'Design automated email funnels that convert.', income: '$600–$3,000', diff: 'Easy', dur: '1–2 mo', pop: 'steady' },
-          { name: 'Affiliate Marketing', icon: '🤝', img: 'affiliate marketing online', desc: 'Earn commissions promoting other people\'s products.', income: '$500–$5,000', diff: 'Easy', dur: '1–3 mo', pop: 'rising' },
-          { name: 'E-commerce', icon: '🛒', img: 'ecommerce online store shopify', desc: 'Build and scale online stores to generate passive income.', income: '$1,000–$8,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
-          { name: 'Dropshipping', icon: '📦', img: 'dropshipping logistics shipping', desc: 'Sell products online without holding any inventory.', income: '$500–$5,000', diff: 'Easy', dur: '1–3 mo', pop: 'steady' },
-          { name: 'Branding', icon: '🏷️', img: 'branding logo identity design', desc: 'Build memorable brand identities that command premium prices.', income: '$800–$4,000', diff: 'Medium', dur: '2–4 mo', pop: 'steady' },
-          { name: 'Sales Funnels', icon: '🔽', img: 'sales funnel conversion marketing', desc: 'Engineer automated pipelines that turn visitors into buyers.', income: '$1,000–$5,000', diff: 'Medium', dur: '2–4 mo', pop: 'rising' },
-          { name: 'Content Creation', icon: '🎥', img: 'content creation YouTube filming', desc: 'Build audiences on YouTube, TikTok, Instagram, and beyond.', income: '$500–$10,000', diff: 'Easy', dur: '1–6 mo', pop: 'hot' },
-          { name: 'Product Management', icon: '🗂️', img: 'product management roadmap', desc: 'Lead cross-functional teams from idea to shipped product.', income: '$2,000–$8,000', diff: 'Hard', dur: '6–12 mo', pop: 'rising' },
-          { name: 'Business Analytics', icon: '📈', img: 'business analytics dashboard', desc: 'Turn raw data into strategic decisions using BI tools.', income: '$1,500–$6,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
-          { name: 'Influencer Marketing', icon: '⭐', img: 'influencer marketing brand deal', desc: 'Connect brands with creators for viral campaigns.', income: '$600–$3,500', diff: 'Easy', dur: '1–2 mo', pop: 'steady' },
-          { name: 'Startup Building', icon: '🚀', img: 'startup entrepreneur office', desc: 'Turn your idea into a funded, scaling business.', income: 'Unlimited', diff: 'Hard', dur: '12+ mo', pop: 'rising' },
+          { name: 'Digital Marketing', icon: 'megaphone', img: 'digital marketing social media', desc: 'Run campaigns across Google, Meta, TikTok, and more.', income: '$800–$4,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Social Media Marketing', icon: 'smartphone-charging', img: 'social media Instagram marketing', desc: 'Grow brands organically and via paid social.', income: '$600–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'SEO Optimization', icon: 'search', img: 'SEO search engine optimization', desc: 'Rank websites #1 on Google and drive organic traffic.', income: '$700–$3,500', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Copywriting', icon: 'pen-tool', img: 'copywriting writing laptop', desc: 'Write words that sell products and build brands.', income: '$700–$4,000', diff: 'Easy', dur: '1–3 mo', pop: 'rising' },
+          { name: 'Email Marketing', icon: 'mail', img: 'email marketing campaign', desc: 'Design automated email funnels that convert.', income: '$600–$3,000', diff: 'Easy', dur: '1–2 mo', pop: 'steady' },
+          { name: 'Affiliate Marketing', icon: 'handshake', img: 'affiliate marketing online', desc: 'Earn commissions promoting other people\'s products.', income: '$500–$5,000', diff: 'Easy', dur: '1–3 mo', pop: 'rising' },
+          { name: 'E-commerce', icon: 'shopping-cart', img: 'ecommerce online store shopify', desc: 'Build and scale online stores to generate passive income.', income: '$1,000–$8,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Dropshipping', icon: 'package', img: 'dropshipping logistics shipping', desc: 'Sell products online without holding any inventory.', income: '$500–$5,000', diff: 'Easy', dur: '1–3 mo', pop: 'steady' },
+          { name: 'Branding', icon: 'tag', img: 'branding logo identity design', desc: 'Build memorable brand identities that command premium prices.', income: '$800–$4,000', diff: 'Medium', dur: '2–4 mo', pop: 'steady' },
+          { name: 'Sales Funnels', icon: 'filter', img: 'sales funnel conversion marketing', desc: 'Engineer automated pipelines that turn visitors into buyers.', income: '$1,000–$5,000', diff: 'Medium', dur: '2–4 mo', pop: 'rising' },
+          { name: 'Content Creation', icon: 'video', img: 'content creation YouTube filming', desc: 'Build audiences on YouTube, TikTok, Instagram, and beyond.', income: '$500–$10,000', diff: 'Easy', dur: '1–6 mo', pop: 'hot' },
+          { name: 'Product Management', icon: 'folder-open', img: 'product management roadmap', desc: 'Lead cross-functional teams from idea to shipped product.', income: '$2,000–$8,000', diff: 'Hard', dur: '6–12 mo', pop: 'rising' },
+          { name: 'Business Analytics', icon: 'trending-up', img: 'business analytics dashboard', desc: 'Turn raw data into strategic decisions using BI tools.', income: '$1,500–$6,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
+          { name: 'Influencer Marketing', icon: 'star', img: 'influencer marketing brand deal', desc: 'Connect brands with creators for viral campaigns.', income: '$600–$3,500', diff: 'Easy', dur: '1–2 mo', pop: 'steady' },
+          { name: 'Startup Building', icon: 'rocket', img: 'startup entrepreneur office', desc: 'Turn your idea into a funded, scaling business.', income: 'Unlimited', diff: 'Hard', dur: '12+ mo', pop: 'rising' },
         ]
       },
       {
         id: 'repair',
-        icon: '🔧',
+        icon: 'wrench',
         name: 'Technical & Repair',
         colorClass: 'repair',
         range: '$400–$3,000/mo',
         badge: 'HOT',
         badgeType: 'hot',
         skills: [
-          { name: 'Phone Repair', icon: '📱', img: 'phone repair technician', desc: 'Fix cracked screens, batteries, and motherboards.', income: '$600–$2,500', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
-          { name: 'Laptop Repair', icon: '💻', img: 'laptop repair technician', desc: 'Diagnose and fix hardware and OS issues on any laptop.', income: '$500–$2,500', diff: 'Medium', dur: '2–4 mo', pop: 'hot' },
+          { name: 'Phone Repair', icon: 'smartphone', img: 'phone repair technician', desc: 'Fix cracked screens, batteries, and motherboards.', income: '$600–$2,500', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Laptop Repair', icon: 'monitor', img: 'laptop repair technician', desc: 'Diagnose and fix hardware and OS issues on any laptop.', income: '$500–$2,500', diff: 'Medium', dur: '2–4 mo', pop: 'hot' },
           { name: 'TV Repair', icon: '📺', img: 'TV repair electronics', desc: 'Service LED/LCD/OLED TVs for homes and businesses.', income: '$400–$2,000', diff: 'Medium', dur: '2–4 mo', pop: 'steady' },
-          { name: 'CCTV Installation', icon: '📹', img: 'CCTV camera installation security', desc: 'Install and configure surveillance systems for clients.', income: '$600–$2,500', diff: 'Medium', dur: '1–3 mo', pop: 'hot' },
-          { name: 'Solar Installation', icon: '☀️', img: 'solar panel installation roof', desc: 'Set up solar power systems for homes and businesses.', income: '$1,000–$4,000', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
-          { name: 'Electrical Wiring', icon: '⚡', img: 'electrical wiring electrician', desc: 'Wire buildings safely and legally to code.', income: '$700–$3,000', diff: 'Hard', dur: '3–6 mo', pop: 'steady' },
-          { name: 'Electronics Repair', icon: '🔌', img: 'electronics repair PCB', desc: 'Fix consumer electronics from speakers to power supplies.', income: '$500–$2,500', diff: 'Medium', dur: '3–6 mo', pop: 'steady' },
-          { name: 'Drone Repair', icon: '🚁', img: 'drone repair technology', desc: 'Service commercial and hobby drones: motors, ESCs, flight controllers.', income: '$600–$3,000', diff: 'Hard', dur: '3–6 mo', pop: 'new' },
-          { name: 'Camera Repair', icon: '📷', img: 'camera repair mirrorless', desc: 'Clean sensors, fix shutters, and service DSLR/mirrorless cameras.', income: '$500–$2,500', diff: 'Hard', dur: '3–6 mo', pop: 'steady' },
-          { name: 'Car Diagnostics', icon: '🚗', img: 'car diagnostics OBD scan', desc: 'Read fault codes and diagnose modern vehicle ECUs.', income: '$700–$3,000', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
-          { name: 'Generator Repair', icon: '🔋', img: 'generator repair engine', desc: 'Service petrol and diesel generators for power businesses.', income: '$500–$2,500', diff: 'Medium', dur: '2–4 mo', pop: 'hot' },
-          { name: 'Air Conditioner Repair', icon: '❄️', img: 'air conditioner repair HVAC', desc: 'Install, service, and fix AC units for homes and offices.', income: '$600–$3,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
-          { name: 'Networking Installation', icon: '🌐', img: 'network installation router cable', desc: 'Build LAN/WAN networks for offices, hotels, and schools.', income: '$700–$3,500', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
-          { name: 'Fiber Optic Installation', icon: '💡', img: 'fiber optic cable installation', desc: 'Splice and lay high-speed fiber for ISPs and businesses.', income: '$800–$3,500', diff: 'Hard', dur: '3–6 mo', pop: 'rising' },
-          { name: 'PCB Design & Repair', icon: '🔬', img: 'PCB soldering electronics repair', desc: 'Design and rework circuit boards for product companies.', income: '$800–$4,000', diff: 'Hard', dur: '5–9 mo', pop: 'new' },
+          { name: 'CCTV Installation', icon: 'video', img: 'CCTV camera installation security', desc: 'Install and configure surveillance systems for clients.', income: '$600–$2,500', diff: 'Medium', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Solar Installation', icon: 'sun', img: 'solar panel installation roof', desc: 'Set up solar power systems for homes and businesses.', income: '$1,000–$4,000', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
+          { name: 'Electrical Wiring', icon: 'zap', img: 'electrical wiring electrician', desc: 'Wire buildings safely and legally to code.', income: '$700–$3,000', diff: 'Hard', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Electronics Repair', icon: 'plug', img: 'electronics repair PCB', desc: 'Fix consumer electronics from speakers to power supplies.', income: '$500–$2,500', diff: 'Medium', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Drone Repair', icon: 'navigation', img: 'drone repair technology', desc: 'Service commercial and hobby drones: motors, ESCs, flight controllers.', income: '$600–$3,000', diff: 'Hard', dur: '3–6 mo', pop: 'new' },
+          { name: 'Camera Repair', icon: 'camera', img: 'camera repair mirrorless', desc: 'Clean sensors, fix shutters, and service DSLR/mirrorless cameras.', income: '$500–$2,500', diff: 'Hard', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Car Diagnostics', icon: 'car', img: 'car diagnostics OBD scan', desc: 'Read fault codes and diagnose modern vehicle ECUs.', income: '$700–$3,000', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
+          { name: 'Generator Repair', icon: 'battery', img: 'generator repair engine', desc: 'Service petrol and diesel generators for power businesses.', income: '$500–$2,500', diff: 'Medium', dur: '2–4 mo', pop: 'hot' },
+          { name: 'Air Conditioner Repair', icon: 'snowflake', img: 'air conditioner repair HVAC', desc: 'Install, service, and fix AC units for homes and offices.', income: '$600–$3,000', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Networking Installation', icon: 'globe', img: 'network installation router cable', desc: 'Build LAN/WAN networks for offices, hotels, and schools.', income: '$700–$3,500', diff: 'Medium', dur: '2–5 mo', pop: 'rising' },
+          { name: 'Fiber Optic Installation', icon: 'lightbulb', img: 'fiber optic cable installation', desc: 'Splice and lay high-speed fiber for ISPs and businesses.', income: '$800–$3,500', diff: 'Hard', dur: '3–6 mo', pop: 'rising' },
+          { name: 'PCB Design & Repair', icon: 'microscope', img: 'PCB soldering electronics repair', desc: 'Design and rework circuit boards for product companies.', income: '$800–$4,000', diff: 'Hard', dur: '5–9 mo', pop: 'new' },
         ]
       },
       {
         id: 'creative',
-        icon: '🎨',
+        icon: 'palette',
         name: 'Creative',
         colorClass: 'creative',
         range: '$500–$6,000/mo',
         badge: 'HOT',
         badgeType: 'hot',
         skills: [
-          { name: 'Photography', icon: '📷', img: 'photography studio camera', desc: 'Capture stunning images for weddings, brands, and editorial.', income: '$600–$4,000', diff: 'Easy', dur: '1–4 mo', pop: 'hot' },
-          { name: 'Videography', icon: '🎥', img: 'videography camera shooting', desc: 'Shoot and produce high-quality video for any purpose.', income: '$700–$4,500', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
-          { name: 'Music Production', icon: '🎵', img: 'music production studio DAW', desc: 'Compose, mix, and master tracks for artists worldwide.', income: '$600–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
-          { name: 'Sound Engineering', icon: '🎚️', img: 'sound engineering mixing board', desc: 'Mix and master audio for studios, live events, and broadcast.', income: '$700–$4,000', diff: 'Hard', dur: '5–9 mo', pop: 'steady' },
-          { name: 'Podcast Production', icon: '🎙️', img: 'podcast microphone recording', desc: 'Produce, edit, and distribute professional podcasts.', income: '$500–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
-          { name: 'Fashion Design', icon: '👗', img: 'fashion design sketching', desc: 'Create clothing lines, costumes, and haute couture.', income: '$600–$4,000', diff: 'Medium', dur: '4–8 mo', pop: 'steady' },
-          { name: 'Interior Design', icon: '🛋️', img: 'interior design living room', desc: 'Transform spaces into functional, beautiful environments.', income: '$800–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
-          { name: 'Architecture Visualization', icon: '🏛️', img: 'architecture 3D visualization render', desc: 'Render photorealistic building visuals for architects.', income: '$1,000–$5,000', diff: 'Hard', dur: '6–10 mo', pop: 'rising' },
-          { name: 'Illustration', icon: '🖌️', img: 'illustration digital art character', desc: 'Create hand-crafted or digital illustrations for books, brands, and games.', income: '$600–$3,500', diff: 'Medium', dur: '3–6 mo', pop: 'steady' },
-          { name: 'Digital Art', icon: '🎭', img: 'digital art painting tablet', desc: 'Paint and create artwork digitally using Procreate, PS, Clip Studio.', income: '$500–$3,500', diff: 'Medium', dur: '2–6 mo', pop: 'hot' },
-          { name: 'Logo Design', icon: '⭕', img: 'logo design branding identity', desc: 'Create iconic logos that define a brand\'s visual identity.', income: '$500–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
-          { name: 'Animation', icon: '🎞️', img: 'animation cartoon 2D 3D', desc: 'Bring characters and stories to life frame by frame.', income: '$800–$5,000', diff: 'Hard', dur: '6–12 mo', pop: 'rising' },
+          { name: 'Photography', icon: 'camera', img: 'photography studio camera', desc: 'Capture stunning images for weddings, brands, and editorial.', income: '$600–$4,000', diff: 'Easy', dur: '1–4 mo', pop: 'hot' },
+          { name: 'Videography', icon: 'video', img: 'videography camera shooting', desc: 'Shoot and produce high-quality video for any purpose.', income: '$700–$4,500', diff: 'Medium', dur: '2–5 mo', pop: 'hot' },
+          { name: 'Music Production', icon: 'music', img: 'music production studio DAW', desc: 'Compose, mix, and master tracks for artists worldwide.', income: '$600–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
+          { name: 'Sound Engineering', icon: 'sliders-horizontal', img: 'sound engineering mixing board', desc: 'Mix and master audio for studios, live events, and broadcast.', income: '$700–$4,000', diff: 'Hard', dur: '5–9 mo', pop: 'steady' },
+          { name: 'Podcast Production', icon: 'mic', img: 'podcast microphone recording', desc: 'Produce, edit, and distribute professional podcasts.', income: '$500–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Fashion Design', icon: 'shirt', img: 'fashion design sketching', desc: 'Create clothing lines, costumes, and haute couture.', income: '$600–$4,000', diff: 'Medium', dur: '4–8 mo', pop: 'steady' },
+          { name: 'Interior Design', icon: 'sofa', img: 'interior design living room', desc: 'Transform spaces into functional, beautiful environments.', income: '$800–$5,000', diff: 'Medium', dur: '4–8 mo', pop: 'rising' },
+          { name: 'Architecture Visualization', icon: 'building', img: 'architecture 3D visualization render', desc: 'Render photorealistic building visuals for architects.', income: '$1,000–$5,000', diff: 'Hard', dur: '6–10 mo', pop: 'rising' },
+          { name: 'Illustration', icon: 'brush', img: 'illustration digital art character', desc: 'Create hand-crafted or digital illustrations for books, brands, and games.', income: '$600–$3,500', diff: 'Medium', dur: '3–6 mo', pop: 'steady' },
+          { name: 'Digital Art', icon: 'drama', img: 'digital art painting tablet', desc: 'Paint and create artwork digitally using Procreate, PS, Clip Studio.', income: '$500–$3,500', diff: 'Medium', dur: '2–6 mo', pop: 'hot' },
+          { name: 'Logo Design', icon: 'circle', img: 'logo design branding identity', desc: 'Create iconic logos that define a brand\'s visual identity.', income: '$500–$3,000', diff: 'Easy', dur: '1–3 mo', pop: 'hot' },
+          { name: 'Animation', icon: 'film', img: 'animation cartoon 2D 3D', desc: 'Bring characters and stories to life frame by frame.', income: '$800–$5,000', diff: 'Hard', dur: '6–12 mo', pop: 'rising' },
         ]
       },
     ];
 
     const CHIPS = ['Web Development', 'Photography', 'Data Science', 'Video Editing', 'UI/UX Design', 'Phone Repair', 'Graphic Design', 'Machine Learning'];
     const FEATURES = [
-      { icon: '⚡', title: 'Instant Breakdown', desc: 'Full skill overview generated in seconds, no fluff.', img: 'technology learning screen' },
-      { icon: '🗺️', title: 'Clear Roadmap', desc: 'Step-by-step from zero to job-ready in your industry.', img: 'road journey planning map' },
-      { icon: '🔗', title: 'Best Resources', desc: 'Top platform matched specifically to your skill goal.', img: 'online course laptop study' },
+      { icon: 'zap', title: 'Instant Breakdown', desc: 'Full skill overview generated in seconds, no fluff.', img: 'technology learning screen' },
+      { icon: 'map', title: 'Clear Roadmap', desc: 'Step-by-step from zero to job-ready in your industry.', img: 'road journey planning map' },
+      { icon: 'link', title: 'Best Resources', desc: 'Top platform matched specifically to your skill goal.', img: 'online course laptop study' },
     ];
 
     const GUIDE_SYS = `You are SkillQuest AI. Respond ONLY with a valid JSON object — no markdown, no backticks, no extra text. Structure: {"icon":"<emoji>","title":"<name>","tags":["<level>","<type>","<time>"],"description":"<2-3 sentences>","steps":[{"title":"<step>","detail":"<instruction>"},{"title":"<step>","detail":"<instruction>"},{"title":"<step>","detail":"<instruction>"},{"title":"<step>","detail":"<instruction>"}],"imageKeywords":["<3-word kw>","<3-word kw>","<3-word kw>"],"bestSite":{"name":"<platform>","url":"<https url>","reason":"<one sentence>"}}`;
@@ -1736,7 +1774,11 @@ TRENDING SKILLS SECTION
     const fabBubble = $('fab-bubble');
     const fabBubbleClose = $('fab-bubble-close');
 
-    function imgUrl(kw, seed) { return `https://image.pollinations.ai/prompt/${encodeURIComponent(kw)}?width=600&height=400&nologo=true&seed=${seed}`; }
+    function imgUrl(kw, seed) {
+      const parts = kw.split(' ');
+      const safeKw = encodeURIComponent(parts[0] + (parts[1] ? ',' + parts[1] : ''));
+      return `https://loremflickr.com/600/400/${safeKw}?lock=${seed}`;
+    }
     function show(el) { el.classList.remove('hidden'); }
     function hide(el) { el.classList.add('hidden'); }
 
@@ -1752,14 +1794,14 @@ TRENDING SKILLS SECTION
 
     /* ─── FEATURE CARDS ─── */
     FEATURES.forEach((f, i) => {
-      $('feat-grid').innerHTML += `<div class="feat-card"><div class="feat-img"><img src="${imgUrl(f.img, i * 83 + 29)}" alt="${f.title}" loading="lazy" onerror="this.style.display='none'"/><div class="feat-img-overlay"></div></div><div class="feat-body"><div class="feat-icon">${f.icon}</div><div class="feat-name">${f.title}</div><div class="feat-desc">${f.desc}</div></div></div>`;
+      $('feat-grid').innerHTML += `<div class="feat-card"><div class="feat-img"><img src="${imgUrl(f.img, i * 83 + 29)}" alt="${f.title}" loading="lazy" onerror="this.style.display='none'"/><div class="feat-img-overlay"></div></div><div class="feat-body"><div class="feat-icon"><i data-lucide="${f.icon}"></i></div><div class="feat-name">${f.title}</div><div class="feat-desc">${f.desc}</div></div></div>`;
     });
 
     /* ════════════════════════════════
        BUILD TRENDING SKILLS SECTION
     ════════════════════════════════ */
     function diffClass(d) { return d === 'Easy' ? 'easy' : d === 'Medium' ? 'medium' : 'hard'; }
-    function popLabel(p) { const m = { hot: '🔥 Hot', rising: '📈 Rising', steady: '⚡ Steady', new: '✨ New' }; return m[p] || p; }
+    function popLabel(p) { const m = { hot: '🔥 Hot', rising: '<i data-lucide="trending-up"></i> Rising', steady: '<i data-lucide="zap"></i> Steady', new: '✨ New' }; return m[p] || p; }
 
     function buildCategories() {
       const list = $('cat-list');
@@ -1771,14 +1813,20 @@ TRENDING SKILLS SECTION
         const header = document.createElement('div');
         header.className = 'cat-header';
         header.innerHTML = `
-      <div class="cat-header-left">
-        <div class="cat-icon-wrap ${cat.colorClass}">${cat.icon}</div>
-        <div class="cat-info">
-          <div class="cat-name">${cat.name}</div>
-          <div class="cat-meta">
-            <span class="cat-count">${cat.skills.length} skills</span>
-            <span class="cat-dot"></span>
-            <span class="cat-range ${cat.colorClass}">${cat.range}</span>
+      <div class="cat-banner">
+        <img src="${imgUrl(cat.name + ' abstract', ci * 42 + 7)}" alt="${cat.name}" loading="lazy" onerror="this.style.display='none'"/>
+        <div class="cat-banner-overlay"></div>
+      </div>
+      <div class="cat-header-content">
+        <div class="cat-header-left">
+          <div class="cat-icon-wrap ${cat.colorClass}"><i data-lucide="${cat.icon}"></i></div>
+          <div class="cat-info">
+            <div class="cat-name">${cat.name}</div>
+            <div class="cat-meta">
+              <span class="cat-count">${cat.skills.length} skills</span>
+              <span class="cat-dot"></span>
+              <span class="cat-range ${cat.colorClass}">${cat.range}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1802,9 +1850,9 @@ TRENDING SKILLS SECTION
           skCard.style.animationPlayState = 'paused';
           skCard.innerHTML = `
         <div class="sk-img-wrap">
-          <img src="${imgUrl(sk.img, ci * 500 + si * 37)}" alt="${sk.name}" loading="lazy" onerror="this.style.background='#111F2E'"/>
+          <img src="${imgUrl(sk.img, ci * 500 + si * 37)}" alt="${sk.name}" loading="lazy" onerror="this.style.display='none'"/>
           <div class="sk-img-overlay"></div>
-          <div class="sk-icon-badge">${sk.icon}</div>
+          <div class="sk-icon-badge"><i data-lucide="${sk.icon}"></i></div>
           <div class="sk-pop-badge ${sk.pop}">${popLabel(sk.pop)}</div>
         </div>
         <div class="sk-body">
@@ -1854,7 +1902,9 @@ TRENDING SKILLS SECTION
       });
     }
 
-    buildCategories();
+    setTimeout(() => { if(window.lucide) window.lucide.createIcons(); }, 50);
+      buildCategories();
+      setTimeout(() => { if(window.lucide) window.lucide.createIcons(); }, 50);
 
     /* ─── INPUT & EVENTS ─── */
     skillInput.addEventListener('focus', () => inputWrap.classList.add('focused'));
@@ -2031,6 +2081,8 @@ TRENDING SKILLS SECTION
     </div>
   </footer>
   <script type="module" src="../assets/js/app.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>if(window.lucide) window.lucide.createIcons();</script>
 </body>
 
 </html>
