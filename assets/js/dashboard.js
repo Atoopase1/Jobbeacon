@@ -215,7 +215,7 @@ export const Dashboard = {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .upsert([profileData])
+        .upsert(profileData)
         .select();
 
       if (error) throw error;

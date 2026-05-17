@@ -182,8 +182,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
             id: user.id,
             full_name: googleName,
             avatar_url: googleAvatar,
-            contact_email: googleEmail,
-            updated_at: new Date().toISOString()
+            contact_email: googleEmail
           });
           console.log('[Auth] Profile created from Google metadata');
         } else {
@@ -193,7 +192,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
           if (!existing.avatar_url && googleAvatar) updates.avatar_url = googleAvatar;
 
           if (Object.keys(updates).length > 0) {
-            updates.updated_at = new Date().toISOString();
             await supabase.from('profiles').update(updates).eq('id', user.id);
             console.log('[Auth] Profile updated with missing Google fields:', updates);
           }

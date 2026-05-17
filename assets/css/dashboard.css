@@ -319,6 +319,16 @@ textarea.form-control {
 /* Responsive Dashboard */
 .sidebar-toggle {
   display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+}
+
+.sidebar-toggle:hover, .sidebar-toggle:active {
+  background-color: var(--bg-surface-hover);
 }
 
 @media (max-width: 1024px) {
@@ -335,7 +345,9 @@ textarea.form-control {
   }
 
   .sidebar-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .dashboard-overlay {
