@@ -422,7 +422,7 @@ INSERT INTO public.jobs (
 -- Freelance Gigs table
 CREATE TABLE IF NOT EXISTS public.freelance_gigs (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  user_id UUID REFERENCES public.profiles(id) NOT NULL,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   category TEXT NOT NULL,
@@ -438,7 +438,7 @@ CREATE TABLE IF NOT EXISTS public.freelance_gigs (
 CREATE TABLE IF NOT EXISTS public.freelance_bids (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   gig_id UUID REFERENCES public.freelance_gigs(id) ON DELETE CASCADE NOT NULL,
-  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  user_id UUID REFERENCES public.profiles(id) NOT NULL,
   amount NUMERIC NOT NULL,
   message TEXT,
   delivery_days INTEGER,
