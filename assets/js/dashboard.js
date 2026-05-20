@@ -198,9 +198,9 @@ export const Dashboard = {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
         
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') throw error;
       return { profile: data, error: null };
     } catch (error) {
       console.error('Error fetching profile:', error.message);

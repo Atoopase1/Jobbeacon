@@ -174,7 +174,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
           .from('profiles')
           .select('id, full_name, avatar_url')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         if (!existing) {
           // First Google login — create a full profile
