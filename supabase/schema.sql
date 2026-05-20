@@ -414,3 +414,79 @@ INSERT INTO public.jobs (
 - Manage budget and allocate funds appropriately', 
   'https://www.gcbbank.com.gh/careers'
 );
+
+-- ==============================================================================
+-- 5. Freelance Marketplace Tables
+-- ==============================================================================
+
+-- Freelance Gigs table
+CREATE TABLE IF NOT EXISTS public.freelance_gigs (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  category TEXT NOT NULL,
+  skills TEXT[],
+  budget_min NUMERIC,
+  budget_max NUMERIC,
+  deadline DATE,
+  status TEXT NOT NULL DEFAULT 'open', -- 'open', 'in_progress', 'completed', 'cancelled'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Freelance Bids table
+CREATE TABLE IF NOT EXISTS public.freelance_bids (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  gig_id UUID REFERENCES public.freelance_gigs(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  amount NUMERIC NOT NULL,
+  message TEXT,
+  delivery_days INTEGER,
+  status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'accepted', 'rejected'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(gig_id, user_id)
+);
+
+-- Freelance Gigs RLS
+ALTER TABLE public.freelance_gigs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Freelance gigs are viewable by everyone."
+  ON public.freelance_gigs FOR SELECT
+  USING ( true );
+
+CREATE POLICY "Authenticated users can create gigs."
+  ON public.freelance_gigs FOR INSERT
+  WITH CHECK ( auth.role() = 'authenticated' );
+
+CREATE POLICY "Users can update their own gigs."
+  ON public.freelance_gigs FOR UPDATE
+  USING ( auth.uid() = user_id );
+
+CREATE POLICY "Users can delete their own gigs."
+  ON public.freelance_gigs FOR DELETE
+  USING ( auth.uid() = user_id );
+
+-- Freelance Bids RLS
+ALTER TABLE public.freelance_bids ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Bids are viewable by everyone."
+  ON public.freelance_bids FOR SELECT
+  USING ( true );
+
+CREATE POLICY "Authenticated users can place bids."
+  ON public.freelance_bids FOR INSERT
+  WITH CHECK ( auth.role() = 'authenticated' );
+
+CREATE POLICY "Gig owners can update bid status."
+  ON public.freelance_bids FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.freelance_gigs
+      WHERE freelance_gigs.id = freelance_bids.gig_id
+      AND freelance_gigs.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can delete their own bids."
+  ON public.freelance_bids FOR DELETE
+  USING ( auth.uid() = user_id );

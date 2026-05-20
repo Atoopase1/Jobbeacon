@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freelance Marketplace - JobBeacon</title>
+  <meta name="description" content="Post your skills, find freelance gigs, and place bids on projects in Ghana.">
+  <meta name="theme-color" content="#0F766E">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/freelance.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" style="background-color: var(--bg-surface); backdrop-filter: none;">
+    <div class="container">
+      <a href="/" class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 7.5 14.6 3 12"></polyline><polyline points="21 12 16.5 14.6 16.5 19.79"></polyline><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Job<span>Beacon</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pages/jobs.html" class="nav-link">Find Jobs</a>
+        <a href="/pages/freelance.html" class="nav-link active">Freelance</a>
+        <a href="/pages/employers.html" class="nav-link">Employers</a>
+        <a href="/pages/learn.html" class="nav-link">SkillQuest</a>
+        <button id="themeToggle" class="theme-toggle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        <a href="/pages/login.html" class="btn btn-primary" id="accountBtn" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Sign In</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="freelance-hero">
+    <div class="container">
+      <h1>Freelance <span>Marketplace</span></h1>
+      <p class="hero-subtitle" style="max-width: 600px; margin: 1rem auto 0;">Showcase your skills, post projects, and connect with talented freelancers across Ghana.</p>
+      <div class="freelance-hero-stats">
+        <div class="freelance-hero-stat"><div class="stat-value" id="statGigs">—</div><div class="stat-label">Open Gigs</div></div>
+        <div class="freelance-hero-stat"><div class="stat-value" id="statBids">—</div><div class="stat-label">Bids Placed</div></div>
+        <div class="freelance-hero-stat"><div class="stat-value" id="statFreelancers">—</div><div class="stat-label">Freelancers</div></div>
+      </div>
+      <div class="freelance-quick-cats" id="quickCats">
+        <button class="quick-cat-btn active" data-cat="">All</button>
+        <button class="quick-cat-btn" data-cat="Web Development">Web Dev</button>
+        <button class="quick-cat-btn" data-cat="Graphic Design">Design</button>
+        <button class="quick-cat-btn" data-cat="Writing & Translation">Writing</button>
+        <button class="quick-cat-btn" data-cat="Digital Marketing">Marketing</button>
+        <button class="quick-cat-btn" data-cat="Mobile Development">Mobile</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <div class="freelance-page-layout">
+      <!-- Sidebar -->
+      <button class="btn btn-outline mobile-gig-filters-btn" id="showGigFilters">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        Filters
+      </button>
+
+      <aside class="freelance-filters" id="gigFiltersSidebar">
+        <button class="close-filters" id="closeGigFilters" style="display:none;margin-left:auto;margin-bottom:1rem;background:none;border:none;font-size:1.5rem;color:var(--text-primary);cursor:pointer;">&times;</button>
+
+        <!-- Post Gig CTA -->
+        <div class="post-gig-cta">
+          <h3>Got a project?</h3>
+          <p>Post your gig and get bids from skilled freelancers.</p>
+          <button class="btn" id="postGigBtn" style="padding:0.5rem 1.25rem;font-size:0.875rem;">Post a Gig</button>
+        </div>
+
+        <form id="gigFiltersForm">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+            <h2 style="font-size:1.25rem;">Filters</h2>
+            <button type="reset" class="btn btn-outline" style="padding:0.25rem 0.75rem;font-size:0.875rem;" id="clearGigFilters">Clear</button>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title" style="font-size:1rem;font-weight:600;margin-bottom:1rem;">Category</h3>
+            <div class="filter-options" style="display:flex;flex-direction:column;gap:0.75rem;">
+              <label class="custom-radio"><input type="radio" name="category" value="" checked><div class="radio-mark"></div><span>All</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Web Development"><div class="radio-mark"></div><span>Web Development</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Mobile Development"><div class="radio-mark"></div><span>Mobile Development</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Graphic Design"><div class="radio-mark"></div><span>Graphic Design</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Writing & Translation"><div class="radio-mark"></div><span>Writing & Translation</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Video & Animation"><div class="radio-mark"></div><span>Video & Animation</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Digital Marketing"><div class="radio-mark"></div><span>Digital Marketing</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Data Entry"><div class="radio-mark"></div><span>Data Entry</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Virtual Assistant"><div class="radio-mark"></div><span>Virtual Assistant</span></label>
+              <label class="custom-radio"><input type="radio" name="category" value="Other"><div class="radio-mark"></div><span>Other</span></label>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title" style="font-size:1rem;font-weight:600;margin-bottom:1rem;">Budget Range</h3>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <input type="number" name="budgetMin" placeholder="Min" class="form-control" style="flex:1;padding:0.5rem;font-size:0.875rem;">
+              <span style="color:var(--text-muted);">–</span>
+              <input type="number" name="budgetMax" placeholder="Max" class="form-control" style="flex:1;padding:0.5rem;font-size:0.875rem;">
+            </div>
+          </div>
+        </form>
+      </aside>
+
+      <!-- Main Column -->
+      <div>
+        <div class="freelance-action-bar">
+          <div class="search-bar" style="flex:1;max-width:500px;border-radius:var(--radius-lg);">
+            <div class="search-input-group">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="gigSearchInput" placeholder="Search gigs, skills..." aria-label="Search gigs">
+            </div>
+            <button class="btn btn-primary" id="gigSearchBtn" style="white-space:nowrap;">Search</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <select class="sort-select" id="gigSortSelect">
+              <option value="newest">Newest First</option>
+              <option value="budget_high">Budget: High to Low</option>
+              <option value="budget_low">Budget: Low to High</option>
+              <option value="deadline">Deadline Soon</option>
+            </select>
+            <button class="btn btn-primary" id="postGigBtnTop" style="padding:0.5rem 1.25rem;font-size:0.875rem;white-space:nowrap;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Post Gig
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+          <h2 style="font-size:1.25rem;" id="gigsResultsCount">Loading...</h2>
+        </div>
+
+        <div class="gigs-grid" id="gigsGrid"></div>
+        <div class="pagination" id="gigsPagination"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" style="margin-top:5rem;">
+    <div class="footer-accent"></div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo" style="margin-bottom:1rem;display:inline-flex;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            Job<span>Beacon</span>
+          </a>
+          <p style="font-size:0.9rem;max-width:280px;line-height:1.7;">Ghana's leading job marketplace connecting talented professionals with top employers.</p>
+        </div>
+        <div>
+          <h4 class="footer-heading">For Candidates</h4>
+          <div class="footer-links">
+            <a href="/pages/jobs.html">Browse Jobs</a>
+            <a href="/pages/freelance.html">Freelance Gigs</a>
+            <a href="/pages/login.html?signup=true">Create Profile</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">For Employers</h4>
+          <div class="footer-links">
+            <a href="/pages/login.html?signup=true">Post a Job</a>
+            <a href="/pages/freelance.html">Post a Gig</a>
+            <a href="/pages/login.html">Dashboard</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">Stay Updated</h4>
+          <p style="font-size:0.875rem;margin-bottom:1rem;color:var(--text-secondary);">Get the latest job alerts delivered weekly.</p>
+          <form style="display:flex;gap:0.5rem;" onsubmit="event.preventDefault();this.querySelector('button').textContent='Subscribed ✓';this.querySelector('button').style.background='#10B981';">
+            <input type="email" placeholder="you@email.com" class="form-control" style="flex:1;padding:0.625rem 1rem;font-size:0.875rem;" required>
+            <button type="submit" class="btn btn-primary" style="padding:0.625rem 1.25rem;font-size:0.875rem;white-space:nowrap;">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 JobBeacon. All rights reserved.</p>
+        <p style="color:var(--text-muted);font-size:0.8rem;">Built by <a href="https://technoidfix.online" target="_blank" rel="noopener" style="color:var(--primary);font-weight:500;">technoidfix</a></p>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Post Gig Modal -->
+  <div class="gig-modal-overlay" id="postGigModal" style="display:none;">
+    <div class="gig-modal" style="max-width:600px;">
+      <div class="gig-modal-header">
+        <h2 style="font-size:1.5rem;">Post a Freelance Gig</h2>
+        <button class="gig-modal-close" id="closePostGigModal">&times;</button>
+      </div>
+      <div class="gig-modal-body">
+        <form class="post-gig-form" id="postGigForm">
+          <div class="form-group"><label class="form-label">Title *</label><input type="text" class="form-control" name="title" placeholder="e.g. Build a responsive website" required></div>
+          <div class="form-group"><label class="form-label">Category *</label>
+            <select class="form-control" name="category" required>
+              <option value="">Select category</option>
+              <option>Web Development</option><option>Mobile Development</option><option>Graphic Design</option>
+              <option>Writing & Translation</option><option>Video & Animation</option><option>Digital Marketing</option>
+              <option>Data Entry</option><option>Virtual Assistant</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Description *</label><textarea class="form-control" name="description" rows="4" placeholder="Describe your project requirements..." required></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Min Budget (GHS)</label><input type="number" class="form-control" name="budget_min" placeholder="500"></div>
+            <div class="form-group"><label class="form-label">Max Budget (GHS)</label><input type="number" class="form-control" name="budget_max" placeholder="2000"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Deadline</label><input type="date" class="form-control" name="deadline"></div>
+          <div class="form-group">
+            <label class="form-label">Required Skills</label>
+            <div class="skills-input-wrapper" id="skillsInputWrapper">
+              <input type="text" placeholder="Type a skill & press Enter" id="skillTagInput">
+            </div>
+            <input type="hidden" name="skills" id="skillsHidden">
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">Press Enter or comma to add.</p>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;" id="submitGigBtn">Post Gig</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gig Detail Modal -->
+  <div class="gig-modal-overlay" id="gigDetailModal" style="display:none;">
+    <div class="gig-modal">
+      <div class="gig-modal-header">
+        <div id="gigDetailHeader"></div>
+        <button class="gig-modal-close" id="closeGigDetail">&times;</button>
+      </div>
+      <div class="gig-modal-body" id="gigDetailBody">Loading...</div>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/js/app.js"></script>
+  <script type="module" src="/assets/js/freelance-page.js"></script>
+</body>
+</html>
