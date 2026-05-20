@@ -307,16 +307,22 @@ export const Dashboard = {
     if (profileForm) {
       // Load Profile Data
       const { profile } = await this.getProfile(user.id);
-      if (profile) {
-        document.getElementById('profileName').value = profile.full_name || '';
-        document.getElementById('profileEmail').value = profile.contact_email || '';
-        document.getElementById('profilePhone').value = profile.phone || '';
-        document.getElementById('profileBio').value = profile.bio || '';
-        
-        if (profile.avatar_url) {
-          document.getElementById('profileAvatarUrl').value = profile.avatar_url;
-          document.getElementById('profileAvatarPreview').innerHTML = `<img src="${profile.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-        }
+      
+      // Bulletproof: Fallback to user metadata if profile row doesn't exist
+      const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
+      const email = profile?.contact_email || user.email || '';
+      const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+      const phone = profile?.phone || user.phone || '';
+      const bio = profile?.bio || '';
+
+      document.getElementById('profileName').value = fullName;
+      document.getElementById('profileEmail').value = email;
+      document.getElementById('profilePhone').value = phone;
+      document.getElementById('profileBio').value = bio;
+      
+      if (avatarUrl) {
+        document.getElementById('profileAvatarUrl').value = avatarUrl;
+        document.getElementById('profileAvatarPreview').innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
       }
 
       // Handle Avatar Upload
