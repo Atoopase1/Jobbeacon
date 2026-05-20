@@ -368,15 +368,47 @@
     import { UI } from '/assets/js/app.js';
     
     const initDashboard = async () => {
-      // Init dashboard (auth check)
-      await Dashboard.init();
-      
-      // Load stats
-      const stats = await Dashboard.getStats();
-      if (!stats.error) {
-        document.getElementById('statTotalJobs').textContent = stats.totalJobs;
-        document.getElementById('statCompanies').textContent = stats.activeCompanies;
-        document.getElementById('statViews').textContent = stats.totalViews.toLocaleString();
+      // Emergency fallback — attach sign-out immediately before any async work,
+      // so the user can ALWAYS log out even if the rest of the page fails to load.
+      const emergencyLogout = document.getElementById('logoutBtn');
+      if (emergencyLogout) {
+        emergencyLogout.addEventListener('click', async (e) => {
+          e.preventDefault();
+          try {
+            const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+            const sb = createClient('https://seztjsmsmpufglzevnwn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlenRqc21zbXB1ZmdsemV2bnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MjA0MDIsImV4cCI6MjA5NDA5NjQwMn0.D1VD33-xhOutdNq0-KRYogxtrMuSeNDRktf-x-UD9t8');
+            await sb.auth.signOut();
+          } catch (_) {}
+          window.location.href = '/index.html';
+        }, { once: true });
+      }
+
+      try {
+        // Init dashboard (auth check + profile load + tab wiring)
+        await Dashboard.init();
+      } catch (err) {
+        console.error('[Dashboard] init() failed:', err);
+        // Don't let a crash block everything — show a recoverable error message
+        const content = document.querySelector('.dashboard-content');
+        if (content) {
+          content.insertAdjacentHTML('afterbegin', `
+            <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:0.75rem;padding:1.25rem 1.5rem;margin-bottom:1.5rem;color:#DC2626;display:flex;align-items:center;gap:0.75rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Dashboard failed to load some features. <a href="javascript:location.reload()" style="font-weight:600;text-decoration:underline;">Click to reload</a></span>
+            </div>`);
+        }
+      }
+
+      try {
+        // Load stats
+        const stats = await Dashboard.getStats();
+        if (!stats.error) {
+          document.getElementById('statTotalJobs').textContent = stats.totalJobs;
+          document.getElementById('statCompanies').textContent = stats.activeCompanies;
+          document.getElementById('statViews').textContent = stats.totalViews.toLocaleString();
+        }
+      } catch (err) {
+        console.warn('[Dashboard] Stats failed:', err);
       }
       
       // Load jobs table

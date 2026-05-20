@@ -232,138 +232,180 @@ export const Dashboard = {
    * Initialize Dashboard UI Logic
    */
   async init() {
-    // Make sure user is authenticated
-    const user = await Auth.requireAuth();
-    if (!user) return; // Redirecting to login...
-
-    // Logout button handler
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        Auth.signOut();
-      });
+    // --- 1. AUTH CHECK ---
+    let user;
+    try {
+      user = await Auth.requireAuth();
+      if (!user) return; // Redirecting to login...
+    } catch (err) {
+      console.error('[Dashboard] Auth check failed:', err);
+      window.location.href = '/pages/login.html';
+      return;
     }
 
-    // Sidebar toggle (Mobile)
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.querySelector('.dashboard-sidebar');
-    const overlay = document.querySelector('.dashboard-overlay');
-    
-    if (sidebarToggle && sidebar && overlay) {
-      const toggleSidebar = () => {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-      };
-      
-      sidebarToggle.addEventListener('click', toggleSidebar);
-      overlay.addEventListener('click', toggleSidebar);
+    // --- 2. LOGOUT BUTTON (wired up first, no async dependency) ---
+    try {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        // Remove any listener attached by the emergency fallback in dashboard.html
+        const freshBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(freshBtn, logoutBtn);
+        freshBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          Auth.signOut();
+        });
+      }
+    } catch (err) {
+      console.warn('[Dashboard] Logout wiring failed:', err);
     }
 
-    // Tab Switching Logic
-    const navJobs = document.getElementById('navJobs');
-    const navProfile = document.getElementById('navProfile');
-    const navApplications = document.getElementById('navApplications');
-    const navSavedJobs = document.getElementById('navSavedJobs');
-    
-    const viewJobs = document.getElementById('viewJobs');
-    const viewProfile = document.getElementById('viewProfile');
-    const viewApplications = document.getElementById('viewApplications');
-    const viewSavedJobs = document.getElementById('viewSavedJobs');
-
-    const allNavs = [navJobs, navProfile, navApplications, navSavedJobs].filter(Boolean);
-    const allViews = [viewJobs, viewProfile, viewApplications, viewSavedJobs].filter(Boolean);
-
-    const switchTab = (activeNav, activeView) => {
-      allNavs.forEach(nav => nav.classList.remove('active'));
-      allViews.forEach(view => view.style.display = 'none');
-      
-      activeNav.classList.add('active');
-      activeView.style.display = 'block';
-      
-      // Load specific tab data
-      if (activeNav === navSavedJobs) {
-        this.loadSavedJobs(user.id);
-      } else if (activeNav === navApplications) {
-        this.loadApplications(user.id);
-      } else if (activeNav === navJobs) {
-        if (window.loadJobsTable) window.loadJobsTable();
-      }
-
-      // Close sidebar on mobile
-      if (sidebar && overlay && window.innerWidth <= 1024) {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-      }
-    };
-
-    if (navJobs && viewJobs) navJobs.addEventListener('click', (e) => { e.preventDefault(); switchTab(navJobs, viewJobs); });
-    if (navProfile && viewProfile) navProfile.addEventListener('click', (e) => { e.preventDefault(); switchTab(navProfile, viewProfile); });
-    if (navApplications && viewApplications) navApplications.addEventListener('click', (e) => { e.preventDefault(); switchTab(navApplications, viewApplications); });
-    if (navSavedJobs && viewSavedJobs) navSavedJobs.addEventListener('click', (e) => { e.preventDefault(); switchTab(navSavedJobs, viewSavedJobs); });
-
-    // Profile Form Logic
-    const profileForm = document.getElementById('profileForm');
-    if (profileForm) {
-      // Load Profile Data
-      const { profile } = await this.getProfile(user.id);
-      
-      // Bulletproof: Fallback to user metadata if profile row doesn't exist
-      const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
-      const email = profile?.contact_email || user.email || '';
-      const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
-      const phone = profile?.phone || user.phone || '';
-      const bio = profile?.bio || '';
-
-      document.getElementById('profileName').value = fullName;
-      document.getElementById('profileEmail').value = email;
-      document.getElementById('profilePhone').value = phone;
-      document.getElementById('profileBio').value = bio;
-      
-      if (avatarUrl) {
-        document.getElementById('profileAvatarUrl').value = avatarUrl;
-        document.getElementById('profileAvatarPreview').innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-      }
-
-      // Handle Avatar Upload
-      const avatarUpload = document.getElementById('profileAvatarUpload');
-      avatarUpload.addEventListener('change', async (e) => {
-        if (e.target.files && e.target.files[0]) {
-          const preview = document.getElementById('profileAvatarPreview');
-          preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-secondary);">Uploading...</span>`;
-          const uploadUrl = await this.uploadAvatar(e.target.files[0], user.id);
-          if (uploadUrl) {
-            document.getElementById('profileAvatarUrl').value = uploadUrl;
-            preview.innerHTML = `<img src="${uploadUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-          } else {
-            preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--error);">Upload failed</span>`;
-          }
-        }
-      });
-
-      // Handle Save Profile
-      profileForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const saveBtn = document.getElementById('saveProfileBtn');
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Saving...';
-
-        const profileData = {
-          id: user.id,
-          full_name: document.getElementById('profileName').value,
-          contact_email: document.getElementById('profileEmail').value,
-          phone: document.getElementById('profilePhone').value,
-          bio: document.getElementById('profileBio').value,
-          avatar_url: document.getElementById('profileAvatarUrl').value
+    // --- 3. SIDEBAR TOGGLE ---
+    try {
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebar = document.querySelector('.dashboard-sidebar');
+      const overlay = document.querySelector('.dashboard-overlay');
+      if (sidebarToggle && sidebar && overlay) {
+        const toggleSidebar = () => {
+          sidebar.classList.toggle('active');
+          overlay.classList.toggle('active');
         };
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+      }
+    } catch (err) {
+      console.warn('[Dashboard] Sidebar toggle wiring failed:', err);
+    }
 
-        await this.updateProfile(profileData);
+    // --- 4. TAB SWITCHING ---
+    try {
+      const navJobs = document.getElementById('navJobs');
+      const navProfile = document.getElementById('navProfile');
+      const navApplications = document.getElementById('navApplications');
+      const navSavedJobs = document.getElementById('navSavedJobs');
 
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Profile';
-      });
+      const viewJobs = document.getElementById('viewJobs');
+      const viewProfile = document.getElementById('viewProfile');
+      const viewApplications = document.getElementById('viewApplications');
+      const viewSavedJobs = document.getElementById('viewSavedJobs');
+
+      const sidebar = document.querySelector('.dashboard-sidebar');
+      const overlay = document.querySelector('.dashboard-overlay');
+
+      const allNavs = [navJobs, navProfile, navApplications, navSavedJobs].filter(Boolean);
+      const allViews = [viewJobs, viewProfile, viewApplications, viewSavedJobs].filter(Boolean);
+
+      const switchTab = (activeNav, activeView) => {
+        allNavs.forEach(nav => nav.classList.remove('active'));
+        allViews.forEach(view => view.style.display = 'none');
+        activeNav.classList.add('active');
+        activeView.style.display = 'block';
+
+        if (activeNav === navSavedJobs) {
+          this.loadSavedJobs(user.id);
+        } else if (activeNav === navApplications) {
+          this.loadApplications(user.id);
+        } else if (activeNav === navJobs) {
+          if (window.loadJobsTable) window.loadJobsTable();
+        }
+
+        if (sidebar && overlay && window.innerWidth <= 1024) {
+          sidebar.classList.remove('active');
+          overlay.classList.remove('active');
+        }
+      };
+
+      if (navJobs && viewJobs) navJobs.addEventListener('click', (e) => { e.preventDefault(); switchTab(navJobs, viewJobs); });
+      if (navProfile && viewProfile) navProfile.addEventListener('click', (e) => { e.preventDefault(); switchTab(navProfile, viewProfile); });
+      if (navApplications && viewApplications) navApplications.addEventListener('click', (e) => { e.preventDefault(); switchTab(navApplications, viewApplications); });
+      if (navSavedJobs && viewSavedJobs) navSavedJobs.addEventListener('click', (e) => { e.preventDefault(); switchTab(navSavedJobs, viewSavedJobs); });
+    } catch (err) {
+      console.warn('[Dashboard] Tab wiring failed:', err);
+    }
+
+    // --- 5. PROFILE FORM (isolated — failure here never blocks logout or nav) ---
+    try {
+      const profileForm = document.getElementById('profileForm');
+      if (profileForm) {
+        // Load profile with a 5s timeout so a dead network doesn't hang the page
+        let profile = null;
+        try {
+          const profilePromise = this.getProfile(user.id);
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Profile fetch timed out')), 5000)
+          );
+          const result = await Promise.race([profilePromise, timeoutPromise]);
+          profile = result?.profile || null;
+        } catch (fetchErr) {
+          console.warn('[Dashboard] Profile fetch failed or timed out:', fetchErr.message);
+        }
+
+        // Bulletproof: always populate from the best available source
+        const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
+        const email = profile?.contact_email || user.email || '';
+        const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+        const phone = profile?.phone || user.phone || '';
+        const bio = profile?.bio || '';
+
+        const nameEl = document.getElementById('profileName');
+        const emailEl = document.getElementById('profileEmail');
+        const phoneEl = document.getElementById('profilePhone');
+        const bioEl = document.getElementById('profileBio');
+        const avatarUrlEl = document.getElementById('profileAvatarUrl');
+        const avatarPreview = document.getElementById('profileAvatarPreview');
+
+        if (nameEl) nameEl.value = fullName;
+        if (emailEl) emailEl.value = email;
+        if (phoneEl) phoneEl.value = phone;
+        if (bioEl) bioEl.value = bio;
+
+        if (avatarUrl && avatarUrlEl) avatarUrlEl.value = avatarUrl;
+        if (avatarUrl && avatarPreview) {
+          avatarPreview.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        }
+
+        // Avatar upload
+        const avatarUpload = document.getElementById('profileAvatarUpload');
+        if (avatarUpload) {
+          avatarUpload.addEventListener('change', async (e) => {
+            if (e.target.files && e.target.files[0]) {
+              const preview = document.getElementById('profileAvatarPreview');
+              if (preview) preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-secondary);">Uploading...</span>`;
+              const uploadUrl = await this.uploadAvatar(e.target.files[0], user.id);
+              if (uploadUrl) {
+                if (avatarUrlEl) avatarUrlEl.value = uploadUrl;
+                if (preview) preview.innerHTML = `<img src="${uploadUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+              } else {
+                if (preview) preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--error);">Upload failed</span>`;
+              }
+            }
+          });
+        }
+
+        // Save profile
+        profileForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const saveBtn = document.getElementById('saveProfileBtn');
+          if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
+
+          const profileData = {
+            id: user.id,
+            full_name: nameEl?.value || '',
+            contact_email: emailEl?.value || '',
+            phone: phoneEl?.value || '',
+            bio: bioEl?.value || '',
+            avatar_url: avatarUrlEl?.value || ''
+          };
+
+          await this.updateProfile(profileData);
+
+          if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Profile'; }
+        });
+      }
+    } catch (err) {
+      console.warn('[Dashboard] Profile section failed:', err);
     }
   },
+
 
   async loadSavedJobs(userId) {
     const grid = document.getElementById('savedJobsGrid');
