@@ -233,22 +233,12 @@ export const Dashboard = {
    * Initialize Dashboard UI Logic
    */
   async init() {
-    // --- 1. AUTH CHECK ---
-    let user;
-    try {
-      user = await Auth.requireAuth();
-      if (!user) return; // Redirecting to login...
-    } catch (err) {
-      console.error('[Dashboard] Auth check failed:', err);
-      window.location.href = '/pages/login.html';
-      return;
-    }
+    let user = null;
 
-    // --- 2. LOGOUT BUTTON (wired up first, no async dependency) ---
+    // --- 1. LOGOUT BUTTON (wired up first, completely synchronous) ---
     try {
       const logoutBtn = document.getElementById('logoutBtn');
       if (logoutBtn) {
-        // Remove any listener attached by the emergency fallback in dashboard.html
         const freshBtn = logoutBtn.cloneNode(true);
         logoutBtn.parentNode.replaceChild(freshBtn, logoutBtn);
         freshBtn.addEventListener('click', (e) => {
@@ -260,7 +250,7 @@ export const Dashboard = {
       console.warn('[Dashboard] Logout wiring failed:', err);
     }
 
-    // --- 3. SIDEBAR TOGGLE ---
+    // --- 2. SIDEBAR TOGGLE (synchronous) ---
     try {
       const sidebarToggle = document.getElementById('sidebarToggle');
       const sidebar = document.querySelector('.dashboard-sidebar');
@@ -277,7 +267,7 @@ export const Dashboard = {
       console.warn('[Dashboard] Sidebar toggle wiring failed:', err);
     }
 
-    // --- 4. TAB SWITCHING ---
+    // --- 3. TAB SWITCHING (synchronous binding) ---
     try {
       const navJobs = document.getElementById('navJobs');
       const navProfile = document.getElementById('navProfile');
@@ -301,9 +291,9 @@ export const Dashboard = {
         activeNav.classList.add('active');
         activeView.style.display = 'block';
 
-        if (activeNav === navSavedJobs) {
+        if (activeNav === navSavedJobs && user) {
           this.loadSavedJobs(user.id);
-        } else if (activeNav === navApplications) {
+        } else if (activeNav === navApplications && user) {
           this.loadApplications(user.id);
         } else if (activeNav === navJobs) {
           if (window.loadJobsTable) window.loadJobsTable();
@@ -323,11 +313,67 @@ export const Dashboard = {
       console.warn('[Dashboard] Tab wiring failed:', err);
     }
 
-    // --- 5. PROFILE FORM (isolated — failure here never blocks logout or nav) ---
+    // --- 4. PROFILE FORM SUBMIT HANDLER (synchronous binding) ---
     try {
       const profileForm = document.getElementById('profileForm');
       if (profileForm) {
-        // Load profile with a 5s timeout so a dead network doesn't hang the page
+        profileForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (!user) return; // Not ready yet
+          
+          const saveBtn = document.getElementById('saveProfileBtn');
+          if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
+
+          const nameEl = document.getElementById('profileName');
+          const emailEl = document.getElementById('profileEmail');
+          const phoneEl = document.getElementById('profilePhone');
+          const bioEl = document.getElementById('profileBio');
+          const avatarUrlEl = document.getElementById('profileAvatarUrl');
+          const avatarPreview = document.getElementById('profileAvatarPreview');
+
+          const profileData = {
+            id: user.id,
+            full_name: nameEl?.value || '',
+            contact_email: emailEl?.value || '',
+            phone: phoneEl?.value || '',
+            bio: bioEl?.value || '',
+            avatar_url: avatarUrlEl?.value || ''
+          };
+
+          const { profile: saved, error: saveError } = await this.updateProfile(profileData);
+
+          if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Profile'; }
+
+          if (saved && !saveError) {
+            if (nameEl)      nameEl.value      = saved.full_name      || '';
+            if (emailEl)     emailEl.value     = saved.contact_email  || '';
+            if (phoneEl)     phoneEl.value     = saved.phone          || '';
+            if (bioEl)       bioEl.value       = saved.bio            || '';
+            if (avatarUrlEl) avatarUrlEl.value = saved.avatar_url     || '';
+            if (saved.avatar_url && avatarPreview) {
+              avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('[Dashboard] Profile form submit wiring failed:', err);
+    }
+
+    // --- 5. AUTH CHECK (Asynchronous barrier) ---
+    try {
+      user = await Auth.requireAuth();
+      if (!user) return; // Redirecting to login...
+    } catch (err) {
+      console.error('[Dashboard] Auth check failed:', err);
+      window.location.href = '/pages/login.html';
+      return;
+    }
+
+    // --- 6. LOAD PROFILE DATA ---
+    try {
+      const profileForm = document.getElementById('profileForm');
+      if (profileForm) {
         let profile = null;
         try {
           const profilePromise = this.getProfile(user.id);
@@ -340,12 +386,21 @@ export const Dashboard = {
           console.warn('[Dashboard] Profile fetch failed or timed out:', fetchErr.message);
         }
 
-        // Bulletproof: always populate from the best available source
-        const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
-        const email = profile?.contact_email || user.email || '';
-        const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
-        const phone = profile?.phone || user.phone || '';
-        const bio = profile?.bio || '';
+        // Helper: pick the first non-empty value
+        const pick = (...vals) => {
+          for (const v of vals) {
+            if (v && typeof v === 'string' && v.trim()) return v.trim();
+          }
+          return '';
+        };
+
+        const fullName = pick(profile?.full_name, user.user_metadata?.full_name, user.user_metadata?.name);
+        const email    = pick(profile?.contact_email, user.email);
+        const avatarUrl = pick(profile?.avatar_url, user.user_metadata?.avatar_url, user.user_metadata?.picture);
+        const phone    = pick(profile?.phone, user.phone);
+        const bio      = pick(profile?.bio);
+
+        console.log('[Dashboard] Profile resolved →', { fullName, email, avatarUrl, phone, bio: bio.substring(0, 30) });
 
         const nameEl = document.getElementById('profileName');
         const emailEl = document.getElementById('profileEmail');
@@ -354,17 +409,18 @@ export const Dashboard = {
         const avatarUrlEl = document.getElementById('profileAvatarUrl');
         const avatarPreview = document.getElementById('profileAvatarPreview');
 
-        if (nameEl) nameEl.value = fullName;
+        // Always populate — this runs after auth, so there's no race with user typing
+        if (nameEl)  nameEl.value  = fullName;
         if (emailEl) emailEl.value = email;
         if (phoneEl) phoneEl.value = phone;
-        if (bioEl) bioEl.value = bio;
+        if (bioEl)   bioEl.value   = bio;
 
         if (avatarUrl && avatarUrlEl) avatarUrlEl.value = avatarUrl;
         if (avatarUrl && avatarPreview) {
           avatarPreview.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
         }
 
-        // Avatar upload
+        // Avatar upload listener (needs user.id)
         const avatarUpload = document.getElementById('profileAvatarUpload');
         if (avatarUpload) {
           avatarUpload.addEventListener('change', async (e) => {
@@ -381,42 +437,9 @@ export const Dashboard = {
             }
           });
         }
-
-        // Save profile
-        profileForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const saveBtn = document.getElementById('saveProfileBtn');
-          if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
-
-          const profileData = {
-            id: user.id,
-            full_name: nameEl?.value || '',
-            contact_email: emailEl?.value || '',
-            phone: phoneEl?.value || '',
-            bio: bioEl?.value || '',
-            avatar_url: avatarUrlEl?.value || ''
-          };
-
-          const { profile: saved, error: saveError } = await this.updateProfile(profileData);
-
-          if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Profile'; }
-
-          // Re-sync form fields from the DB-returned row so the UI always
-          // reflects what was actually persisted, not just what was typed.
-          if (saved && !saveError) {
-            if (nameEl)      nameEl.value      = saved.full_name      || '';
-            if (emailEl)     emailEl.value     = saved.contact_email  || '';
-            if (phoneEl)     phoneEl.value     = saved.phone          || '';
-            if (bioEl)       bioEl.value       = saved.bio            || '';
-            if (avatarUrlEl) avatarUrlEl.value = saved.avatar_url     || '';
-            if (saved.avatar_url && avatarPreview) {
-              avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-            }
-          }
-        });
       }
     } catch (err) {
-      console.warn('[Dashboard] Profile section failed:', err);
+      console.warn('[Dashboard] Profile data loading failed:', err);
     }
   },
 

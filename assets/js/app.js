@@ -133,7 +133,9 @@ function initApp() {
   const navLinks = document.getElementById('navLinks');
 
   if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', () => {
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       navLinks.classList.toggle('active');
     });
   }
@@ -164,26 +166,45 @@ function initApp() {
   // 4. Account Button — update based on auth session
   const accountBtn = document.getElementById('accountBtn');
   if (accountBtn) {
-    // Check immediately on load
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const updateAuthUI = (session) => {
+      let logoutBtn = document.getElementById('globalLogoutBtn');
       if (session) {
-        accountBtn.textContent = 'My Account';
+        accountBtn.textContent = 'Dashboard';
         accountBtn.href = '/pages/dashboard.html';
+        
+        if (!logoutBtn) {
+          logoutBtn = document.createElement('button');
+          logoutBtn.id = 'globalLogoutBtn';
+          logoutBtn.className = 'btn btn-outline';
+          logoutBtn.style.padding = '0.5rem 1.25rem';
+          logoutBtn.style.fontSize = '0.9rem';
+          logoutBtn.style.marginLeft = '0.5rem';
+          logoutBtn.textContent = 'Sign Out';
+          logoutBtn.addEventListener('click', async () => {
+             const { error } = await supabase.auth.signOut();
+             if (error) {
+               UI.showToast('Failed to log out', 'error');
+             } else {
+               UI.showToast('Logged out successfully', 'success');
+             }
+          });
+          accountBtn.parentNode.insertBefore(logoutBtn, accountBtn.nextSibling);
+        }
       } else {
         accountBtn.textContent = 'Sign In';
         accountBtn.href = '/pages/login.html';
+        if (logoutBtn) logoutBtn.remove();
       }
+    };
+
+    // Check immediately on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      updateAuthUI(session);
     });
 
     // Also react to live auth changes (login / logout)
     supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        accountBtn.textContent = 'My Account';
-        accountBtn.href = '/pages/dashboard.html';
-      } else {
-        accountBtn.textContent = 'Sign In';
-        accountBtn.href = '/pages/login.html';
-      }
+      updateAuthUI(session);
     });
   }
 
