@@ -192,19 +192,22 @@ export const Dashboard = {
   /**
    * Fetch User Profile
    */
-  async getProfile(userId) {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-        
-      if (error && error.code !== 'PGRST116') throw error;
-      return { profile: data, error: null };
-    } catch (error) {
-      console.error('Error fetching profile:', error.message);
-      return { profile: null, error: error.message };
+  async getProfile(userId, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+          
+        if (error && error.code !== 'PGRST116') throw error;
+        return { profile: data, error: null };
+      } catch (error) {
+        console.error(`Error fetching profile (attempt ${i + 1}):`, error.message);
+        if (i === retries - 1) return { profile: null, error: error.message };
+        await new Promise(r => setTimeout(r, 1000 * (i + 1))); // exponential backoff
+      }
     }
   },
 
@@ -375,15 +378,37 @@ export const Dashboard = {
       const profileForm = document.getElementById('profileForm');
       if (profileForm) {
         let profile = null;
+        let profileError = null;
         try {
           const profilePromise = this.getProfile(user.id);
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Profile fetch timed out')), 5000)
+            setTimeout(() => reject(new Error('Profile fetch timed out')), 10000)
           );
           const result = await Promise.race([profilePromise, timeoutPromise]);
           profile = result?.profile || null;
+          profileError = result?.error || null;
         } catch (fetchErr) {
           console.warn('[Dashboard] Profile fetch failed or timed out:', fetchErr.message);
+          profileError = fetchErr.message;
+        }
+
+        const saveBtn = document.getElementById('saveProfileBtn');
+        
+        if (profileError) {
+          // If we failed to load the profile, show an error and disable the form
+          // so the user doesn't accidentally overwrite their data with blanks
+          const errorHtml = `
+            <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:0.5rem; padding:1rem; margin-bottom:1.5rem; color:#DC2626; font-size:0.9rem;">
+              <strong>Connection Error:</strong> We couldn't load your profile data (${profileError}). 
+              Please <a href="javascript:location.reload()" style="text-decoration:underline; font-weight:bold;">refresh the page</a> to try again.
+            </div>
+          `;
+          profileForm.insertAdjacentHTML('beforebegin', errorHtml);
+          if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Profile Load Failed';
+          }
+          return; // Stop here so we don't populate empty fields
         }
 
         // Helper: pick the first non-empty value
