@@ -356,6 +356,20 @@ export const Dashboard = {
             if (saved.avatar_url && avatarPreview) {
               avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
             }
+
+            // Sync with dashboard header
+            const headerUserName = document.querySelector('.user-name');
+            const headerAvatar = document.getElementById('headerAvatar');
+            if (headerUserName) {
+              headerUserName.textContent = saved.full_name || saved.contact_email?.split('@')[0] || 'User';
+            }
+            if (headerAvatar) {
+              if (saved.avatar_url) {
+                headerAvatar.innerHTML = `<img src="${saved.avatar_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+              } else {
+                headerAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(saved.full_name || saved.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
+              }
+            }
           }
         });
       }
@@ -445,6 +459,20 @@ export const Dashboard = {
           avatarPreview.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
         }
 
+        // Sync with dashboard header
+        const headerUserName = document.querySelector('.user-name');
+        const headerAvatar = document.getElementById('headerAvatar');
+        if (headerUserName) {
+          headerUserName.textContent = fullName || email?.split('@')[0] || 'User';
+        }
+        if (headerAvatar) {
+          if (avatarUrl) {
+            headerAvatar.innerHTML = `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+          } else {
+            headerAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(fullName || email || 'U').charAt(0).toUpperCase()}</div>`;
+          }
+        }
+
         // Avatar upload listener (needs user.id)
         const avatarUpload = document.getElementById('profileAvatarUpload');
         if (avatarUpload) {
@@ -456,6 +484,11 @@ export const Dashboard = {
               if (uploadUrl) {
                 if (avatarUrlEl) avatarUrlEl.value = uploadUrl;
                 if (preview) preview.innerHTML = `<img src="${uploadUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                
+                // Update header immediately on upload
+                if (headerAvatar) {
+                  headerAvatar.innerHTML = `<img src="${uploadUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                }
               } else {
                 if (preview) preview.innerHTML = `<span style="font-size: 0.75rem; color: var(--error);">Upload failed</span>`;
               }
