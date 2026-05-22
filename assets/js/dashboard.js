@@ -215,10 +215,11 @@ export const Dashboard = {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .upsert(profileData)
+        .upsert(profileData, { onConflict: 'id' })
         .select();
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Profile save returned no data — check RLS policies.');
       UI.showToast('Profile updated successfully', 'success');
       return { profile: data[0], error: null };
     } catch (error) {
@@ -396,9 +397,22 @@ export const Dashboard = {
             avatar_url: avatarUrlEl?.value || ''
           };
 
-          await this.updateProfile(profileData);
+          const { profile: saved, error: saveError } = await this.updateProfile(profileData);
 
           if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Profile'; }
+
+          // Re-sync form fields from the DB-returned row so the UI always
+          // reflects what was actually persisted, not just what was typed.
+          if (saved && !saveError) {
+            if (nameEl)      nameEl.value      = saved.full_name      || '';
+            if (emailEl)     emailEl.value     = saved.contact_email  || '';
+            if (phoneEl)     phoneEl.value     = saved.phone          || '';
+            if (bioEl)       bioEl.value       = saved.bio            || '';
+            if (avatarUrlEl) avatarUrlEl.value = saved.avatar_url     || '';
+            if (saved.avatar_url && avatarPreview) {
+              avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            }
+          }
         });
       }
     } catch (err) {
