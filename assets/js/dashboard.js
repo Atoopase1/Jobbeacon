@@ -339,9 +339,13 @@ export const Dashboard = {
             full_name: nameEl?.value || '',
             contact_email: emailEl?.value || '',
             phone: phoneEl?.value || '',
-            bio: bioEl?.value || '',
-            avatar_url: avatarUrlEl?.value || ''
+            bio: bioEl?.value || ''
           };
+          // Only include avatar_url when it actually has a value.
+          // Sending an empty string would wipe the stored avatar from the DB.
+          if (avatarUrlEl?.value) {
+            profileData.avatar_url = avatarUrlEl.value;
+          }
 
           const { profile: saved, error: saveError } = await this.updateProfile(profileData);
 
@@ -425,19 +429,25 @@ export const Dashboard = {
           return; // Stop here so we don't populate empty fields
         }
 
-        // If no profile row exists yet, auto-create one so data persists from now on
+        // If no profile row exists yet, safely create one.
+        // IMPORTANT: Use ignoreDuplicates:true so if the row DOES exist in the DB
+        // (getProfile returned null due to a transient network error), we never
+        // overwrite the user's saved data with empty seed values.
         if (!profile) {
-          console.log('[Dashboard] No profile row found — creating one now');
+          console.log('[Dashboard] No profile row — inserting seed (safe, no overwrite)');
           const seed = {
             id: user.id,
-            full_name:     user.user_metadata?.full_name || user.user_metadata?.name || '',
-            contact_email: user.email || '',
-            avatar_url:    user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
-            phone: '',
-            bio: ''
+            full_name:     user.user_metadata?.full_name || user.user_metadata?.name || null,
+            contact_email: user.email || null,
+            avatar_url:    user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            phone: null,
+            bio: null
           };
-          const { profile: created } = await this.updateProfile(seed);
-          if (created) profile = created;
+          // ignoreDuplicates:true = INSERT ... ON CONFLICT DO NOTHING
+          await supabase.from('profiles').upsert(seed, { onConflict: 'id', ignoreDuplicates: true });
+          // Re-fetch whatever is actually in the DB (could be existing or newly created)
+          const { profile: refetched } = await this.getProfile(user.id);
+          if (refetched) profile = refetched;
         }
 
         // Helper: pick the first non-empty value
