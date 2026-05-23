@@ -396,7 +396,7 @@ export const Dashboard = {
         try {
           const profilePromise = this.getProfile(user.id);
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Profile fetch timed out')), 10000)
+            setTimeout(() => reject(new Error('Profile fetch timed out')), 15000)
           );
           const result = await Promise.race([profilePromise, timeoutPromise]);
           profile = result?.profile || null;
@@ -423,6 +423,21 @@ export const Dashboard = {
             saveBtn.textContent = 'Profile Load Failed';
           }
           return; // Stop here so we don't populate empty fields
+        }
+
+        // If no profile row exists yet, auto-create one so data persists from now on
+        if (!profile) {
+          console.log('[Dashboard] No profile row found — creating one now');
+          const seed = {
+            id: user.id,
+            full_name:     user.user_metadata?.full_name || user.user_metadata?.name || '',
+            contact_email: user.email || '',
+            avatar_url:    user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
+            phone: '',
+            bio: ''
+          };
+          const { profile: created } = await this.updateProfile(seed);
+          if (created) profile = created;
         }
 
         // Helper: pick the first non-empty value
