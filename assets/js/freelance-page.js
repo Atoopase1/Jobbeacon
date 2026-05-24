@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     quickCats.querySelectorAll('.quick-cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const cat = btn.dataset.cat;
-    const radio = filtersForm?.querySelector(`input[name="category"][value="${cat}"]`);
-    if (radio) radio.checked = true;
+    const select = filtersForm?.querySelector(`select[name="category"]`);
+    if (select) select.value = cat;
     loadGigs(1);
   });
 
