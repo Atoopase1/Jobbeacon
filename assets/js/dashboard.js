@@ -197,7 +197,7 @@ export const Dashboard = {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, full_name, contact_email, avatar_url, phone, bio, profession, role, location, hometown, whatsapp, tekyel_name')
           .eq('id', userId)
           .maybeSingle();
           
@@ -508,20 +508,29 @@ export const Dashboard = {
           if (refetched) profile = refetched;
         }
 
-        // Use profile data, fallback to auth metadata if DB fields are still empty
+        // Use profile data, fallback to auth metadata if DB fields are still empty.
+        // Also merge with any locally-cached data so new fields are never lost
+        // if the DB schema cache hasn't refreshed yet.
+        let cachedProfile = {};
+        try {
+          const raw = localStorage.getItem('jb_profile_cache');
+          if (raw) cachedProfile = JSON.parse(raw);
+        } catch(e) {}
+
         const finalProfile = {
+          ...cachedProfile,
           ...profile,
-          full_name: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '',
-          contact_email: profile?.contact_email || user.email || '',
-          avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
-          phone: profile?.phone || user.phone || '',
-          profession: profile?.profession || '',
-          role: profile?.role || '',
-          location: profile?.location || '',
-          hometown: profile?.hometown || '',
-          whatsapp: profile?.whatsapp || '',
-          tekyel_name: profile?.tekyel_name || '',
-          bio: profile?.bio || ''
+          full_name: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || cachedProfile.full_name || '',
+          contact_email: profile?.contact_email || user.email || cachedProfile.contact_email || '',
+          avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || cachedProfile.avatar_url || '',
+          phone: profile?.phone || user.phone || cachedProfile.phone || '',
+          profession: profile?.profession || cachedProfile.profession || '',
+          role: profile?.role || cachedProfile.role || '',
+          location: profile?.location || cachedProfile.location || '',
+          hometown: profile?.hometown || cachedProfile.hometown || '',
+          whatsapp: profile?.whatsapp || cachedProfile.whatsapp || '',
+          tekyel_name: profile?.tekyel_name || cachedProfile.tekyel_name || '',
+          bio: profile?.bio || cachedProfile.bio || ''
         };
 
         // Cache and render
