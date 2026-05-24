@@ -165,6 +165,10 @@ function initApp() {
                 <svg class="mobile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
                 <span>SkillQuest</span>
               </a>
+              <a href="/pages/dashboard.html" class="mobile-nav-card" id="menuAccountRow">
+                <svg class="mobile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span id="menuAccountLabel">Sign In</span>
+              </a>
             </div>
             
             <div class="mobile-menu-divider"></div>
@@ -178,12 +182,6 @@ function initApp() {
                 <div class="menu-toggle-thumb"></div>
               </label>
             </div>
-            
-            <a href="/pages/dashboard.html" class="mobile-dropdown-row" id="menuAccountRow">
-              <svg class="mobile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              <span id="menuAccountLabel">Sign In</span>
-            </a>
-            
             <button class="mobile-dropdown-row" id="menuSignOutRow" style="display:none; width: 100%; border:none; background:none; text-align: left; cursor:pointer;">
               <svg class="mobile-icon" style="color:var(--sq-red);" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
               <span style="color:var(--sq-red);">Sign Out</span>
@@ -274,7 +272,10 @@ function initApp() {
           accountBtn.href = '/pages/dashboard.html';
         }
         
-        if (menuAccountLabel) menuAccountLabel.textContent = 'Account';
+        if (menuAccountLabel) {
+          menuAccountLabel.textContent = 'Account';
+          if (menuAccountRow) menuAccountRow.href = '/pages/dashboard.html';
+        }
         if (menuSignOutRow) {
           menuSignOutRow.style.display = 'flex';
           menuSignOutRow.onclick = async () => {
@@ -310,7 +311,10 @@ function initApp() {
         }
         if (logoutBtn) logoutBtn.remove();
         
-        if (menuAccountLabel) menuAccountLabel.textContent = 'Sign In';
+        if (menuAccountLabel) {
+          menuAccountLabel.textContent = 'Sign In';
+          if (menuAccountRow) menuAccountRow.href = '/pages/login.html';
+        }
         if (menuSignOutRow) menuSignOutRow.style.display = 'none';
       }
     };
