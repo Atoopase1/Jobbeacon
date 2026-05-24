@@ -150,74 +150,10 @@ export const Auth = {
   }
 };
 
-/**
- * Ensure a profile row exists for the given user.
- * Works for ALL providers (email, Google, etc.).
- * Never overwrites fields the user has already filled in.
- */
-async function ensureProfile(user) {
-  if (!user) return;
-
-  const meta = user.user_metadata || {};
-  const provider = user.app_metadata?.provider || 'email';
-
-  // Gather metadata (works for Google; for email these will be empty strings)
-  const metaName   = meta.full_name || meta.name || '';
-  const metaAvatar = meta.avatar_url || meta.picture || '';
-  const metaEmail  = user.email || '';
-
-  try {
-    // Check if a profile row already exists
-    const { data: existing, error: fetchErr } = await supabase
-      .from('profiles')
-      .select('id, full_name, avatar_url, contact_email')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (fetchErr && fetchErr.code !== 'PGRST116') {
-      console.error('[Auth] Profile fetch error:', fetchErr.message);
-      return;
-    }
-
-    if (!existing) {
-      // No profile row yet — create one
-      const { error: insertErr } = await supabase.from('profiles').upsert({
-        id: user.id,
-        full_name: metaName || null,
-        avatar_url: metaAvatar || null,
-        contact_email: metaEmail || null
-      }, { onConflict: 'id' });
-
-      if (insertErr) {
-        console.error('[Auth] Profile insert error:', insertErr.message);
-      } else {
-        console.log('[Auth] Profile created for', provider, 'user');
-      }
-    } else {
-      // Profile exists — only fill in blank fields, never overwrite user edits
-      const updates = {};
-      if (!existing.full_name    && metaName)   updates.full_name     = metaName;
-      if (!existing.avatar_url   && metaAvatar) updates.avatar_url    = metaAvatar;
-      if (!existing.contact_email && metaEmail) updates.contact_email = metaEmail;
-
-      if (Object.keys(updates).length > 0) {
-        await supabase.from('profiles').update(updates).eq('id', user.id);
-        console.log('[Auth] Profile patched with missing fields:', Object.keys(updates));
-      }
-    }
-  } catch (err) {
-    console.error('[Auth] ensureProfile error:', err.message);
-  }
-}
-
 // Initialize auth state listener
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN' && session) {
     const user = session.user;
-
-    // Always ensure a profile row exists — for ALL providers.
-    // We await this so the redirect doesn't fire before the profile is saved.
-    await ensureProfile(user);
 
     // Handle OAuth redirect callback (e.g. Google sign-in)
     const isLoginPage = window.location.pathname.includes('/login.html');

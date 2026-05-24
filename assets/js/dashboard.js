@@ -395,76 +395,15 @@ export const Dashboard = {
     try {
       const profileForm = document.getElementById('profileForm');
       if (profileForm) {
-        let profile = null;
-        let profileError = null;
-        try {
-          const profilePromise = this.getProfile(user.id);
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Profile fetch timed out')), 15000)
-          );
-          const result = await Promise.race([profilePromise, timeoutPromise]);
-          profile = result?.profile || null;
-          profileError = result?.error || null;
-        } catch (fetchErr) {
-          console.warn('[Dashboard] Profile fetch failed or timed out:', fetchErr.message);
-          profileError = fetchErr.message;
-        }
-
-        const saveBtn = document.getElementById('saveProfileBtn');
+        // Fetch profile cleanly
+        const { profile } = await this.getProfile(user.id);
         
-        if (profileError) {
-          // If we failed to load the profile, show an error and disable the form
-          // so the user doesn't accidentally overwrite their data with blanks
-          const errorHtml = `
-            <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:0.5rem; padding:1rem; margin-bottom:1.5rem; color:#DC2626; font-size:0.9rem;">
-              <strong>Connection Error:</strong> We couldn't load your profile data (${profileError}). 
-              Please <a href="javascript:location.reload()" style="text-decoration:underline; font-weight:bold;">refresh the page</a> to try again.
-            </div>
-          `;
-          profileForm.insertAdjacentHTML('beforebegin', errorHtml);
-          if (saveBtn) {
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Profile Load Failed';
-          }
-          return; // Stop here so we don't populate empty fields
-        }
-
-        // If no profile row exists yet, safely create one.
-        // IMPORTANT: Use ignoreDuplicates:true so if the row DOES exist in the DB
-        // (getProfile returned null due to a transient network error), we never
-        // overwrite the user's saved data with empty seed values.
-        if (!profile) {
-          console.log('[Dashboard] No profile row — inserting seed (safe, no overwrite)');
-          const seed = {
-            id: user.id,
-            full_name:     user.user_metadata?.full_name || user.user_metadata?.name || null,
-            contact_email: user.email || null,
-            avatar_url:    user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
-            phone: null,
-            bio: null
-          };
-          // ignoreDuplicates:true = INSERT ... ON CONFLICT DO NOTHING
-          await supabase.from('profiles').upsert(seed, { onConflict: 'id', ignoreDuplicates: true });
-          // Re-fetch whatever is actually in the DB (could be existing or newly created)
-          const { profile: refetched } = await this.getProfile(user.id);
-          if (refetched) profile = refetched;
-        }
-
-        // Helper: pick the first non-empty value
-        const pick = (...vals) => {
-          for (const v of vals) {
-            if (v && typeof v === 'string' && v.trim()) return v.trim();
-          }
-          return '';
-        };
-
-        const fullName = pick(profile?.full_name, user.user_metadata?.full_name, user.user_metadata?.name);
-        const email    = pick(profile?.contact_email, user.email);
-        const avatarUrl = pick(profile?.avatar_url, user.user_metadata?.avatar_url, user.user_metadata?.picture);
-        const phone    = pick(profile?.phone, user.phone);
-        const bio      = pick(profile?.bio);
-
-        console.log('[Dashboard] Profile resolved →', { fullName, email, avatarUrl, phone, bio: bio.substring(0, 30) });
+        // Use profile data, fallback to auth metadata if empty
+        const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
+        const email = profile?.contact_email || user.email || '';
+        const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+        const phone = profile?.phone || user.phone || '';
+        const bio = profile?.bio || '';
 
         const nameEl = document.getElementById('profileName');
         const emailEl = document.getElementById('profileEmail');
@@ -473,12 +412,11 @@ export const Dashboard = {
         const avatarUrlEl = document.getElementById('profileAvatarUrl');
         const avatarPreview = document.getElementById('profileAvatarPreview');
 
-        // Always populate — this runs after auth, so there's no race with user typing
-        if (nameEl)  nameEl.value  = fullName;
+        if (nameEl) nameEl.value = fullName;
         if (emailEl) emailEl.value = email;
         if (phoneEl) phoneEl.value = phone;
-        if (bioEl)   bioEl.value   = bio;
-
+        if (bioEl) bioEl.value = bio;
+        
         if (avatarUrl && avatarUrlEl) avatarUrlEl.value = avatarUrl;
         if (avatarUrl && avatarPreview) {
           avatarPreview.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
@@ -498,7 +436,7 @@ export const Dashboard = {
           }
         }
 
-        // Avatar upload listener (needs user.id)
+        // Avatar upload listener
         const avatarUpload = document.getElementById('profileAvatarUpload');
         if (avatarUpload) {
           avatarUpload.addEventListener('change', async (e) => {
@@ -509,8 +447,6 @@ export const Dashboard = {
               if (uploadUrl) {
                 if (avatarUrlEl) avatarUrlEl.value = uploadUrl;
                 if (preview) preview.innerHTML = `<img src="${uploadUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-                
-                // Update header immediately on upload
                 if (headerAvatar) {
                   headerAvatar.innerHTML = `<img src="${uploadUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
                 }

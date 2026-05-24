@@ -23,7 +23,9 @@ let adminModeActive = localStorage.getItem('jobbeacon_admin_mode') === 'true';
 
 /* ─── Utility ─────────────────────────────────────────────────────────────── */
 function pageKey() {
-  return window.location.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
+  const path = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
+  const search = window.location.search;
+  return search ? path + search : path;
 }
 
 function assignIds() {
@@ -241,7 +243,7 @@ function openTextModal(el) {
 
   overlay.innerHTML = `
     <div id="img-admin-modal">
-      <h3 style="color:#F59E0B;">✏️ Add / Edit / Repost Text</h3>
+      <h3 style="color:#F59E0B;">✏️ Update Any Post</h3>
       <p class="admin-sub">ID: <code style="color:#F59E0B;font-size:0.75rem;">${el.dataset.textId}</code></p>
       <label class="img-admin-label">Content (HTML allowed)</label>
       <textarea class="img-admin-input img-admin-textarea" id="txt-admin-content">${el.innerHTML}</textarea>
