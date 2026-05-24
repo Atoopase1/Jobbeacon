@@ -128,24 +128,106 @@ function initApp() {
     });
   }
 
-  // 2. Mobile Menu Toggle
+  // 2. Mobile Menu Integrated Dropdown
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-  const navLinks = document.getElementById('navLinks');
-
-  if (mobileMenuBtn && navLinks) {
+  
+  if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      navLinks.classList.toggle('active');
+      
+      let dropdown = document.getElementById('mobileDropdownPanel');
+      if (!dropdown) {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+          dropdown = document.createElement('div');
+          dropdown.id = 'mobileDropdownPanel';
+          dropdown.className = 'mobile-dropdown-panel';
+          dropdown.innerHTML = `
+            <div class="mobile-nav-grid">
+              <a href="/" class="mobile-nav-card">
+                <svg class="mobile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Home</span>
+              </a>
+              <a href="/pages/jobs.html" class="mobile-nav-card">
+                <svg class="mobile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <span>Find Jobs</span>
+              </a>
+              <a href="/pages/employers.html" class="mobile-nav-card">
+                <svg class="mobile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                <span>Employers</span>
+              </a>
+              <a href="/pages/learn.html" class="mobile-nav-card">
+                <svg class="mobile-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                <span>SkillQuest</span>
+              </a>
+            </div>
+            
+            <div class="mobile-menu-divider"></div>
+            
+            <div class="mobile-dropdown-row">
+               <svg class="mobile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+               <span>Dark Mode</span>
+               <label class="menu-toggle-switch" id="menuDarkToggle" aria-label="Toggle dark mode">
+                <input type="checkbox" id="menuDarkCheckbox">
+                <div class="menu-toggle-track"></div>
+                <div class="menu-toggle-thumb"></div>
+              </label>
+            </div>
+            
+            <a href="/pages/dashboard.html" class="mobile-dropdown-row" id="menuAccountRow">
+              <svg class="mobile-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span id="menuAccountLabel">Sign In</span>
+            </a>
+            
+            <button class="mobile-dropdown-row" id="menuSignOutRow" style="display:none; width: 100%; border:none; background:none; text-align: left; cursor:pointer;">
+              <svg class="mobile-icon" style="color:var(--sq-red);" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+              <span style="color:var(--sq-red);">Sign Out</span>
+            </button>
+          `;
+          navbar.appendChild(dropdown);
+
+          // Dark mode sync for the new dropdown
+          const menuDarkToggle = document.getElementById('menuDarkCheckbox');
+          const menuDarkSwitch = document.getElementById('menuDarkToggle');
+          if (menuDarkToggle) {
+            menuDarkToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (menuDarkToggle.checked) menuDarkSwitch.classList.add('on');
+            
+            menuDarkToggle.addEventListener('change', (e) => {
+              const newTheme = e.target.checked ? 'dark' : 'light';
+              document.documentElement.setAttribute('data-theme', newTheme);
+              localStorage.setItem('theme', newTheme);
+              
+              if (e.target.checked) menuDarkSwitch.classList.add('on');
+              else menuDarkSwitch.classList.remove('on');
+              
+              // Sync main toggle if exists
+              const mainToggle = document.getElementById('themeToggle');
+              if (mainToggle && mainToggle.tagName === 'INPUT') mainToggle.checked = e.target.checked;
+            });
+          }
+
+          // Trigger auth update for new dropdown
+          if (typeof window.triggerAuthUpdate === 'function') {
+            window.triggerAuthUpdate();
+          }
+        }
+      }
+      
+      if (dropdown) {
+        dropdown.classList.toggle('active');
+      }
     });
   }
 
   // Close mobile menu when clicking outside
   document.addEventListener('click', (e) => {
-    if (navLinks && navLinks.classList.contains('active') &&
-      !e.target.closest('.nav-links') &&
+    const dropdown = document.getElementById('mobileDropdownPanel');
+    if (dropdown && dropdown.classList.contains('active') &&
+      !e.target.closest('#mobileDropdownPanel') &&
       !e.target.closest('.mobile-menu-btn')) {
-      navLinks.classList.remove('active');
+      dropdown.classList.remove('active');
     }
   });
 
