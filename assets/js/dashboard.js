@@ -243,6 +243,68 @@ export const Dashboard = {
    * Initialize Dashboard UI Logic
    */
   async init() {
+    // --- 0. CACHE & UI HELPER (instant synchronous load) ---
+    const populateProfileUI = (data) => {
+      // 1. Display Mode
+      const displayName = document.getElementById('displayName');
+      const displayEmail = document.getElementById('displayEmail');
+      const displayPhone = document.getElementById('displayPhone');
+      const displayBio = document.getElementById('displayBio');
+      const displayAvatar = document.getElementById('displayAvatar');
+
+      if (displayName) displayName.textContent = data.full_name || 'User Name';
+      if (displayEmail) displayEmail.textContent = data.contact_email || 'user@example.com';
+      if (displayPhone) displayPhone.textContent = data.phone || 'Not provided';
+      if (displayBio) displayBio.textContent = data.bio || 'Not provided';
+      if (displayAvatar) {
+        if (data.avatar_url) {
+          displayAvatar.innerHTML = `<img src="${data.avatar_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        } else {
+          displayAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(data.full_name || data.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
+        }
+      }
+
+      // 2. Edit Mode
+      const nameEl = document.getElementById('profileName');
+      const emailEl = document.getElementById('profileEmail');
+      const phoneEl = document.getElementById('profilePhone');
+      const bioEl = document.getElementById('profileBio');
+      const avatarUrlEl = document.getElementById('profileAvatarUrl');
+      const avatarPreview = document.getElementById('profileAvatarPreview');
+
+      if (nameEl) nameEl.value = data.full_name || '';
+      if (emailEl) emailEl.value = data.contact_email || '';
+      if (phoneEl) phoneEl.value = data.phone || '';
+      if (bioEl) bioEl.value = data.bio || '';
+      if (avatarUrlEl) avatarUrlEl.value = data.avatar_url || '';
+      if (data.avatar_url && avatarPreview) {
+        avatarPreview.innerHTML = `<img src="${data.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+      }
+
+      // 3. Header
+      const headerUserName = document.querySelector('.user-name');
+      const headerAvatar = document.getElementById('headerAvatar');
+      if (headerUserName) {
+        headerUserName.textContent = data.full_name || data.contact_email?.split('@')[0] || 'User';
+      }
+      if (headerAvatar) {
+        if (data.avatar_url) {
+          headerAvatar.innerHTML = `<img src="${data.avatar_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        } else {
+          headerAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(data.full_name || data.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
+        }
+      }
+    };
+
+    try {
+      const cached = localStorage.getItem('jb_profile_cache');
+      if (cached) {
+        populateProfileUI(JSON.parse(cached));
+      }
+    } catch(e) {
+      console.warn('Failed to parse profile cache', e);
+    }
+
     let user = null;
 
     // --- 1. LOGOUT BUTTON (wired up first, completely synchronous) ---
@@ -355,32 +417,8 @@ export const Dashboard = {
           if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Profile'; }
 
           if (saved && !saveError) {
-            if (nameEl)      nameEl.value      = saved.full_name      || '';
-            if (emailEl)     emailEl.value     = saved.contact_email  || '';
-            if (phoneEl)     phoneEl.value     = saved.phone          || '';
-            if (bioEl)       bioEl.value       = saved.bio            || '';
-            if (avatarUrlEl) avatarUrlEl.value = saved.avatar_url     || '';
-            if (saved.avatar_url && avatarPreview) {
-              avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-            }
-
-            // Sync with display mode
-            const displayName = document.getElementById('displayName');
-            const displayEmail = document.getElementById('displayEmail');
-            const displayPhone = document.getElementById('displayPhone');
-            const displayBio = document.getElementById('displayBio');
-            const displayAvatar = document.getElementById('displayAvatar');
-            if (displayName) displayName.textContent = saved.full_name || 'User Name';
-            if (displayEmail) displayEmail.textContent = saved.contact_email || 'user@example.com';
-            if (displayPhone) displayPhone.textContent = saved.phone || 'Not provided';
-            if (displayBio) displayBio.textContent = saved.bio || 'Not provided';
-            if (displayAvatar) {
-              if (saved.avatar_url) {
-                displayAvatar.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
-              } else {
-                displayAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(saved.full_name || saved.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
-              }
-            }
+            localStorage.setItem('jb_profile_cache', JSON.stringify(saved));
+            populateProfileUI(saved);
 
             // Return to display mode
             const toggleBtn = document.getElementById('toggleEditProfileBtn');
@@ -390,19 +428,6 @@ export const Dashboard = {
                editMode.style.display = 'none';
                displayMode.style.display = 'block';
                toggleBtn.style.display = 'block';
-            }
-
-            const headerUserName = document.querySelector('.user-name');
-            const headerAvatar = document.getElementById('headerAvatar');
-            if (headerUserName) {
-              headerUserName.textContent = saved.full_name || saved.contact_email?.split('@')[0] || 'User';
-            }
-            if (headerAvatar) {
-              if (saved.avatar_url) {
-                headerAvatar.innerHTML = `<img src="${saved.avatar_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-              } else {
-                headerAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(saved.full_name || saved.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
-              }
             }
           }
         });
@@ -447,40 +472,17 @@ export const Dashboard = {
         }
 
         // Use profile data, fallback to auth metadata if DB fields are still empty
-        const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
-        const email = profile?.contact_email || user.email || '';
-        const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
-        const phone = profile?.phone || user.phone || '';
-        const bio = profile?.bio || '';
-
-        // Update Display Mode
-        const displayName = document.getElementById('displayName');
-        const displayEmail = document.getElementById('displayEmail');
-        const displayPhone = document.getElementById('displayPhone');
-        const displayBio = document.getElementById('displayBio');
-        const displayAvatar = document.getElementById('displayAvatar');
-
-        const updateDisplayMode = (data) => {
-          if (displayName) displayName.textContent = data.full_name || 'User Name';
-          if (displayEmail) displayEmail.textContent = data.email || 'user@example.com';
-          if (displayPhone) displayPhone.textContent = data.phone || 'Not provided';
-          if (displayBio) displayBio.textContent = data.bio || 'Not provided';
-          if (displayAvatar) {
-            if (data.avatar_url) {
-              displayAvatar.innerHTML = `<img src="${data.avatar_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
-            } else {
-              displayAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(data.full_name || data.email || 'U').charAt(0).toUpperCase()}</div>`;
-            }
-          }
+        const finalProfile = {
+          full_name: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '',
+          contact_email: profile?.contact_email || user.email || '',
+          avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
+          phone: profile?.phone || user.phone || '',
+          bio: profile?.bio || ''
         };
 
-        updateDisplayMode({
-          full_name: fullName,
-          email: email,
-          phone: phone,
-          bio: bio,
-          avatar_url: avatarUrl
-        });
+        // Cache and render
+        localStorage.setItem('jb_profile_cache', JSON.stringify(finalProfile));
+        populateProfileUI(finalProfile);
 
         // Toggle logic
         const toggleBtn = document.getElementById('toggleEditProfileBtn');
@@ -500,37 +502,8 @@ export const Dashboard = {
             toggleBtn.style.display = 'block';
           });
         }
-
-        const nameEl = document.getElementById('profileName');
-        const emailEl = document.getElementById('profileEmail');
-        const phoneEl = document.getElementById('profilePhone');
-        const bioEl = document.getElementById('profileBio');
-        const avatarUrlEl = document.getElementById('profileAvatarUrl');
-        const avatarPreview = document.getElementById('profileAvatarPreview');
-
-        if (nameEl) nameEl.value = fullName;
-        if (emailEl) emailEl.value = email;
-        if (phoneEl) phoneEl.value = phone;
-        if (bioEl) bioEl.value = bio;
         
-        if (avatarUrl && avatarUrlEl) avatarUrlEl.value = avatarUrl;
-        if (avatarUrl && avatarPreview) {
-          avatarPreview.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-        }
 
-        // Sync with dashboard header
-        const headerUserName = document.querySelector('.user-name');
-        const headerAvatar = document.getElementById('headerAvatar');
-        if (headerUserName) {
-          headerUserName.textContent = fullName || email?.split('@')[0] || 'User';
-        }
-        if (headerAvatar) {
-          if (avatarUrl) {
-            headerAvatar.innerHTML = `<img src="${avatarUrl}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-          } else {
-            headerAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(fullName || email || 'U').charAt(0).toUpperCase()}</div>`;
-          }
-        }
 
         // Avatar upload listener
         const avatarUpload = document.getElementById('profileAvatarUpload');

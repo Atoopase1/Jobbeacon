@@ -185,6 +185,7 @@ function initApp() {
              if (error) {
                UI.showToast('Failed to log out', 'error');
              } else {
+               localStorage.removeItem('jb_profile_cache');
                UI.showToast('Logged out successfully', 'success');
              }
           });

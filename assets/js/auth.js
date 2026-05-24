@@ -113,6 +113,8 @@ export const Auth = {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
+      localStorage.removeItem('jb_profile_cache');
+      
       UI.showToast('Logged out successfully', 'success');
       setTimeout(() => {
         window.location.href = '/index.html';
