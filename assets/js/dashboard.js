@@ -197,7 +197,7 @@ export const Dashboard = {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, full_name, contact_email, avatar_url, phone, bio, profession, role, location, hometown, whatsapp, tekyel_name, extra_fields')
+          .select('id, full_name, contact_email, avatar_url, phone, bio, profession, role, company, location, hometown, whatsapp, tekyel_name, extra_fields')
           .eq('id', userId)
           .maybeSingle();
           
@@ -254,6 +254,7 @@ export const Dashboard = {
 
       const displayProfession = document.getElementById('displayProfession');
       const displayRole = document.getElementById('displayRole');
+      const displayCompany = document.getElementById('displayCompany');
       const displayLocation = document.getElementById('displayLocation');
       const displayHometown = document.getElementById('displayHometown');
       const displayWhatsapp = document.getElementById('displayWhatsapp');
@@ -264,6 +265,7 @@ export const Dashboard = {
       if (displayPhone) displayPhone.textContent = data.phone || 'Not provided';
       if (displayProfession) displayProfession.textContent = data.profession || 'Not provided';
       if (displayRole) displayRole.textContent = data.role || 'Not provided';
+      if (displayCompany) displayCompany.textContent = data.company || 'Not provided';
       if (displayLocation) displayLocation.textContent = data.location || 'Not provided';
       if (displayHometown) displayHometown.textContent = data.hometown || 'Not provided';
       if (displayWhatsapp) displayWhatsapp.textContent = data.whatsapp || 'Not provided';
@@ -284,6 +286,7 @@ export const Dashboard = {
       const bioEl = document.getElementById('profileBio');
       const professionEl = document.getElementById('profileProfession');
       const roleEl = document.getElementById('profileRole');
+      const companyEl = document.getElementById('profileCompany');
       const locationEl = document.getElementById('profileLocation');
       const hometownEl = document.getElementById('profileHometown');
       const whatsappEl = document.getElementById('profileWhatsapp');
@@ -296,6 +299,7 @@ export const Dashboard = {
       if (phoneEl) phoneEl.value = data.phone || '';
       if (professionEl) professionEl.value = data.profession || '';
       if (roleEl) roleEl.value = data.role || '';
+      if (companyEl) companyEl.value = data.company || '';
       if (locationEl) locationEl.value = data.location || '';
       if (hometownEl) hometownEl.value = data.hometown || '';
       if (whatsappEl) whatsappEl.value = data.whatsapp || '';
@@ -474,6 +478,7 @@ export const Dashboard = {
           const phoneEl = document.getElementById('profilePhone');
           const professionEl = document.getElementById('profileProfession');
           const roleEl = document.getElementById('profileRole');
+          const companyEl = document.getElementById('profileCompany');
           const locationEl = document.getElementById('profileLocation');
           const hometownEl = document.getElementById('profileHometown');
           const whatsappEl = document.getElementById('profileWhatsapp');
@@ -490,6 +495,7 @@ export const Dashboard = {
           if (phoneEl?.value?.trim())   profileData.phone         = phoneEl.value.trim();
           if (professionEl?.value?.trim()) profileData.profession = professionEl.value.trim();
           if (roleEl?.value?.trim())       profileData.role       = roleEl.value.trim();
+          if (companyEl?.value?.trim())    profileData.company    = companyEl.value.trim();
           if (locationEl?.value?.trim())   profileData.location   = locationEl.value.trim();
           if (hometownEl?.value?.trim())   profileData.hometown   = hometownEl.value.trim();
           if (whatsappEl?.value?.trim())   profileData.whatsapp   = whatsappEl.value.trim();
@@ -584,6 +590,7 @@ export const Dashboard = {
           phone: profile?.phone || user.phone || cachedProfile.phone || '',
           profession: profile?.profession || cachedProfile.profession || '',
           role: profile?.role || cachedProfile.role || '',
+          company: profile?.company || cachedProfile.company || '',
           location: profile?.location || cachedProfile.location || '',
           hometown: profile?.hometown || cachedProfile.hometown || '',
           whatsapp: profile?.whatsapp || cachedProfile.whatsapp || '',
