@@ -156,11 +156,27 @@
     }
 
     @media (max-width: 600px) {
-      .employers-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-      .employer-card { padding: 1.25rem; }
-    }
-    @media (max-width: 380px) {
-      .employers-grid { grid-template-columns: 1fr; }
+      .employers-grid { 
+        display: flex; 
+        flex-wrap: nowrap; 
+        overflow-x: auto; 
+        gap: 1rem; 
+        padding-bottom: 1rem;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+      .employers-grid::-webkit-scrollbar {
+        height: 6px;
+      }
+      .employers-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      .employer-card { 
+        flex: 0 0 85%; 
+        scroll-snap-align: center;
+        padding: 1.25rem; 
+      }
     }
   </style>
 </head>
