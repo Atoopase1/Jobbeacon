@@ -452,18 +452,19 @@ p {
     padding: 1.25rem 1rem;
     display: none;
     flex-direction: column;
-    z-index: 100;
+    z-index: -1;
     max-height: calc(100vh - 60px);
     overflow-y: auto;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   }
 
   .mobile-dropdown-panel.active {
     display: flex;
-    animation: slideDown 0.2s ease forwards;
+    animation: slideInDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
+  @keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-30%); }
     to { opacity: 1; transform: translateY(0); }
   }
 
