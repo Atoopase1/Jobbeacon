@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="/assets/css/style.css">
   <style>
     .jobs-page-layout {
-      display: grid;
-      grid-template-columns: 280px 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 2rem;
       padding: 2rem 0;
     }
@@ -22,12 +22,20 @@
       padding: 1.5rem;
       border: 1px solid var(--border);
       height: fit-content;
-      position: sticky;
-      top: 100px;
+      position: relative;
+      width: 100%;
     }
     
+    #filtersForm {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
     .filter-group {
-      margin-bottom: 1.5rem;
+      flex: 1;
+      min-width: 200px;
     }
     
     .filter-title {
@@ -129,7 +137,7 @@
     
     @media (max-width: 900px) {
       .jobs-page-layout {
-        grid-template-columns: 1fr;
+        gap: 1rem;
       }
       .filters-sidebar {
         display: none;
@@ -141,6 +149,10 @@
         z-index: 100;
         border-radius: 0;
         overflow-y: auto;
+      }
+      #filtersForm {
+        flex-direction: column;
+        flex-wrap: nowrap;
       }
       .filters-sidebar.active {
         display: block;
@@ -245,8 +257,8 @@
         <button class="close-filters" id="closeFiltersBtn">&times;</button>
         
         <form id="filtersForm">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2 style="font-size: 1.25rem;">Filters</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; width: 100%;">
+            <h2 style="font-size: 1.25rem; margin: 0;">Filters</h2>
             <button type="reset" class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;" id="clearFiltersBtn">Clear</button>
           </div>
 
