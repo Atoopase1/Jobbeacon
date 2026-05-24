@@ -173,9 +173,21 @@
           <label for="remember">Remember me for 30 days</label>
         </div>
         
+        <div id="termsDisclosure" style="display: none; margin-bottom: 1rem;">
+          <details style="background: rgba(0,0,0,0.02); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+            <summary style="cursor: pointer; font-weight: 500; font-size: 0.875rem; color: var(--text-primary); user-select: none;">Read Terms & Services</summary>
+            <div style="margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-secondary); max-height: 120px; overflow-y: auto; padding-right: 0.5rem; line-height: 1.5;">
+              <p style="margin-bottom: 0.5rem;"><strong>1. Acceptance of Terms:</strong> By creating an account, you agree to our terms.</p>
+              <p style="margin-bottom: 0.5rem;"><strong>2. User Conduct:</strong> You agree to use JobBeacon for professional purposes only. Spam or harassment will result in account termination.</p>
+              <p style="margin-bottom: 0.5rem;"><strong>3. Privacy:</strong> Your personal data is handled according to our Privacy Policy. We do not sell your data.</p>
+              <p style="margin: 0;">For full details, read our complete <a href="/pages/terms.html" style="color: var(--primary); text-decoration: underline;" target="_blank">Terms of Service</a>.</p>
+            </div>
+          </details>
+        </div>
+        
         <div class="checkbox-group" id="termsGroup" style="display: none;">
           <input type="checkbox" id="termsAgree">
-          <label for="termsAgree">I agree to the <a href="/pages/terms.html" style="color: var(--primary); text-decoration: underline;" target="_blank">Professional Policy & Terms of Service</a></label>
+          <label for="termsAgree">I accept the Terms & Services</label>
         </div>
         
         <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%;">
@@ -241,6 +253,8 @@
           toggleBtn.innerText = 'Sign In';
           rememberGroup.style.display = 'none';
           termsGroup.style.display = 'flex';
+          const td = document.getElementById('termsDisclosure');
+          if (td) td.style.display = 'block';
         } else {
           pageTitle.innerText = 'Welcome Back';
           pageSubtitle.innerText = 'Sign in to your dashboard';
@@ -249,6 +263,8 @@
           toggleBtn.innerText = 'Sign Up';
           rememberGroup.style.display = 'flex';
           termsGroup.style.display = 'none';
+          const td = document.getElementById('termsDisclosure');
+          if (td) td.style.display = 'none';
         }
       };
       
