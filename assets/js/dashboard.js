@@ -216,9 +216,16 @@ export const Dashboard = {
    */
   async updateProfile(profileData) {
     try {
+      // Strip empty strings — never overwrite existing DB values with blanks
+      const cleanData = Object.fromEntries(
+        Object.entries(profileData).filter(([key, val]) =>
+          key === 'id' || (val !== '' && val !== null && val !== undefined)
+        )
+      );
+
       const { data, error } = await supabase
         .from('profiles')
-        .upsert(profileData, { onConflict: 'id' })
+        .upsert(cleanData, { onConflict: 'id' })
         .select();
 
       if (error) throw error;
@@ -322,8 +329,8 @@ export const Dashboard = {
       if (profileForm) {
         profileForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          if (!user) return; // Not ready yet
-          
+          if (!user) return;
+
           const saveBtn = document.getElementById('saveProfileBtn');
           if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving...'; }
 
@@ -334,18 +341,14 @@ export const Dashboard = {
           const avatarUrlEl = document.getElementById('profileAvatarUrl');
           const avatarPreview = document.getElementById('profileAvatarPreview');
 
-          const profileData = {
-            id: user.id,
-            full_name: nameEl?.value || '',
-            contact_email: emailEl?.value || '',
-            phone: phoneEl?.value || '',
-            bio: bioEl?.value || ''
-          };
-          // Only include avatar_url when it actually has a value.
-          // Sending an empty string would wipe the stored avatar from the DB.
-          if (avatarUrlEl?.value) {
-            profileData.avatar_url = avatarUrlEl.value;
-          }
+          // Build profile data — only include non-empty values so we never
+          // accidentally overwrite existing DB data with blank form fields.
+          const profileData = { id: user.id };
+          if (nameEl?.value?.trim())    profileData.full_name     = nameEl.value.trim();
+          if (emailEl?.value?.trim())   profileData.contact_email = emailEl.value.trim();
+          if (phoneEl?.value?.trim())   profileData.phone         = phoneEl.value.trim();
+          if (bioEl?.value?.trim())     profileData.bio           = bioEl.value.trim();
+          if (avatarUrlEl?.value?.trim()) profileData.avatar_url  = avatarUrlEl.value.trim();
 
           const { profile: saved, error: saveError } = await this.updateProfile(profileData);
 
@@ -360,8 +363,6 @@ export const Dashboard = {
             if (saved.avatar_url && avatarPreview) {
               avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
             }
-
-            // Sync with dashboard header
             const headerUserName = document.querySelector('.user-name');
             const headerAvatar = document.getElementById('headerAvatar');
             if (headerUserName) {
@@ -395,10 +396,28 @@ export const Dashboard = {
     try {
       const profileForm = document.getElementById('profileForm');
       if (profileForm) {
-        // Fetch profile cleanly
-        const { profile } = await this.getProfile(user.id);
-        
-        // Use profile data, fallback to auth metadata if empty
+        // Fetch profile from DB
+        let { profile } = await this.getProfile(user.id);
+
+        // If no row exists yet (new user), create one from auth metadata — safely
+        if (!profile) {
+          console.log('[Dashboard] No profile row — creating from auth metadata');
+          const seed = {
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+            contact_email: user.email || null,
+            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            phone: null,
+            bio: null
+          };
+          // ignoreDuplicates: true = INSERT ... ON CONFLICT DO NOTHING
+          // This means we NEVER overwrite an existing row even if getProfile failed
+          await supabase.from('profiles').upsert(seed, { onConflict: 'id', ignoreDuplicates: true });
+          const { profile: refetched } = await this.getProfile(user.id);
+          if (refetched) profile = refetched;
+        }
+
+        // Use profile data, fallback to auth metadata if DB fields are still empty
         const fullName = profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '';
         const email = profile?.contact_email || user.email || '';
         const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
