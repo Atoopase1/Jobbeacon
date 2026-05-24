@@ -517,8 +517,10 @@ p {
     text-decoration: none;
     color: var(--text-primary);
     font-weight: 600;
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
   }
 
   .mobile-dropdown-row:hover, .mobile-dropdown-row:active {
