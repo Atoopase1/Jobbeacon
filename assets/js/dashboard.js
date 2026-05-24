@@ -510,10 +510,17 @@ export const Dashboard = {
 
         // Use profile data, fallback to auth metadata if DB fields are still empty
         const finalProfile = {
+          ...profile,
           full_name: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '',
           contact_email: profile?.contact_email || user.email || '',
           avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
           phone: profile?.phone || user.phone || '',
+          profession: profile?.profession || '',
+          role: profile?.role || '',
+          location: profile?.location || '',
+          hometown: profile?.hometown || '',
+          whatsapp: profile?.whatsapp || '',
+          tekyel_name: profile?.tekyel_name || '',
           bio: profile?.bio || ''
         };
 
