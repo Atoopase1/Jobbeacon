@@ -261,11 +261,26 @@ function initApp() {
   if (accountBtn) {
     const updateAuthUI = (session) => {
       let logoutBtn = document.getElementById('globalLogoutBtn');
+      const menuAccountLabel = document.getElementById('menuAccountLabel');
+      const menuSignOutRow = document.getElementById('menuSignOutRow');
+      
       if (session) {
-        accountBtn.textContent = 'Dashboard';
-        accountBtn.href = '/pages/dashboard.html';
+        if (accountBtn) {
+          accountBtn.textContent = 'Account';
+          accountBtn.href = '/pages/dashboard.html';
+        }
         
-        if (!logoutBtn) {
+        if (menuAccountLabel) menuAccountLabel.textContent = 'Account';
+        if (menuSignOutRow) {
+          menuSignOutRow.style.display = 'flex';
+          menuSignOutRow.onclick = async () => {
+             await supabase.auth.signOut();
+             localStorage.removeItem('jb_profile_cache');
+             UI.showToast('Logged out successfully', 'success');
+          };
+        }
+        
+        if (!logoutBtn && accountBtn) {
           logoutBtn = document.createElement('button');
           logoutBtn.id = 'globalLogoutBtn';
           logoutBtn.className = 'btn btn-outline';
@@ -285,10 +300,20 @@ function initApp() {
           accountBtn.parentNode.insertBefore(logoutBtn, accountBtn.nextSibling);
         }
       } else {
-        accountBtn.textContent = 'Sign In';
-        accountBtn.href = '/pages/login.html';
+        if (accountBtn) {
+          accountBtn.textContent = 'Sign In';
+          accountBtn.href = '/pages/login.html';
+        }
         if (logoutBtn) logoutBtn.remove();
+        
+        if (menuAccountLabel) menuAccountLabel.textContent = 'Sign In';
+        if (menuSignOutRow) menuSignOutRow.style.display = 'none';
       }
+    };
+
+    window.triggerAuthUpdate = async () => {
+      const { data } = await supabase.auth.getSession();
+      updateAuthUI(data.session);
     };
 
     // Check immediately on load
