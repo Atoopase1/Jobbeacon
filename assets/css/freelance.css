@@ -140,7 +140,7 @@
   align-items: flex-start;
 }
 
-.freelance-filters .filter-group {
+.filter-group {
   flex: 1;
   min-width: 200px;
 }
