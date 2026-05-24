@@ -211,10 +211,30 @@
                 <p id="displayEmail" style="color: var(--text-muted); font-size: 0.9rem;">user@example.com</p>
               </div>
               
-              <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
-                <div style="margin-bottom: 1rem;">
+              <div style="border-top: 1px solid var(--border); padding-top: 1.5rem; display: grid; gap: 1rem;">
+                <div>
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Profession</h4>
+                  <p id="displayProfession" style="font-size: 1rem;">Not provided</p>
+                </div>
+                <div>
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Role</h4>
+                  <p id="displayRole" style="font-size: 1rem;">Not provided</p>
+                </div>
+                <div>
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Location</h4>
+                  <p id="displayLocation" style="font-size: 1rem;">Not provided</p>
+                </div>
+                <div>
                   <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Phone Number</h4>
                   <p id="displayPhone" style="font-size: 1rem;">Not provided</p>
+                </div>
+                <div>
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">WhatsApp Line</h4>
+                  <p id="displayWhatsapp" style="font-size: 1rem;">Not provided</p>
+                </div>
+                <div>
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Tekyel Name</h4>
+                  <p id="displayTekyel" style="font-size: 1rem;">Not provided</p>
                 </div>
                 <div>
                   <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Bio / Professional Summary</h4>
@@ -237,19 +257,39 @@
                   <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Max size: 2MB.</p>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
                   <label class="form-label" for="profileName">Full Name</label>
                   <input type="text" id="profileName" class="form-control" required placeholder="Your full name">
                 </div>
-                
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
                   <label class="form-label" for="profileEmail">Contact Email</label>
                   <input type="email" id="profileEmail" class="form-control" required placeholder="Email for contact purposes">
                 </div>
-                
-                <div class="form-group">
-                  <label class="form-label" for="profilePhone">Phone Number (Optional)</label>
-                  <input type="text" id="profilePhone" class="form-control" placeholder="e.g. +233 ...">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                  <label class="form-label" for="profileProfession">Profession</label>
+                  <input type="text" id="profileProfession" class="form-control" placeholder="e.g. Software Engineer, Designer">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                  <label class="form-label" for="profileRole">Role</label>
+                  <input type="text" id="profileRole" class="form-control" placeholder="e.g. Senior Frontend Developer">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                  <label class="form-label" for="profileLocation">Location</label>
+                  <input type="text" id="profileLocation" class="form-control" placeholder="e.g. Accra, Ghana">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="profilePhone">Phone Number</label>
+                    <input type="text" id="profilePhone" class="form-control" placeholder="e.g. +233 ...">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="profileWhatsapp">WhatsApp Line</label>
+                    <input type="text" id="profileWhatsapp" class="form-control" placeholder="e.g. +233 ...">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                  <label class="form-label" for="profileTekyel">Tekyel Name</label>
+                  <input type="text" id="profileTekyel" class="form-control" placeholder="Your Tekyel Name">
                 </div>
                 
                 <div class="form-group">

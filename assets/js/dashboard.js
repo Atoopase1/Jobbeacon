@@ -252,9 +252,20 @@ export const Dashboard = {
       const displayBio = document.getElementById('displayBio');
       const displayAvatar = document.getElementById('displayAvatar');
 
+      const displayProfession = document.getElementById('displayProfession');
+      const displayRole = document.getElementById('displayRole');
+      const displayLocation = document.getElementById('displayLocation');
+      const displayWhatsapp = document.getElementById('displayWhatsapp');
+      const displayTekyel = document.getElementById('displayTekyel');
+
       if (displayName) displayName.textContent = data.full_name || 'User Name';
       if (displayEmail) displayEmail.textContent = data.contact_email || 'user@example.com';
       if (displayPhone) displayPhone.textContent = data.phone || 'Not provided';
+      if (displayProfession) displayProfession.textContent = data.profession || 'Not provided';
+      if (displayRole) displayRole.textContent = data.role || 'Not provided';
+      if (displayLocation) displayLocation.textContent = data.location || 'Not provided';
+      if (displayWhatsapp) displayWhatsapp.textContent = data.whatsapp || 'Not provided';
+      if (displayTekyel) displayTekyel.textContent = data.tekyel_name || 'Not provided';
       if (displayBio) displayBio.textContent = data.bio || 'Not provided';
       if (displayAvatar) {
         if (data.avatar_url) {
@@ -269,12 +280,22 @@ export const Dashboard = {
       const emailEl = document.getElementById('profileEmail');
       const phoneEl = document.getElementById('profilePhone');
       const bioEl = document.getElementById('profileBio');
+      const professionEl = document.getElementById('profileProfession');
+      const roleEl = document.getElementById('profileRole');
+      const locationEl = document.getElementById('profileLocation');
+      const whatsappEl = document.getElementById('profileWhatsapp');
+      const tekyelEl = document.getElementById('profileTekyel');
       const avatarUrlEl = document.getElementById('profileAvatarUrl');
       const avatarPreview = document.getElementById('profileAvatarPreview');
 
       if (nameEl) nameEl.value = data.full_name || '';
       if (emailEl) emailEl.value = data.contact_email || '';
       if (phoneEl) phoneEl.value = data.phone || '';
+      if (professionEl) professionEl.value = data.profession || '';
+      if (roleEl) roleEl.value = data.role || '';
+      if (locationEl) locationEl.value = data.location || '';
+      if (whatsappEl) whatsappEl.value = data.whatsapp || '';
+      if (tekyelEl) tekyelEl.value = data.tekyel_name || '';
       if (bioEl) bioEl.value = data.bio || '';
       if (avatarUrlEl) avatarUrlEl.value = data.avatar_url || '';
       if (data.avatar_url && avatarPreview) {
@@ -399,6 +420,11 @@ export const Dashboard = {
           const nameEl = document.getElementById('profileName');
           const emailEl = document.getElementById('profileEmail');
           const phoneEl = document.getElementById('profilePhone');
+          const professionEl = document.getElementById('profileProfession');
+          const roleEl = document.getElementById('profileRole');
+          const locationEl = document.getElementById('profileLocation');
+          const whatsappEl = document.getElementById('profileWhatsapp');
+          const tekyelEl = document.getElementById('profileTekyel');
           const bioEl = document.getElementById('profileBio');
           const avatarUrlEl = document.getElementById('profileAvatarUrl');
           const avatarPreview = document.getElementById('profileAvatarPreview');
@@ -409,6 +435,11 @@ export const Dashboard = {
           if (nameEl?.value?.trim())    profileData.full_name     = nameEl.value.trim();
           if (emailEl?.value?.trim())   profileData.contact_email = emailEl.value.trim();
           if (phoneEl?.value?.trim())   profileData.phone         = phoneEl.value.trim();
+          if (professionEl?.value?.trim()) profileData.profession = professionEl.value.trim();
+          if (roleEl?.value?.trim())       profileData.role       = roleEl.value.trim();
+          if (locationEl?.value?.trim())   profileData.location   = locationEl.value.trim();
+          if (whatsappEl?.value?.trim())   profileData.whatsapp   = whatsappEl.value.trim();
+          if (tekyelEl?.value?.trim())     profileData.tekyel_name = tekyelEl.value.trim();
           if (bioEl?.value?.trim())     profileData.bio           = bioEl.value.trim();
           if (avatarUrlEl?.value?.trim()) profileData.avatar_url  = avatarUrlEl.value.trim();
 
