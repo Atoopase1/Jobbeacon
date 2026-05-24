@@ -216,11 +216,9 @@ export const Dashboard = {
    */
   async updateProfile(profileData) {
     try {
-      // Strip empty strings — never overwrite existing DB values with blanks
+      // Remove undefined values, but allow empty strings so users can clear fields
       const cleanData = Object.fromEntries(
-        Object.entries(profileData).filter(([key, val]) =>
-          key === 'id' || (val !== '' && val !== null && val !== undefined)
-        )
+        Object.entries(profileData).filter(([key, val]) => val !== undefined)
       );
 
       const { data, error } = await supabase
@@ -434,28 +432,32 @@ export const Dashboard = {
           const avatarUrlEl = document.getElementById('profileAvatarUrl');
           const avatarPreview = document.getElementById('profileAvatarPreview');
 
-          // Build profile data — only include non-empty values so we never
-          // accidentally overwrite existing DB data with blank form fields.
+          // Build profile data — assign all fields so empty strings can clear DB values
           const profileData = { id: user.id };
-          if (nameEl?.value?.trim())    profileData.full_name     = nameEl.value.trim();
-          if (emailEl?.value?.trim())   profileData.contact_email = emailEl.value.trim();
-          if (phoneEl?.value?.trim())   profileData.phone         = phoneEl.value.trim();
-          if (professionEl?.value?.trim()) profileData.profession = professionEl.value.trim();
-          if (roleEl?.value?.trim())       profileData.role       = roleEl.value.trim();
-          if (locationEl?.value?.trim())   profileData.location   = locationEl.value.trim();
-          if (hometownEl?.value?.trim())   profileData.hometown   = hometownEl.value.trim();
-          if (whatsappEl?.value?.trim())   profileData.whatsapp   = whatsappEl.value.trim();
-          if (tekyelEl?.value?.trim())     profileData.tekyel_name = tekyelEl.value.trim();
-          if (bioEl?.value?.trim())     profileData.bio           = bioEl.value.trim();
-          if (avatarUrlEl?.value?.trim()) profileData.avatar_url  = avatarUrlEl.value.trim();
+          if (nameEl)       profileData.full_name     = nameEl.value.trim();
+          if (emailEl)      profileData.contact_email = emailEl.value.trim();
+          if (phoneEl)      profileData.phone         = phoneEl.value.trim();
+          if (professionEl) profileData.profession    = professionEl.value.trim();
+          if (roleEl)       profileData.role          = roleEl.value.trim();
+          if (locationEl)   profileData.location      = locationEl.value.trim();
+          if (hometownEl)   profileData.hometown      = hometownEl.value.trim();
+          if (whatsappEl)   profileData.whatsapp      = whatsappEl.value.trim();
+          if (tekyelEl)     profileData.tekyel_name   = tekyelEl.value.trim();
+          if (bioEl)        profileData.bio           = bioEl.value.trim();
+          if (avatarUrlEl)  profileData.avatar_url    = avatarUrlEl.value.trim();
 
           const { profile: saved, error: saveError } = await this.updateProfile(profileData);
 
           if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Profile'; }
 
           if (saved && !saveError) {
-            localStorage.setItem('jb_profile_cache', JSON.stringify(saved));
-            populateProfileUI(saved);
+            // Merge returned data with the submitted profile data.
+            // This ensures the UI instantly updates with your typed text,
+            // even if the Supabase database schema cache hasn't processed the new columns yet!
+            const mergedSaved = { ...saved, ...profileData };
+            
+            localStorage.setItem('jb_profile_cache', JSON.stringify(mergedSaved));
+            populateProfileUI(mergedSaved);
 
             // Return to display mode
             const toggleBtn = document.getElementById('toggleEditProfileBtn');
