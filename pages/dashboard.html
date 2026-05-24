@@ -197,11 +197,36 @@
         <!-- PROFILE VIEW -->
         <div id="viewProfile">
           <div style="max-width: 600px;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">My Profile</h2>
-            <div class="card" style="padding: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h2 style="font-size: 1.5rem; margin: 0;">My Profile</h2>
+              <button class="btn btn-outline" id="toggleEditProfileBtn">Edit Profile</button>
+            </div>
+            
+            <div class="card" style="padding: 2rem;" id="profileDisplayMode">
+              <div style="text-align: center; margin-bottom: 2rem;">
+                <div id="displayAvatar" class="company-logo" style="width: 100px; height: 100px; margin: 0 auto 1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; background: var(--bg-body); border: 1px solid var(--border); overflow: hidden;">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <h3 id="displayName" style="font-size: 1.25rem; margin-bottom: 0.25rem;">User Name</h3>
+                <p id="displayEmail" style="color: var(--text-muted); font-size: 0.9rem;">user@example.com</p>
+              </div>
+              
+              <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                <div style="margin-bottom: 1rem;">
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Phone Number</h4>
+                  <p id="displayPhone" style="font-size: 1rem;">Not provided</p>
+                </div>
+                <div>
+                  <h4 style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Bio / Professional Summary</h4>
+                  <p id="displayBio" style="font-size: 1rem; line-height: 1.6;">Not provided</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="padding: 2rem; display: none;" id="profileEditMode">
               <form id="profileForm">
                 <div class="form-group" style="text-align: center; margin-bottom: 2rem;">
-                  <div id="profileAvatarPreview" class="company-logo" style="width: 100px; height: 100px; margin: 0 auto 1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: var(--bg-body); border: 2px dashed var(--border);">
+                  <div id="profileAvatarPreview" class="company-logo" style="width: 100px; height: 100px; margin: 0 auto 1rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: var(--bg-body); border: 2px dashed var(--border); overflow: hidden;">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                   </div>
                   <input type="hidden" id="profileAvatarUrl">
@@ -232,7 +257,10 @@
                   <textarea id="profileBio" class="form-control" rows="4" placeholder="Tell us about yourself..."></textarea>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+                <div style="display: flex; gap: 1rem;">
+                  <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                  <button type="button" class="btn btn-outline" id="cancelEditProfileBtn">Cancel</button>
+                </div>
               </form>
             </div>
 

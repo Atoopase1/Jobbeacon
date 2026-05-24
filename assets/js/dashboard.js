@@ -363,6 +363,35 @@ export const Dashboard = {
             if (saved.avatar_url && avatarPreview) {
               avatarPreview.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
             }
+
+            // Sync with display mode
+            const displayName = document.getElementById('displayName');
+            const displayEmail = document.getElementById('displayEmail');
+            const displayPhone = document.getElementById('displayPhone');
+            const displayBio = document.getElementById('displayBio');
+            const displayAvatar = document.getElementById('displayAvatar');
+            if (displayName) displayName.textContent = saved.full_name || 'User Name';
+            if (displayEmail) displayEmail.textContent = saved.contact_email || 'user@example.com';
+            if (displayPhone) displayPhone.textContent = saved.phone || 'Not provided';
+            if (displayBio) displayBio.textContent = saved.bio || 'Not provided';
+            if (displayAvatar) {
+              if (saved.avatar_url) {
+                displayAvatar.innerHTML = `<img src="${saved.avatar_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
+              } else {
+                displayAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(saved.full_name || saved.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
+              }
+            }
+
+            // Return to display mode
+            const toggleBtn = document.getElementById('toggleEditProfileBtn');
+            const displayMode = document.getElementById('profileDisplayMode');
+            const editMode = document.getElementById('profileEditMode');
+            if (editMode && displayMode && toggleBtn) {
+               editMode.style.display = 'none';
+               displayMode.style.display = 'block';
+               toggleBtn.style.display = 'block';
+            }
+
             const headerUserName = document.querySelector('.user-name');
             const headerAvatar = document.getElementById('headerAvatar');
             if (headerUserName) {
@@ -423,6 +452,54 @@ export const Dashboard = {
         const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
         const phone = profile?.phone || user.phone || '';
         const bio = profile?.bio || '';
+
+        // Update Display Mode
+        const displayName = document.getElementById('displayName');
+        const displayEmail = document.getElementById('displayEmail');
+        const displayPhone = document.getElementById('displayPhone');
+        const displayBio = document.getElementById('displayBio');
+        const displayAvatar = document.getElementById('displayAvatar');
+
+        const updateDisplayMode = (data) => {
+          if (displayName) displayName.textContent = data.full_name || 'User Name';
+          if (displayEmail) displayEmail.textContent = data.email || 'user@example.com';
+          if (displayPhone) displayPhone.textContent = data.phone || 'Not provided';
+          if (displayBio) displayBio.textContent = data.bio || 'Not provided';
+          if (displayAvatar) {
+            if (data.avatar_url) {
+              displayAvatar.innerHTML = `<img src="${data.avatar_url}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            } else {
+              displayAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(data.full_name || data.email || 'U').charAt(0).toUpperCase()}</div>`;
+            }
+          }
+        };
+
+        updateDisplayMode({
+          full_name: fullName,
+          email: email,
+          phone: phone,
+          bio: bio,
+          avatar_url: avatarUrl
+        });
+
+        // Toggle logic
+        const toggleBtn = document.getElementById('toggleEditProfileBtn');
+        const cancelBtn = document.getElementById('cancelEditProfileBtn');
+        const displayMode = document.getElementById('profileDisplayMode');
+        const editMode = document.getElementById('profileEditMode');
+
+        if (toggleBtn && cancelBtn && displayMode && editMode) {
+          toggleBtn.addEventListener('click', () => {
+            displayMode.style.display = 'none';
+            editMode.style.display = 'block';
+            toggleBtn.style.display = 'none';
+          });
+          cancelBtn.addEventListener('click', () => {
+            editMode.style.display = 'none';
+            displayMode.style.display = 'block';
+            toggleBtn.style.display = 'block';
+          });
+        }
 
         const nameEl = document.getElementById('profileName');
         const emailEl = document.getElementById('profileEmail');
