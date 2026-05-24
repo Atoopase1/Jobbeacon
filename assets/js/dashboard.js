@@ -197,7 +197,7 @@ export const Dashboard = {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, full_name, contact_email, avatar_url, phone, bio, profession, role, location, hometown, whatsapp, tekyel_name')
+          .select('id, full_name, contact_email, avatar_url, phone, bio, profession, role, location, hometown, whatsapp, tekyel_name, extra_fields')
           .eq('id', userId)
           .maybeSingle();
           
@@ -306,20 +306,58 @@ export const Dashboard = {
         avatarPreview.innerHTML = `<img src="${data.avatar_url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
       }
 
-      // 3. Header
-      const headerUserName = document.querySelector('.user-name');
-      const headerAvatar = document.getElementById('headerAvatar');
-      if (headerUserName) {
-        headerUserName.textContent = data.full_name || data.contact_email?.split('@')[0] || 'User';
-      }
-      if (headerAvatar) {
-        if (data.avatar_url) {
-          headerAvatar.innerHTML = `<img src="${data.avatar_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+      // 4. Extra Fields Display & Edit
+      const displayExtraFields = document.getElementById('displayExtraFields');
+      const extraContainer = document.getElementById('extraFieldsContainer');
+      let extras = [];
+      try {
+        extras = Array.isArray(data.extra_fields) ? data.extra_fields : (data.extra_fields ? JSON.parse(data.extra_fields) : []);
+      } catch(e) { extras = []; }
+
+      // Render in display mode
+      if (displayExtraFields) {
+        if (extras.length > 0) {
+          displayExtraFields.innerHTML = `
+            <div class="profile-grid" style="margin-top:0;">
+              ${extras.map(f => `
+                <div class="profile-card">
+                  <div class="profile-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                  </div>
+                  <div class="profile-card-content">
+                    <h4 style="font-size:0.75rem;color:var(--primary);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.35rem 0;font-weight:700;">${f.label}</h4>
+                    <p style="font-size:1rem;color:var(--text-primary);margin:0;font-weight:600;word-break:break-word;">${f.value}</p>
+                  </div>
+                </div>`).join('')}
+            </div>`;
         } else {
-          headerAvatar.innerHTML = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 50%; font-weight: bold;">${(data.full_name || data.contact_email || 'U').charAt(0).toUpperCase()}</div>`;
+          displayExtraFields.innerHTML = '';
         }
       }
+
+      // Populate edit form rows
+      if (extraContainer) {
+        extraContainer.innerHTML = '';
+        extras.forEach((f, i) => addExtraFieldRow(f.label, f.value));
+      }
     };
+
+    // Helper: add a dynamic extra field row to the edit form
+    const addExtraFieldRow = (label = '', value = '') => {
+      const container = document.getElementById('extraFieldsContainer');
+      if (!container) return;
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:0.5rem;align-items:center;';
+      row.innerHTML = `
+        <input type="text" placeholder="Label (e.g. LinkedIn)" value="${label}" class="form-control extra-field-label" style="flex:1;">
+        <input type="text" placeholder="Value / URL" value="${value}" class="form-control extra-field-value" style="flex:2;">
+        <button type="button" class="remove-extra-field" style="background:none;border:none;color:#EF4444;cursor:pointer;padding:0.4rem;border-radius:var(--radius-md);" title="Remove">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>`;
+      row.querySelector('.remove-extra-field').addEventListener('click', () => row.remove());
+      container.appendChild(row);
+    };
+
 
     try {
       const cached = localStorage.getItem('jb_profile_cache');
@@ -410,6 +448,16 @@ export const Dashboard = {
       console.warn('[Dashboard] Tab wiring failed:', err);
     }
 
+    // --- 4b. ADD EXTRA FIELD BUTTON ---
+    try {
+      const addExtraBtn = document.getElementById('addExtraFieldBtn');
+      if (addExtraBtn) {
+        addExtraBtn.addEventListener('click', () => addExtraFieldRow());
+      }
+    } catch(err) {
+      console.warn('[Dashboard] Add extra field button wiring failed:', err);
+    }
+
     // --- 4. PROFILE FORM SUBMIT HANDLER (synchronous binding) ---
     try {
       const profileForm = document.getElementById('profileForm');
@@ -448,6 +496,16 @@ export const Dashboard = {
           if (tekyelEl?.value?.trim())     profileData.tekyel_name = tekyelEl.value.trim();
           if (bioEl?.value?.trim())     profileData.bio           = bioEl.value.trim();
           if (avatarUrlEl?.value?.trim()) profileData.avatar_url  = avatarUrlEl.value.trim();
+
+          // Collect extra fields
+          const extraRows = document.querySelectorAll('#extraFieldsContainer > div');
+          const extraFields = [];
+          extraRows.forEach(row => {
+            const label = row.querySelector('.extra-field-label')?.value?.trim();
+            const value = row.querySelector('.extra-field-value')?.value?.trim();
+            if (label && value) extraFields.push({ label, value });
+          });
+          profileData.extra_fields = extraFields;
 
           const { profile: saved, error: saveError } = await this.updateProfile(profileData);
 
@@ -530,7 +588,8 @@ export const Dashboard = {
           hometown: profile?.hometown || cachedProfile.hometown || '',
           whatsapp: profile?.whatsapp || cachedProfile.whatsapp || '',
           tekyel_name: profile?.tekyel_name || cachedProfile.tekyel_name || '',
-          bio: profile?.bio || cachedProfile.bio || ''
+          bio: profile?.bio || cachedProfile.bio || '',
+          extra_fields: profile?.extra_fields ?? cachedProfile.extra_fields ?? []
         };
 
         // Cache and render

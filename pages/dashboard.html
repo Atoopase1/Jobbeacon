@@ -295,7 +295,7 @@
                 </div>
 
                 <!-- Bio Summary -->
-                <div style="background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-lg);">
+                <div style="background: var(--primary-light); padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1rem;">
                   <h4 style="font-size: 0.85rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1rem 0; font-weight: 700; display: flex; align-items: center; gap: 0.75rem;">
                     <div style="background: white; color: var(--primary); padding: 0.4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="21" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="21" y1="18" x2="3" y2="18"></line></svg>
@@ -304,6 +304,9 @@
                   </h4>
                   <p id="displayBio" style="font-size: 1rem; color: var(--text-primary); margin: 0; line-height: 1.7; font-weight: 500;">Not provided</p>
                 </div>
+
+                <!-- Extra Info Display -->
+                <div id="displayExtraFields"></div>
               </div>
             </div>
 
@@ -366,7 +369,19 @@
                   <label class="form-label" for="profileBio">Bio / Professional Summary</label>
                   <textarea id="profileBio" class="form-control" rows="4" placeholder="Tell us about yourself..."></textarea>
                 </div>
-                
+
+                <!-- Extra Info Section -->
+                <div style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <label class="form-label" style="margin: 0;">Extra Info <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">(LinkedIn, GitHub, Skills, etc.)</span></label>
+                    <button type="button" id="addExtraFieldBtn" style="background: var(--primary-light); color: var(--primary); border: none; border-radius: var(--radius-md); padding: 0.4rem 1rem; font-weight: 600; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      Add Field
+                    </button>
+                  </div>
+                  <div id="extraFieldsContainer" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                </div>
+
                 <div style="display: flex; gap: 1rem;">
                   <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
                   <button type="button" class="btn btn-outline" id="cancelEditProfileBtn">Cancel</button>
